@@ -8,7 +8,7 @@ OUT	= .
 DVI	= $(OUT)/$(PROJ).dvi
 PDF	= $(OUT)/$(PROJ).pdf
 
-CMDLATEX = latex -output-directory=$(OUT)
+CMDLATEX = pdflatex -output-directory=$(OUT)
 CMDPDF   = dvipdf
 
 PDFVIEWER = evince
@@ -45,4 +45,3 @@ clean	:
 	rm -rf $(OUT)/*.lot
 	rm -rf $(OUT)/*.out
 	rm -rf $(OUT)/*.toc
-	rm -rf $(OUT)/*.pdf
