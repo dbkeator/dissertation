@@ -14,6 +14,7 @@
 % A few common packages
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{amssymb}
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{natbib}
@@ -24,6 +25,22 @@
 \usepackage{subcaption}  % \begin{subfigure}...\end{subfigure} within figure
 \usepackage{multirow}
 \usepackage{tabularx}
+
+\usepackage{listings}
+
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+\usepackage[linesnumbered]{algorithm2e}
+
+\makeatletter
+\newcommand{\nosemic}{\renewcommand{\@endalgocfline}{\relax}}% Drop semi-colon ;
+\newcommand{\dosemic}{\renewcommand{\@endalgocfline}{\algocf@endline}}% Reinstate semi-colon ;
+\newcommand{\pushline}{\Indp}% Indent
+\newcommand{\popline}{\Indm\dosemic}% Undent
+\makeatother
 
 % plainpages=false fixes the "duplicate ignored" error with page counters
 % Set pdfborder to 0 0 0 to disable colored borders around PDF hyperlinks
@@ -71,7 +88,11 @@
 % Include the different components of your thesis, in separate files.
 % Using \include allows you to set \includeonly above.
 \include{chapter1}
-%\include{chapter2}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter5}
+\include{conclusion}
 % ... and so on
 
 % These commands fix an odd problem in which the bibliography line

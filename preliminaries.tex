@@ -1,5 +1,5 @@
 \thesistitle{
-  Title of the Thesis
+  Pruning Large Search Spaces using Context Networks
 }
 
 \degreename{Doctor of Philosophy}
@@ -9,17 +9,19 @@
 \degreefield{Computer Science}
 
 % Your name as it appears on official UCI records.
-\authorname{Your name}
+\authorname{Arjun Satish}
 
 % Use the full name of each committee member.
-\committeechair{Professor A}
+\committeechair{Professor Ramesh Jain}
 \othercommitteemembers
 {
-  Professor B\\
-  Professor C
+  Professor Nalini Venkatasubramanian\\
+  Professor Deva Ramanan\\
+  Professor Bill Tomlinson\\
+  Dr. Amarnath Gupta
 }
 
-\degreeyear{2012}
+\degreeyear{2013}
 
 \copyrightdeclaration
 {
@@ -46,17 +48,17 @@
 
 \acknowledgments
 {
-  I would like to thank...
-  
-  (You must acknowledge grants and other funding assistance. 
-  
-  You may also acknowledge the contributions of professors and
-  friends.
-  
-  You also need to acknowledge any publishers of your previous
-  work who have given you permission to incorporate that work
-  into your dissertation. See Section 3.2 of the UCI Thesis and
-  Dissertation Manual.)
+%  I would like to thank...
+%  
+%  (You must acknowledge grants and other funding assistance. 
+%  
+%  You may also acknowledge the contributions of professors and
+%  friends.
+%  
+%  You also need to acknowledge any publishers of your previous
+%  work who have given you permission to incorporate that work
+%  into your dissertation. See Section 3.2 of the UCI Thesis and
+%  Dissertation Manual.)
 }
 
 
@@ -136,7 +138,7 @@
 % supposedly somewhat of a soft constraint.
 \thesisabstract
 {
-  The abstract of your contribution goes here.
+The search spaces of real world AI problems are extremely large. Consider the example of tagging faces in a person's photo album. The search space contains a few billion potential candidates. Any algorithm which attempts to directly tag one of billion people in a given photo will perform poorly.  Measures are taken by systems to prune the search space prior to invoking a decision making algorithm. The strategy adopted by such measures is to model the environment accurately to reason which parts of the search space can be pruned without hurting the performance of the algorithm. Deriving models for a real world application like personal photo tagging is challenging due to the diversity of environments in which the photo capture occurs. 
 }
 
 

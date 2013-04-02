@@ -7,36 +7,193 @@
 % 2) Call \myappendix once, and then make each appendix a \section.
 
 \appendix
-\chapter{Appendix Title}
+\chapter{Appendix}
 
-Supplementary material goes here. See for instance Figure
-\ref{fig:quote}.
+Supplementary material goes here.
 
-\section{Lorem Ipsum}
+\section{Source Mapping}
 
-dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+\begin{verbatim}
+(:source google-calendar
+   (:attrs event email time location title description attendee)
+   (:rel ev type-of event)
+   (:rel owner type-of person)
+   (:rel ti type-of time-interval)
+   (:rel ev occurs-during ti)
+   (:rel participant type-of person)
+   (:rel owner participant-of ev)
+   (:rel participant participant-of ev)
+   (:io disk (:db mongodb))
+   (:type personal)
+   (:axioms
+      (:map ev event)
+      (:map ti time)
+      (:map owner.email email B)
+      (:map ev.occurs-during time)
+      (:map ev.occurs-at location)
+      (:map participant attendee)
+      (:map ev.title title U)
+      (:map ev.description description U)))
+\end{verbatim}
 
-\begin{figure}
-  \centering
-  \begin{tabular}{l}
-    ``I am glad I was up so late,\\
-    \quad{}for that's the reason I was up so early.''\\
-    \em \footnotesize William Shakespeare (1564-1616), British
-    dramatist, poet.\\
-    \em \footnotesize Cloten, in Cymbeline, act 2, sc. 3, l. 33-4.
-  \end{tabular}
-  \caption{A deep quote.}
-  \label{fig:quote}
-\end{figure}
+\begin{verbatim}
+(:source fb-user
+   (:attrs id name birthday location work email)
+   (:rel person type-of person)
+   (:rel named-place type-of named-place)
+   (:rel address type-of address)
+   (:rel person works-at named-place)
+   (:rel person lives-at address)
+   (:io disk (:db mongodb))
+   (:type personal)
+   (:axioms
+      (:map person.name name)
+      (:map person.dob birthday)
+      (:map address.street-address location.name)
+      (:map named-place.name work.name)))
 
 
-%%% Local Variables: ***
-%%% mode: latex ***
-%%% TeX-master: "thesis.tex" ***
-%%% End: ***
+(:source email
+   (:attrs from to cc)
+   (:rel pf type-of person)
+   (:rel pt type-of person)
+   (:rel pc type-of person)
+   (:io disk (:db mongodb))
+   (:type personal)
+   (:axioms
+      (:map pf.email from)
+      (:map pt.email to)
+      (:map pc.email cc)))
+
+
+(:source fb-relation
+   (:attrs name1 name2)
+   (:rel p1 type-of person)
+   (:rel p2 type-of person)
+   (:rel p1 knows p2)
+   (:io disk (:db mongodb))
+   (:type personal)
+   (:axioms
+      (:map p1.name name1 F)
+      (:map p2.name name2 U)))
+
+(:source academix
+   (:attrs name1 name2)
+   (:rel p1 type-of person)
+   (:rel p2 type-of person)
+   (:rel p1 knows p2)
+   (:io disk (:db mongodb))
+   (:type public)
+   (:axioms
+      (:map p1.name name1 F)
+      (:map p2.name name2 U)))
+
+(:source conferences
+   (:attrs time location ltitle stitle url)
+   (:rel conf type-of event)
+   (:rel time type-of time-interval)
+   (:rel loc type-of location)
+   (:rel conf occurs-at location)
+   (:rel conf occurs-during time)
+   (:axioms
+      (:map time time)
+      (:map loc location)
+      (:map conf.title ltitle)
+      (:map conf.name stitle)
+      (:map conf.url url)))
+
+
+(:source confattendees
+   (:attrs url name time location ltitle stitle)
+   (:rel conf type-of conference)
+   (:rel time type-of time-interval)
+   (:rel loc type-of location)
+   (:rel attendee type-of person)
+   (:rel attendee participant-in conf)
+   (:rel conf occurs-at location)
+   (:rel conf occurs-during time)
+   (:axioms
+      (:map time time)
+      (:map loc location)
+      (:map conf.title ltitle)
+      (:map conf.name stitle)
+      (:map conf.url url)
+      (:map attendee.name name)))
+
+
+(:source keynotes
+   (:attrs url time location title name)
+   (:rel conf type-of conference)
+   (:rel k type-of keynote)
+   (:rel k subevent-of conf)
+   (:rel attendee participant-in k)
+   (:axioms
+      (:map conf.url url)
+      (:map attendee.name name)
+      (:map k.location location)
+      (:map k.time time)
+      (:map k.title title)))
+
+(:source sessions
+   (:attrs url time location title name)
+   (:rel conf type-of conference)
+   (:rel k type-of session)
+   (:rel k subevent-of conf)
+   (:rel attendee participant-in k)
+   (:axioms
+      (:map conf.url url)
+      (:map attendee.name name)
+      (:map k.location location)
+      (:map k.time time)
+      (:map k.title title)))
+
+
+(:source talks
+   (:attrs url time location title name)
+   (:rel conf type-of conference)
+   (:rel k type-of talk)
+   (:rel k subevent-of conf)
+   (:rel attendee participant-in k)
+   (:axioms
+      (:map conf.url url)
+      (:map attendee.name name)
+      (:map k.location location)
+      (:map k.time time)
+      (:map k.title title)))
+
+(:source conflunches
+   (:attrs url time location title name)
+   (:rel conf type-of conference)
+   (:rel k type-of lunch)
+   (:rel k subevent-of conf)
+   (:rel attendee participant-in k)
+   (:axioms
+      (:map conf.url url)
+      (:map attendee.name name)
+      (:map k.location location)
+      (:map k.time time)
+      (:map k.title title)))
+
+
+(:source tweets
+   (:attrs url name)
+   (:rel conf type-of conference)
+   (:rel attendee type-of person)
+   (:rel attendee participant-in conf)
+   (:axioms
+      (:map conf.url url)
+      (:map attendee.name name)))
+
+(:source fb-events
+   (:attrs event name time)
+   (:rel ev type-of event)
+   (:rel p1 type-of person)
+   (:rel ti type-of time-interval)
+   (:rel ev occurs-during ti)
+   (:rel p1 participant-of ev)
+   (:axioms
+      (:map p1.name name)
+      (:map ev event)
+      (:map ev.occurs-during time)
+      (:map ti time)))
+\end{verbatim}

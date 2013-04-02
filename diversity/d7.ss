@@ -1,0 +1,20 @@
+Sandy Pentland 
+Dirk Helbing 
+Hideaki Aoyama 
+Eugene Stanley 
+Shlomo Havlin 
+Alex Vespignani 
+Albert-Laszlo Barabasi 
+Ramesh Jain 
+Alois Ferscha 
+Paul Lukowicz 
+Markus Eisenhower 
+Jeffrey Johnson 
+Damon Centola 
+Peter Dodds 
+Jose Fernando Mendes 
+Alex Pozdnoukhov 
+David Lazer 
+Cesar Hidalgo 
+Jerome Glenn 
+Dino Pedreschi 
