@@ -129,8 +129,8 @@
 \vspace{12pt}
 \textbf{SOFTWARE}
 
-  \mysoftentry{Magical tool}{http://your.url.here/}
-  {C++ algorithm that solves TSP in polynomial time.}
+  \mysoftentry{CueNet}{https://github.com/wicknicks/cuenet/}
+  {Polyglot implementation of the CueNet ecosystem to tag faces in photos.}
 
 }
 
@@ -138,7 +138,11 @@
 % supposedly somewhat of a soft constraint.
 \thesisabstract
 {
-The search spaces of real world AI problems are extremely large. Consider the example of tagging faces in a person's photo album. The search space contains a few billion potential candidates. Any algorithm which attempts to directly tag one of billion people in a given photo will perform poorly.  Measures are taken by systems to prune the search space prior to invoking a decision making algorithm. The strategy adopted by such measures is to model the environment accurately to reason which parts of the search space can be pruned without hurting the performance of the algorithm. Deriving models for a real world application like personal photo tagging is challenging due to the diversity of environments in which the photo capture occurs. 
+The search spaces of real world AI problems are extremely large. The strategy adopted to prune large search spaces is to accurately model the environment, and reason which parts of the search space can be pruned without hurting the performance of the decision making algorithm. Although relatively easier in virtual environments, modeling dynamic real world environments is a very challenging problem.
+
+Consider the example of tagging faces in a person's photo album. The search space contains a few billion potential candidates. Any algorithm which attempts to directly tag one of billion people in a given photo will perform poorly. But, given a complete model of the world, the search space needs to be limited only to the entities who were present close to the camera's field of view at the time of photo capture. Now, the algorithm needs to decide over few tens of candidates as opposed to billions.
+
+In this dissertation, we present \textit{Context Networks}, a representation of real world environments used to prune search spaces for real world AI problems, and a novel \textit{Progressive Discovery} algorithm to construct such networks from heterogenous data sources. We facilitate our following discussions through an example system to tag faces in personal photos. We discuss the architecture of a complete system to model data sources, construct context networks for a given AI problem (which in the case of face tagging would be a personal photo and the exhaustive search space) and provides a pruned version of the search space most relevant to the problem. We also present experiments to quantitatively demonstrate the efficacy of our algorithm.
 }
 
 
