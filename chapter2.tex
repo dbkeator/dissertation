@@ -13,19 +13,25 @@ In his seminal paper, Anind Dey [CITE] describes context \textit{as any informat
 
 They then proceed to define Context-Aware computing as follows: \textit{A system is context-aware if it uses context to provide relevant information and/or services to the user, where relevancy depends on the user's tasks}. But, we need to ask ourselves why a system which uses this ``additional information" should be considered a context-aware system. There are numerous system which simply would consider these ``additional information" as regular inputs. 
 
-The above definition suffers from the following drawbacks. Firstly, it is an object centric view of the variables involved in a problem. Using context in solving a problem implies bringing in additional variables which bring more flexibility in solving the problem. Secondly, the new variables are statically linked. 
+The above definition suffers from the following drawbacks. Firstly, it is an object centric view of the variables involved in a problem. Using context in solving a problem implies bringing in additional variables which bring more flexibility in solving the problem. Secondly, the new variables are statically linked. For solving every instance of that problem, the same variables are used. There is no way of reasoning which variable is interesting, and which is not. For example, in the above tour example, the weather variable is unnecessary in most cases, but is applicable in situations when bad weather influences the people's experience of the tour. 
 
-static linking, dynamic linking
+\subsection{Relation Centric View}
+We believe that any context is any event or entity which can be \textit{related} to the variables in a problem. It must be noted that focus has now shifted from finding objects which are of a specific type, and that to objects (of any type), but related to the problem variables through specific relationship types.
 
-context aware systems
+\subsection{Temporal Relevance}
+The relations between problem variables and the context objects must be temporal in nature. There are two advantages to this. First, this allows us to associate different context objects (possibly of different types) to different instances of the problem. Second, real world relations are always temporal in nature. By explicitly modeling time in our definition of context, we are able to incorporate a majority of real world relations, which are very crucial in real world applications.
 
-temporal relevance
+\subsection{Dynamic Linking}
+When a problem uses a fixed set of context objects for all instances, we refer to it as static linking. But here argument would be -- why call it context? and not just a problem which uses an additional set of variables. In this dissertation, we believe that context must be \textbf{dynamically linked} to the problem variables. This follows from the above two points. For example, tagging faces in photos cannot restrict the search space to be just friends of the user on Facebook. 
 
-real world integration
+In summary, we can say that context is any information which can be dynamically related to information present in the given problem, under the accepted spatio-temporal constraints.
 
-object centric view of context, and relation centric view.
+\subsection{Context-Awareness}
+Given the above properties of context, we define a system which is context aware as one, which when given access to different sources of additional information, has the capability to select information to reduce the complexity of the original problem.
 
-person centric?
+In this dissertation, we will see one such way of selecting such information for a specific face tagging application. In this work, we use event semantics and sources to specify our relations and context respectively.
+
+Also, context has been used in many non-real world problems. For instance, in natural language processing [CITE], ranking pages of the web [CITE-pagerank], entity resolution [CITE], face clustering [CITE] and therefore it must not mean that contextual techniques must apply only to real world problems. For the purposes of this dissertation, we ignore the application of context in such problems.
 
 \section{Parallels}
 
