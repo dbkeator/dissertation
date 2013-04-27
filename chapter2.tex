@@ -35,19 +35,34 @@ Also, context has been used in many non-real world problems. For instance, in na
 
 \section{Parallels}
 
+In this section, we look at how context awareness has explained many of the long standing problems in different communities.
+
 \subsection{Black Swans}
-How can the turkey save itself?
+In his widely acclaimed book, The Black Swan, Nassim Nicholas Taleb presents many arguments against solely relying on prediction based techniques. Citing examples from stock markets to clinical psychology trials he presents the case that historical evidence is insufficient to position oneself in the future. 
+
+His example of a turkey brings to light an interesting point ``Consider a turkey that is fed every day. Every single feeding will firm up the bird's belief that it is the general rule of life to be fed every day by friendly members of the human race ``looking our for its best interest''. On the afternoon of the Wednesday before Thanksgiving, something unexpected will happen to the turkey. It will incur a revision of belief.''
+
+Any amount of prediction is futile in this case. Taleb shows the graph showing the belief of the turkey in mankind. How could the turkey protect itself, yet reaping the benefits of the food given to it? 
+
+From the standpoint of the turkey, the Wednesday event is a Black Swan event. But from the standpoint of the butcher, it is not, since its occurrence is not unexpected.
+
+The simple example shows how new objects bring with them different semantics. And highlights that object relations can be disrupted heavily with even the slight change in relations. The second thing it shows is the need for awareness in the turkey to ``look-out'' for potential causes of harm. This action of being context-awareness is criticial in any real world systems.
+
+Figure shows how the turkey can navigate to various sources to learn how human beign behave. humans ..to.. festivals ..to.. thanksgiving ..to.. role of turkey in thanksgiving ..to.. butcher's profession.
 
 \subsection{Polynesian Tribes}
 Finding why such closely related tribes could evolve so differently in such a short time?
 
-\subsection{Zeno's Paradox}
-\textit{In the paradox of Achilles and the Tortoise, Achilles is in a footrace with the tortoise. Achilles allows the tortoise a head start of 100 metres, for example. If we suppose that each racer starts running at some constant speed (one very fast and one very slow), then after some finite time, Achilles will have run 100 metres, bringing him to the tortoise's starting point. During this time, the tortoise has run a much shorter distance, say, 10 metres. It will then take Achilles some further time to run that distance, by which time the tortoise will have advanced farther; and then more time still to reach this third point, while the tortoise moves ahead. Thus, whenever Achilles reaches somewhere the tortoise has been, he still has farther to go. Therefore, because there are an infinite number of points Achilles must reach where the tortoise has already been, he can never overtake the tortoise.}
-
-How can achilles win? Idea: Ignoring a variable can make a process very hard to explain. Different variables work together holistically. In this case, it is time. Just by bringing it into the same picture the problem becomes tractable.
-
 \subsection{The Gaia Hypothesis}
-Example of temperature regulation. involvment of rocks in the explanation for sustenance of life.
+Charles Darwin's work describes how living being have evolved over billions on years. But it does not answer the question -- how does life sustain itself on Earth? It turns out that the few billion years of life we have had is too little to let life have grown randomly, and just let natural selection determine who succeeds. There had to be bigger factors which let life sustain and grow in specific ways.
+
+One of the theories proposed in the 1970s is commonly known as the Gaia Theory. Proposed by James Lovelock and Lynn Margulis, it proposes the presence of feedback loops to explain the sustanence of life. Their argument is that for life to sustain, the amount of carbon dioxide in the atmosphere must not exceed a certain threshold. But who keeps this in check? How has the amount of CO2 in the atmosphere been almost constant for the last millions of years. Their reasoning is as follows:
+
+The Earth's volcanoes have spewed out huge amounts of carbon dioxide for millions of years. Plant and animals recycle massive amounts of CO2 in the process of photosynthesis, respiration and decay. According to the Gaia theory, the excess of CO2 is recycled is removed and recycled by a vast feedback loop, which involves rock weathering as a key ingredient. In the process of rock weathering, rocks, rainwater and CO2 form chemicals known as carbonates which are taken out of the atomosphere and bound in liquid solutions. It turns out that soil bacteria vastly increases the rate of rock weathering. The carbonates are then washed down where tiny algae invisble to the naked eye, absorb them and use them to make shells of chalk. So the CO2 that was in the atmosphere has now ended up in the shells of those minute algae. In addition, ocean algae also absorb CO2 from the ocean.  
+
+When the algae die their shells are then washed down into the ocean, where they form sediments of limestone. Limestone is very heavy, and gradually sinks into the mantle of the earth. Eventually, some of the CO2 is released back to the atomsphere by volcanoes. The entire cycle -- linking volcanoes to rock weathering, to soil bacteria, to oceanic algae, to limestone sediments, and back to volcanoes -- acts as a feedback loop which regulates the Earth's temperature. As the sun gets hotter, the bacteria in the soil get hotter, and more CO2 is removed from the atmosphere and sent to the ocean, thus cooling the planet.
+
+This remarkable explanation involves rocks, bacteria and ocean dynamics and the even the sun to explain how a simple thing as the earth's temperature is regulated. By studying one or more objects in isolation makes the analysis far from complete. More interestingly, the relations between the objects are very precise, involving biochemical reactions and have very precise definitions.
 
 \section{Event Context}
 Our justification for the use of context begins with the statement: \textit{For a given user, the correctness of face tags for a photograph containing people she has never met is undefined}. This observation prepares us to understand what context is, and how contextual reasoning assists in tagging photos. The description of any problem domain requires a set of abstract data types, and a model of how these types are related to each other. We \textbf{define} contextual types as those which are semantically different from these data types, but can be directly or indirectly related to them via an extended model which encapsulates the original one. Contextual reasoning assists in the following two ways. \textbf{First}, contextual data restricts the number of people who might appear in the photographs. We can also argue that all the personal data of a user (her profile on Facebook, LinkedIn, email exchanges, phone call logs) provides a reasonable estimate of all these people who might appear in her photos. \textbf{Second}, by reasoning on abstractions in the contextual domain, we can infer conclusions on the original problem. We exploit this property to develop our algorithm in the later sections. Though CueNet can be applied to a variety of recognition problems, we focus on tagging people in personal photos for concreteness, where, the image and person tag form the abstractions in the problem domain. The types used in the contextual domain, but not limited to, are the following:
@@ -72,3 +87,9 @@ At this point we will mention the \textbf{temporal relevance} property of a data
 
 conclusion: by using events we get dynamic linking, temporal relevance and real world integration.
 
+
+
+%\subsection{Zeno's Paradox}
+% \textit{In the paradox of Achilles and the Tortoise, Achilles is in a footrace with the tortoise. Achilles allows the tortoise a head start of 100 metres, for example. If we suppose that each racer starts running at some constant speed (one very fast and one very slow), then after some finite time, Achilles will have run 100 metres, bringing him to the tortoise's starting point. During this time, the tortoise has run a much shorter distance, say, 10 metres. It will then take Achilles some further time to run that distance, by which time the tortoise will have advanced farther; and then more time still to reach this third point, while the tortoise moves ahead. Thus, whenever Achilles reaches somewhere the tortoise has been, he still has farther to go. Therefore, because there are an infinite number of points Achilles must reach where the tortoise has already been, he can never overtake the tortoise.}
+
+% How can achilles win? Idea: Ignoring a variable can make a process very hard to explain. Different variables work together holistically. In this case, it is time. Just by bringing it into the same picture the problem becomes tractable.
