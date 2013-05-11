@@ -32,7 +32,7 @@ Search space pruning has been identified as an important problem since the earli
 
 First, the application of computer science is no longer restricted to abstract algorithms but the real world. Systems working on the problems like autonomous car navigation and personal photo tagging. Sensors are deployed around the world to tap into real world information. The challenges in integrating many, different types of sensors provides a new research opportunity.
 
-Second, systems are working against a very large audience. It is quite clear with the emergence of personalization techniques that it is not possible to use the same hammer against all users' problems. These people come from various cultures, different backgrounds and unique needs. Knowledge of real world information most relevant to each user is becoming increasingly desirable to solve their individual problems. This desiderata requires looking at the search space pruning in a different light.
+Second, systems are working against a very large audience. It is quite clear with the emergence of personalization techniques that it is now possible to use the personal information to solve the problems in a different way. At the same time, the users come from various cultures, different backgrounds and unique needs, so this adds a new level of complexity. This opportunity requires looking at the search space pruning in a different light.
 
 Third, original pruning solutions worked against very hard problems like Chess playing agents, where the very large search space was enumerated through a rule based system. It can be argued that due to the simplistic model, it was harder to prune the space as there were no properties which could be exploited to do so. But by bringing in real world, we can bring in more variables into the picture, and therefore more \textit{relations} can be exploited to prune the search space.
 
@@ -44,5 +44,11 @@ This dissertation is organized into the following chapters. Chapter 2 provides a
 % Chapters 6 and 7 describe two extensions to the CueNet framework to solve problems of missing context and that of source selection. 
 
 \section{Terminology}
-Before starting the discussion on Context Networks, it is necessary to include this short note on terminology to avoid any ambiguities. We use the word `Object' to collectively refer to events and entities. An entity includes persons, places in the world, for example `Starbucks, UC Irvine', `The Eiffel Tower, Paris, France', or organizations, for example `Google Inc', `Royal Society of London'. `Object' has been used in literature to refer to things which have no spatio-temporal properties. But, in our discussion, an `object' could imply an event which exhibits spatio-temporal properties.
+Before starting the discussion on Context Networks, it is necessary to include this short note on terminology to avoid any ambiguities. We use the word `Object' to collectively refer to events and entities. An entity includes persons, places in the world, for example `Starbucks, UC Irvine', `The Eiffel Tower, Paris, France', or organizations, for example `Google Inc', `Royal Society of London'. The term `object' has been used in literature to refer to things which have no temporal properties. But, in our discussion, an `object' could imply an event which exhibits temporal properties.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter1/terminology.png}
+\caption{Objects, Events and Entities.}
+\label{fig:terminology}
+\end{figure}
