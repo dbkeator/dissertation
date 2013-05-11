@@ -4,12 +4,26 @@ Artificial Intelligence is defined as the study and design of intelligent system
 
 This dissertation addresses the problem of constructing computational representations of real world environments from various heterogeneous sensors, to reason which parts of the search space can be pruned without hurting the overall performance of the intelligent system. We refer to such a representation as the \textbf{Context Network} of the environment. The network describes real-world events occurring in the environment, the entities participating in them, and their semantic inter-relationships.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter1/india-streets.jpg}
+\caption{Such streets would pose a significant challenge in designing automomous cars.}
+\label{fig:india-streets}
+\end{figure}
+
 \section{Approach}
 Before embarking on a mission to model the entire world, we ask ourselves the question: How much of the real world information is actually relevant to the intelligent system? Constructing the entire world model is extremely challenging and often unnecessary. For example, there might not be much value in representing sports events in New York in a model being used to help cars navigate in Japan. 
 
-This dissertation presents a \textbf{\textit{progressive discovery}} algorithm to ingest information from various real world data sources to construct context networks containing the most relevant information for pruning the search space for the system. Examples of data sources include social media web services to provide information about events and entities like Facebook, Twitter; services which can be queried to find information about places like Yelp; Sensors on personal mobile phones, for example GPS which inform applications of the location of a person is present at any given point in time.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{media/chapter1/setarehetal.png}
+\caption{Face tagging problems could be challenged by very large search spaces.}
+\label{fig:india-streets}
+\end{figure}
 
-\textbf{What is progressive discovery?} Progressive discovery is an incremental process  where knowledge of real world events and entities can be added to a given context network. If we look at this definition recursively, it says that given a context network and some data sources describing events and entities, a progressive discovery algorithm will obtain new information from the sources and relate it to context network. By repeatedly executing this algorithm, we can grow a context network until the data sources can provide no further information or the information in the network prunes the search space well enough for the AI problem to be fully solved.
+This primary \uline{contribution} of this dissertation is a \textbf{\textit{progressive discovery}} algorithm to ingest information from various real world data sources to construct context networks containing the most relevant information for pruning the search space for the system. Examples of data sources include social media web services to provide information about events and entities like Facebook, Twitter; services which can be queried to find information about places like Yelp; Sensors on personal mobile phones, for example GPS which inform applications of the location of a person is present at any given point in time.
+
+\textbf{What is progressive discovery?} Progressive discovery is an incremental process where knowledge of real world events and entities can be added to a given context network. If we look at this definition recursively, it says that given a context network and some data sources describing events and entities, a progressive discovery algorithm will obtain new information from the sources and relate it to context network. By repeatedly executing this algorithm, we can grow a context network until the data sources can provide no further information or the information in the network prunes the search space well enough for the AI problem to be fully solved.
 
 In the following chapters, discussion on context networks, and their discovery from various data sources will be presented in conjunction with an application to \textbf{tag faces in personal photos}. The face tagging algorithm, whose search space contains a few billion entities is a very hard real world AI problem. But if a real world model of the world existed, the search space which is relevant to this photo contains just the entities who are present within the field of view of the camera at the time the photo was captured. 
 
@@ -25,7 +39,9 @@ Third, original pruning solutions worked against very hard problems like Chess p
 In summary, it can be said that large availablilty of personal, social and sensor information, and the need to incorporate real world semantics, change the dynamics of search space pruning problems, and it must be visited so new solutions can be designed for current problems.
 
 \section{Overview}
-This dissertation is organized into the following chapters. Chapter 2 provides an overview of context, and how context has been used to address problems in various communities. Chapter 3 describes the related work in computer science, and how this work is informed by them. Chapter 4 describes our context discovery framework, how it models various data sources, and how our progressive discovery algorithm constructs models for real world problems. We facilitate this discussion with an example real world application to tag faces of people in personal photos. Chapter 5 analyzes the algorithmic complexity of different parts of the system, and provides experiments to confirm the same. We also present experiments to confirm the efficacy of our approach in the light of the real world application. Chapters 6 and 7 describe two extensions to the CueNet framework to solve problems of missing context and that of source selection. Finally, chapter 8 attempts to describe the future possibilities of context discovery.
+This dissertation is organized into the following chapters. Chapter 2 provides an overview of context, how context has been used to address problems in various scientific disciplines and how we use context in our specific personal photo tagging application. Chapter 3 describes the related work in computer science, and how this work is informed by them. Chapter 4 describes our context discovery framework, how it models various data sources, and how our progressive discovery algorithm constructs models for real world problems. We facilitate this discussion with an example real world application to tag faces of people in personal photos. Chapter 5 analyzes the algorithmic complexity of different parts of the system, and provides experiments to verify the competence and performance of the system. We also present experiments to confirm the efficacy of our approach in the light of the real world application. Finally, chapter 6 attempts to describe the future possibilities of using context discovery in computer science.
+
+% Chapters 6 and 7 describe two extensions to the CueNet framework to solve problems of missing context and that of source selection. 
 
 \section{Terminology}
 Before starting the discussion on Context Networks, it is necessary to include this short note on terminology to avoid any ambiguities. We use the word `Object' to collectively refer to events and entities. An entity includes persons, places in the world, for example `Starbucks, UC Irvine', `The Eiffel Tower, Paris, France', or organizations, for example `Google Inc', `Royal Society of London'. `Object' has been used in literature to refer to things which have no spatio-temporal properties. But, in our discussion, an `object' could imply an event which exhibits spatio-temporal properties.
