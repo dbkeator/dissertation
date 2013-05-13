@@ -1,9 +1,5 @@
 \chapter{Context Discovery Framework}
 
-\section{General Approach}
-What is our approach? How does context fit into? Describe a generic architecture of context discovery systems.
-
-
 \section{Pruning Search Spaces with CueNet}
 
 Automatic media annotation algorithms essentially assign one or more labels from a search space to a given input image. Figure \ref{fig:with-without-cuenet} shows the various approaches of constructing such a search space for such an algorithm. The traditional approach is shown in \ref{fig:with-without-cuenet}(a). These spaces were limited to a set of labels chosen by an expert, with no way of pruning the search space in case it got very large. The focus was instead on extracting the best features from images, to obtain high overall classification accuracy\cite{turk1991eigenfaces}.
@@ -36,6 +32,11 @@ Figure \ref{fig:cuenet-arch} shows the different components of the CueNet framew
 \caption{The Conceptual Architecture of CueNet.}
 \label{fig:cuenet-arch}
 \end{figure}
+
+\section{General Approach}
+What is our approach? How does context fit into? Describe a generic architecture of context discovery systems.
+
+\section{Execution Trace}
 
 \section{Event Model}
 Our ontologies extend the E* model\cite{gupta2011managing} to specify relationships between events and entities. Specifically, we utilize the relationships ``\textbf{subevent-of}", which specifies event containment. An event $e1$ is a subevent-of of another event $e2$, if $e1$ occurs completely within the spatiotemporal bounds of $e2$. Additionally, we utilize the relations \textbf{occurs-during} and \textbf{occurs-at}, which specify the space and time properties of an event. Also, another important relation between entities and events is the ``\textbf{participant}" property, which allows us to describe which entity is participating in which event. It must be noted that participants of a subevent are also participants of the parent event. A participation relationship between an event and person instance asserts the presence of the person within the spatiotemporal region of the event. We argue that the reverse is also true, i.e., if a participant $P$ is present in $\mathcal{L}_P$ during the time $\mathcal{T}_P$ and an event $E$ occurs within the spatiotemporal region $<\mathcal{L}_E$, $\mathcal{T}_E>$, we say $P$ is a participant of $E$ if the event's spatiotemporal span contained that of the participant.
