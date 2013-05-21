@@ -37,7 +37,7 @@ Figure \ref{fig:cuenet-arch} shows the different components of the CueNet framew
 \end{figure}
 
 \section{General Approach}
-High level introduction to the algorithm.
+Figure \ref{fig:cuenet-arch} shows a high level architecture of CueNet. The major functional blocks consist of a data integration system (left), which provides a uniform query interface to a multitude of autonomous data sources, which may reside within an enterprise or on the World-Wide Web \cite{halevy2001answering}; a specification of model describing real-world knowledge in terms of objects and their relations, along with any axioms and constraints to be imposed on instance graphs (top); since we are assisting face tagging application, the final block (right) consists of a set of hooks to invoke appropriate face tagging algorithms by providing a set of candidate for the input photo. In this work, we shall assume verification semantics in such a tagging algorithm, where given an input photo and a candidate person, the algorithm returns true or false (with a confidence score). Face recognition models would have to be retrained when the candidate set changes. Also, as described in chapter 3, the state-of-the-art techniques for face verification perform much more reliably than their recognition counterparts.
 
 \section{Execution Trace}
 Use the above introduction to describe execution traces for two scenarios (probably from the demo?).
