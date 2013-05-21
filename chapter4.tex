@@ -37,10 +37,66 @@ Figure \ref{fig:cuenet-arch} shows the different components of the CueNet framew
 \end{figure}
 
 \section{General Approach}
-Figure \ref{fig:cuenet-arch} shows a high level architecture of CueNet. The major functional blocks consist of a data integration system (left), which provides a uniform query interface to a multitude of autonomous data sources, which may reside within an enterprise or on the World-Wide Web \cite{halevy2001answering}; a specification of model describing real-world knowledge in terms of objects and their relations, along with any axioms and constraints to be imposed on instance graphs (top); since we are assisting face tagging application, the final block (right) consists of a set of hooks to invoke appropriate face tagging algorithms by providing a set of candidate for the input photo. In this work, we shall assume verification semantics in such a tagging algorithm, where given an input photo and a candidate person, the algorithm returns true or false (with a confidence score). Face recognition models would have to be retrained when the candidate set changes. Also, as described in chapter 3, the state-of-the-art techniques for face verification perform much more reliably than their recognition counterparts.
+Figure \ref{fig:cuenet-arch} shows a high level architecture of CueNet. The major functional blocks consist of a data integration system (left), which provides a uniform query interface to a multitude of autonomous data sources, which may reside within an enterprise or on the World-Wide Web \cite{halevy2001answering}; a specification of model describing real-world knowledge in terms of objects and their relations, along with any axioms and constraints to be imposed on instance graphs (top); since we are assisting face tagging application, the final block (right) consists of a set of hooks to invoke appropriate face tagging algorithms by providing a set of candidate for the input photo. In this work, we shall assume verification semantics in such a tagging algorithm, where given an input photo and a candidate person, the algorithm returns true or false (with a confidence score). Face recognition models would have to be retrained when the candidate set changes. Also, as described in chapter 3, the state-of-the-art techniques for face verification perform much more reliably than their recognition counterparts. At the heart of CueNet, lies the context discovery algorithm. Given a photo the algorithm constructs a context network with all the known information. Using the knowlege base, the algorithm constructs queries to be executed on the interface provided by the data integration layer. Objects which are returned are merged into existing context network. New entities in the network are passed to the face tagging algorithm to check for their presence in the photo. If they are present, the context network is altered to reflect this fact. The execute-merge cycle is iteratively performed until all the faces are tagged, or the data integration module is unable to furnish any new data.
 
 \section{Execution Trace}
-Use the above introduction to describe execution traces for two scenarios (probably from the demo?).
+In this section, we will trace the execution on two different photos, to see how the different modules interact to produce context networks, and how they are used to tag faces. The first example will be a relatively simpler one, requiring only 2 data sources, whereas the second photo will require multiple sources to sucessfully tag all photos.
+
+\subsection{Simple Case}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-hidden.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-torsten-hidden}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/calendar.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-calendar}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/context-network-torsten.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-context-network}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/sources.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-sources}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-all}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/time-space-selected.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-exif}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-tagged.png}
+\caption{The Conceptual Architecture of CueNet.}
+\label{fig:stacktrace-simple-torsten-tagged}
+\end{figure}
+
+
+
+
+\subsection{Complex Case}
 
 \section{Event Model}
 Our ontologies extend the E* model\cite{gupta2011managing} to specify relationships between events and entities. Specifically, we utilize the relationships ``\textbf{subevent-of}", which specifies event containment. An event $e1$ is a subevent-of of another event $e2$, if $e1$ occurs completely within the spatiotemporal bounds of $e2$. Additionally, we utilize the relations \textbf{occurs-during} and \textbf{occurs-at}, which specify the space and time properties of an event. Also, another important relation between entities and events is the ``\textbf{participant}" property, which allows us to describe which entity is participating in which event. It must be noted that participants of a subevent are also participants of the parent event. A participation relationship between an event and person instance asserts the presence of the person within the spatiotemporal region of the event. We argue that the reverse is also true, i.e., if a participant $P$ is present in $\mathcal{L}_P$ during the time $\mathcal{T}_P$ and an event $E$ occurs within the spatiotemporal region $<\mathcal{L}_E$, $\mathcal{T}_E>$, we say $P$ is a participant of $E$ if the event's spatiotemporal span contained that of the participant.
