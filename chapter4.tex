@@ -44,47 +44,55 @@ In this section, we will trace the execution on two different photos, to see how
 
 \subsection{Simple Case}
 
-\begin{figure}[h]
+Consider the photo shown in figure \ref{fig:stacktrace-simple-torsten-hidden}. For the purposes of this trace, we assume that we have access to the sources shown in figure \ref{fig:stacktrace-simple-sources} through the data integration module. Given, an input photo, the knowledge base is queried to find what other objects can be associated with an photo object. The KB stores the information that every photo consists of an EXIF header, which stores timestamp and location coordinates and a fact which states that every photo is owned by a user object, where \textbf{owner-of} is a relationship described in the KB. This knowledge is used to construct the context network shown in figure \ref{fig:exif-network}.
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-hidden.png}
-\caption{The Conceptual Architecture of CueNet.}
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/torsten-hidden.png}
+\caption{Input Photo.}
 \label{fig:stacktrace-simple-torsten-hidden}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/sources.png}
+\caption{Available Data Sources.}
+\label{fig:stacktrace-simple-sources}
+\end{minipage}
 \end{figure}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/calendar.png}
-\caption{The Conceptual Architecture of CueNet.}
+\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/init-network.png}
+\caption{Context Network built after User Information and EXIF sources are queried and merged.}
+\label{fig:exif-network}
+\end{figure}
+
+Now, the algorithm traverses the graph to list all the possible queries it can execute on the data integration layer. Given the knowledge that entities participate in events, and events can contain participants, it generates the following queries:
+
+\begin{itemize}
+\item Does any data source contain participant information related to the photo capture event?
+\item What events is the owner (entity:ArjunSatish) participating at time, t and location, l?
+\end{itemize}
+
+The data integration system looks at the different sources and says that none of them store information about photo capture events, and skips executing the first query. But many sources describe events, and store their participants too (Google Calendar, Facebook, Conference Calendar). These query is converted to their native formats (API calls or relational database queries) and results, are sent back to the data integration module. We see that there was a calendar entry returned be the Google Calendar source, as shown in \ref{fig:stacktrace-simple-calendar}. This information is now merged with the existing context graph to produce a context graph similar to that shown in \ref{fig:stacktrace-simple-context-network}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/calendar.png}
+\caption{Calendar Event.}
 \label{fig:stacktrace-simple-calendar}
 \end{figure}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/context-network-torsten.png}
-\caption{The Conceptual Architecture of CueNet.}
+\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/context-network-torsten.png}
+\caption{Context Network after integrating calendar information.}
 \label{fig:stacktrace-simple-context-network}
 \end{figure}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/sources.png}
-\caption{The Conceptual Architecture of CueNet.}
-\label{fig:stacktrace-simple-sources}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
-\caption{The Conceptual Architecture of CueNet.}
-\label{fig:stacktrace-simple-all}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/time-space-selected.png}
-\caption{The Conceptual Architecture of CueNet.}
-\label{fig:stacktrace-simple-exif}
-\end{figure}
+Now, we have new entities related to the photo. The face verification algorithm is invoked with the new set of candidates. It must be noted that this verification problem is much easier than trying to verify out of many thousands of candidates. Once the correct entity is identified, the photo is annotated as shown in figure \ref{fig:stacktrace-simple-torsten-tagged}.
 
 \begin{figure}[h]
 \centering
@@ -93,10 +101,113 @@ In this section, we will trace the execution on two different photos, to see how
 \label{fig:stacktrace-simple-torsten-tagged}
 \end{figure}
 
+One last look at the source diagram in figure \ref{fig:stacktrace-simple-all} shows which data sources revealed interesting information related to this photo. In this case, EXIF provided some relevant context on when and where the photo was taken. The owner's personal calendar provided information on what event was occurring during the time of photo capture, and who else was involved in it.
 
-
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
+\caption{Sources which provided relevant context are highlighted by green circles.}
+\label{fig:stacktrace-simple-all}
+\end{figure}
 
 \subsection{Complex Case}
+Now, we will consider a more complex case which requires more than just metadata and personal sources for successful tagging. The photo under consideration is shown in \ref{fig:vldb-hidden}. We will use the same set of data sources, shown again in \ref{fig:vldb-sources}.
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-hide-all.jpg}
+\caption{Input Photo.}
+\label{fig:vldb-hidden}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/sources.png}
+\caption{Available Data Sources.}
+\label{fig:vldb-sources}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/vldb-network-1.png}
+\caption{Context Network built after User Information and EXIF sources are queried and merged.}
+\label{fig:vldb-exif-network}
+\end{figure}
+
+Using metadata sources and personal information, we arrive at the context network shown in figure \ref{fig:vldb-exif-network}. The procedure until here is exactly same as that for the previous scenario. Now, given the known state of the world, if we invoke the face verification tools, we discover that the owner is actually present in the photo (figure \ref{fig:vldb-network-2}). In this case, the candidate set contains just one entity, and therefore reduces the complexity of the tagging algorithm.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/vldb-network-2.png}
+\caption{Context Network built after User Information and EXIF sources are queried and merged.}
+\label{fig:vldb-network-2}
+\end{figure}
+
+The next query generated by the system is to discover what the (entity:ArjunSatish) was doing at this time? But, this time we find that the conference calendar holds the answer.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/vldb-network-3.png}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/vldb-source-1.png}
+\caption{Context Network after querying conference sources.}
+\label{fig:vldb-network-3}
+\end{figure}
+
+At this point, the conference event is known to our knowledge base to have a definite structure, in terms of keynote, session and talk events with lunch/coffee breaks interleaved, and having many attendees. So it immediately queries the conference source to find and merge all of these objects. It discovers that the photo was taken during a break event, and that the conference (VLDB 2009) has many hundreds of participants, as shown in figure \ref{fig:vldb-network-4}.
+
+\begin{figure}[h]
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-network-4.png}
+\caption{Context Network after discovering conference attendees.}
+\label{fig:vldb-network-4}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-network-5.png}
+\caption{Context Network after discovering relations between attendees and owner.}
+\label{fig:vldb-network-5}
+\end{minipage}
+\end{figure}
+
+Figure \ref{fig:vldb-network-4} shows the various attendees discovered by the algorithm from the conference source. But finding 3 candidates from hundreds is an equally challening task. Before invoking the face tagging algorithm, we want to see if we can discover any more relations between the objects in the context network. So the discovery algorithm consults the knowledge base to find that entities can be related through a \textbf{friend-of} relation. So it queries all known sources to find friend relations, and finds that Facebook, Gmail and Twitter are sources which store data containing this relation. Querying it reveals that a few of the entities who were present at the conference were related to the user, and therefore have a bigger chance of appearing in the photo. The face verifier is invoked only with these candidates, for potential true positives. By doing this we tag two more faces in the photo. The context network is shown in the figure \ref{fig:vldb-network-6}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/vldb-network-6.png}
+\caption{Context Network after discovering social relations.}
+\label{fig:vldb-network-6}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/vldb-source-2.png}
+\caption{Sources used so far.}
+\label{fig:vldb-network-3}
+\end{figure}
+
+Since we have more candidates tagged in the photo, we can repeat the above procedure to discover more relation between the entites related to the photo and those who are present in the conference. This time results are returned from Gmail, and none from Facebook and Twitter (because these people had sent emails to each other during the conference, but did not connect through Facebook or Twitter). The changes in the context network are shown in \ref{fig:vldb-network-7} and \ref{fig:vldb-network-8}
+
+\begin{figure}[h]
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-network-7.png}
+\caption{Context Network after discovering further social relations.}
+\label{fig:vldb-network-7}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-network-8.png}
+\caption{Context Network after tagging all faces.}
+\label{fig:vldb-network-8}
+\end{minipage}
+\end{figure}
 
 \section{Event Model}
 Our ontologies extend the E* model\cite{gupta2011managing} to specify relationships between events and entities. Specifically, we utilize the relationships ``\textbf{subevent-of}", which specifies event containment. An event $e1$ is a subevent-of of another event $e2$, if $e1$ occurs completely within the spatiotemporal bounds of $e2$. Additionally, we utilize the relations \textbf{occurs-during} and \textbf{occurs-at}, which specify the space and time properties of an event. Also, another important relation between entities and events is the ``\textbf{participant}" property, which allows us to describe which entity is participating in which event. It must be noted that participants of a subevent are also participants of the parent event. A participation relationship between an event and person instance asserts the presence of the person within the spatiotemporal region of the event. We argue that the reverse is also true, i.e., if a participant $P$ is present in $\mathcal{L}_P$ during the time $\mathcal{T}_P$ and an event $E$ occurs within the spatiotemporal region $<\mathcal{L}_E$, $\mathcal{T}_E>$, we say $P$ is a participant of $E$ if the event's spatiotemporal span contained that of the participant.
