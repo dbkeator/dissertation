@@ -191,7 +191,7 @@ Figure \ref{fig:vldb-network-4} shows the various attendees discovered by the al
 \label{fig:vldb-network-3}
 \end{figure}
 
-Since we have more candidates tagged in the photo, we can repeat the above procedure to discover more relation between the entites related to the photo and those who are present in the conference. This time results are returned from Gmail, and none from Facebook and Twitter (because these people had sent emails to each other during the conference, but did not connect through Facebook or Twitter). The changes in the context network are shown in \ref{fig:vldb-network-7} and \ref{fig:vldb-network-8}
+Since we have more candidates tagged in the photo, we can repeat the above procedure to discover more relation between the entites related to the photo and those who are present in the conference. This time results are returned from Gmail, and none from Facebook and Twitter (because these people had sent emails to each other during the conference, but did not connect through Facebook or Twitter). The changes in the context network are shown in \ref{fig:vldb-network-7} and \ref{fig:vldb-network-8}. Figure \ref{fig:vldb-network-3} highlights all sources which returned relevant context for this trace. 
 
 \begin{figure}[h]
 \begin{minipage}[b]{0.5\linewidth}
@@ -208,6 +208,14 @@ Since we have more candidates tagged in the photo, we can repeat the above proce
 \label{fig:vldb-network-8}
 \end{minipage}
 \end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/vldb-source-3.png}
+\caption{Sources used to tag all faces.}
+\label{fig:vldb-network-3}
+\end{figure}
+
 
 \section{Event Model}
 Our ontologies extend the E* model\cite{gupta2011managing} to specify relationships between events and entities. Specifically, we utilize the relationships ``\textbf{subevent-of}", which specifies event containment. An event $e1$ is a subevent-of of another event $e2$, if $e1$ occurs completely within the spatiotemporal bounds of $e2$. Additionally, we utilize the relations \textbf{occurs-during} and \textbf{occurs-at}, which specify the space and time properties of an event. Also, another important relation between entities and events is the ``\textbf{participant}" property, which allows us to describe which entity is participating in which event. It must be noted that participants of a subevent are also participants of the parent event. A participation relationship between an event and person instance asserts the presence of the person within the spatiotemporal region of the event. We argue that the reverse is also true, i.e., if a participant $P$ is present in $\mathcal{L}_P$ during the time $\mathcal{T}_P$ and an event $E$ occurs within the spatiotemporal region $<\mathcal{L}_E$, $\mathcal{T}_E>$, we say $P$ is a participant of $E$ if the event's spatiotemporal span contained that of the participant.
