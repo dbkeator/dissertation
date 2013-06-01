@@ -1,18 +1,10 @@
 \chapter{Introduction}
 
-Artificial Intelligence is defined as the study and design of intelligent systems. An intelligent system is one which perceives its environment and takes actions that maximizes its chances of success. The nature of this environment varies from system to system. For example, the environment for a chess playing system can be enumerated with a set of rules; the environment for an autonomous car is the size, position of cars, their relative speeds on the street and the position of important objects like traffic lights, stop signs. The search space of an AI problem is the total number of candidate objects over which a decision needs to made. In both the above examples, the search space contains an enormous of candidates. But for the second case, the problem of enumerating the search space is non-trivial. Firstly, It requires a large amount of knowledge about the environment. Also, the interactions between elements in the real world are very hard to predict. They need to be \textit{sensed} in a real time fashion for decisions to be made accordingly. With the growing amount of sensors in the real world, its becoming possible to record events and activities of increasingly finer granularity. Sensory inputs in the real world could range from news articles on the web to stock market tickers to thermometer readings from wildlife parks. Such large amounts of heterogeneous information cannot be easily accessed and analyzed to prune search spaces. 
+This dissertation introduces a new approach to discovering context for photo annotation problems. The primary complexity of photo annotation problems lies in large search spaces of the solution and the diversity of feature-based representations of images. Contextual information is used to prune this large search spaces with reduced dependency on image features. Once the search space has been reduced, the image features are used to select from the \textit{remaining} tags. For example, people with weak social ties do not co-occur often in photos, and by identifying one we can eliminate the other. In this case, we would say that social context is used to prune candidates in a face annotation problem.
 
-This dissertation addresses the problem of constructing computational representations of real world environments from various heterogeneous data sources, to reason which parts of the search space can be pruned without hurting the overall performance of the intelligent system. We refer to such a representation as the \textbf{Context Network} of the environment. The network describes real-world events occurring in the environment, the entities participating in them, and their semantic inter-relationships.
+Recently, there have been two changes in the scientific community which motivates us to take a fresh look at context. First, with mobile phones becoming the primary mode of photo taking, the nature of context has evolved from providing cues about tags, to the description of the world around a photo taking moment when a person was taking the photo. With the ever increasing amount of personal, social and public information, it is becoming harder to specify which subset of these would constitute the most interesting context for a given picture. Thus, it is not clear what data to consider context, and how do we combine them to form models of the real world which will allow photo annotation algorithms to reason what tags to assign various regions in a given photo.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.75\textwidth]{media/chapter1/india-streets.jpg}
-\caption{Such streets would pose a significant challenge in designing automomous cars.}
-\label{fig:india-streets}
-\end{figure}
-
-\section{Approach}
-Before embarking on a mission to model the entire world, we ask ourselves the question: How much of the real world information is actually relevant to the intelligent system? Constructing the entire world model is extremely challenging and often unnecessary. For example, there might not be much value in representing sports events in New York in a model being used to help cars navigate in Japan. 
+This dissertation addresses the problem of constructing computational representations of real world events from various heterogeneous data sources, to reason which parts of the search space can be pruned without hurting the overall performance of the annotation algorithm. We refer to such a representation as the \textbf{Context Network} of the photo. The network describes real-world events occurring in the environment, the entities participating in them, and their semantic inter-relationships.
 
 \begin{figure}[t]
 \centering
@@ -21,20 +13,29 @@ Before embarking on a mission to model the entire world, we ask ourselves the qu
 \label{fig:people}
 \end{figure}
 
+
+\section{Importance}
+
+Technique is applicable to a variety of problems which needs to reason about real world events.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter1/india-streets.jpg}
+\caption{Such streets would pose a significant challenge in designing automomous cars.}
+\label{fig:india-streets}
+\end{figure}
+
+
+\section{Novelty}
+
+\section{Approach}
+Before embarking on a mission to model the entire world, we ask ourselves the question: How much of the real world information is actually relevant to the intelligent system? Constructing the entire world model is extremely challenging and often unnecessary. For example, there might not be much value in representing sports events in New York in a model being used to help cars navigate in Japan. 
+
 This primary \uline{contribution} of this dissertation is a \textbf{\textit{progressive discovery}} algorithm to ingest information from various real world data sources to construct context networks containing the most relevant information for pruning the search space for the system. Examples of data sources include social media web services to provide information about events and entities like Facebook, Twitter; services which can be queried to find information about places like Yelp; Sensors on personal mobile phones, for example GPS which inform applications of the location of a person is present at any given point in time.
 
 \textbf{What is progressive discovery?} Progressive discovery is an incremental process where knowledge of real world events and entities can be added to a given context network. Given a context network and multiple data sources describing events and entities, a progressive discovery algorithm will obtain new information from the sources and relate it to context network. By iteratively executing this algorithm, we can grow a context network until the data sources can provide no further information or the information in the network prunes the search space well enough for the AI problem to be fully solved.
 
 The discussion in the following chapters on context networks and their discovery from various data sources will be presented in conjunction with an application to \textbf{tag faces in personal photos}. The face tagging algorithm, whose search space contains a few million entities is a very hard real world AI problem. But if a real world model of the world existed, the search space which is relevant to this photo contains just the entities who are present within the field of view of the camera at the time the photo was captured. 
-
-\section{Why Prune Search Spaces?}
-Search space pruning has been identified as an important problem since the earliest discussions on Computer Science topic. So what has changed in the last few years, that we should focus on it again? The following reasons describe, in a nutshell, the differences between this problem and previously tackled problems and why it is relevant today.
-
-% Why is this problem important?
-
-\textbf{First}, large amounts of personal and local information are now available. Personal information paves the way to reason about problems from an individual's point of view, which provides unique opportunities in comparison with using a generic model of the user. Local information, such as social, spatial and environmental data is also becoming increasingly available. Along with ever-increasing public databases, new ways of modeling real world data \cite{gupta2011managing} and knowledge \cite{mcguinness2004owl} they provide new opportunities to combine information, thereby creating new research challenges.
-
-\textbf{Second}, The nature of applications today is different. Many real world applications can benefit with general principles to prune real world search spaces. For example, autonomous cars navigating streets as shown in \ref{fig:india-streets}, personal photo tagging applications tasked with photos similar to \ref{fig:people}. Real world models can assist in modeling real time data from Twitter-like application streams to understand public reaction to events. Banks can utilize information about the user's activities to gain insights to how to detect fraudulent transactions, massively large models can be used to understand climate behavior and its relations with human activities.
 
 \section{Overview}
 This dissertation is organized into the following chapters. Chapter 2 provides an overview of context, how context has been used to address problems in various scientific disciplines and how we use context in our specific personal photo tagging application. Chapter 3 describes the related work in computer science, and how this work is informed by them. Chapter 4 describes our context discovery framework, how it models various data sources, and how our progressive discovery algorithm constructs models for real world problems. We facilitate this discussion with an example real world application to tag faces of people in personal photos. Chapter 5 analyzes the algorithmic complexity of different parts of the system, and provides experiments to verify the competence and performance of the system. We also present experiments to confirm the efficacy of our approach in the light of the real world application. Finally, chapter 6 attempts to describe the future possibilities of using context discovery in computer science.
