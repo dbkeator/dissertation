@@ -40,7 +40,7 @@ Karen Henricksen et al.\ \cite{henricksen2002modeling} make the following intere
 \label{fig:karen-obs}
 \end{figure}
 
-More recently, Vaninha Vieira et al.\ \cite{vieira2011designing} uses a rule centric view of context to design their context sensitive system, Cemantika. Vaninha defines a contextual element as any piece of data or information which can be used to characterize an entity in an application domain, whereas the context of an interaction between an agent and an application is the set of instantiated contextual elements that are necessary to support the task at hand. Context awareness, for them, is to explicitly change the task the system is executing under different conditions, as shown in figure \ref{fig:va-def}. For this they explictly model the \textit{context sources} which includes heterogenous and  external sources like sensors, user dialog interfaces and databases. This allows the various processes to operate independently of the type of sources. It should be noted that the use of ontologies is describing knowledge and context sources is becoming increasingly popular. A more listing of relevant work is provided in chapter 3.
+More recently, Vaninha Vieira et al.\ \cite{vieira2011designing} uses a rule centric view of context to design their context sensitive system, Cemantika. Vaninha defines a contextual element as any piece of data or information which can be used to characterize an entity in an application domain, whereas the context of an interaction between an agent and an application is the set of instantiated contextual elements that are necessary to support the task at hand. Context awareness, for them, is to explicitly switch the task the system is executing under different conditions. For this they explictly model the \textit{context sources} which includes heterogenous and  external sources like sensors, user dialog interfaces and databases. Figure \ref{fig:va-def} shows various data sources providing context. Some data sources are preferred over others depending on certain conditions pre-defined in the system. This allows the various processes to operate independently of the type of sources. It should be noted that the use of ontologies is describing knowledge and context sources is becoming increasingly popular (these ideas and systems are described in chapter 3).
 
 \begin{figure}[t]
 \centering
@@ -51,31 +51,36 @@ More recently, Vaninha Vieira et al.\ \cite{vieira2011designing} uses a rule cen
 
 \section{Relation-Centric View of Context}
 
-The common ground behind these definitions is their object centric view of context. Context is largely a set of objects which sorround a primary object (whose context is in question). This is where Henricksen's observation of temporality raises an important question -- how do we decide what goes into this set, and what doesn't? Does this set remain fixed forever? An object centric view cannot provide answers to these questions. Especially, with the current trend of ever increasing list of sensors and data sources in the world, there has to be a way of reasoning what is relevant and what is not relevant context. In order to provide some answers, we adopt a \textbf{relation-centric view} of context.
+The common ground behind these definitions is their object centric view of context. Context is largely a set of objects that ``surrounds'' a primary object (whose context is in question). This view is insufficient while addressing applications which are very broad in scope, the photo tagging application for example, where users can take photos in very diverse environment, and a large number of sensors and sources of context exist. The two examples from chapter 1, are shown in figures \ref{fig:naaman-icmr} and \ref{fig:example-kasturi-show}. In order to tag the photo on the left, we exclusively used conference calendar information. In order to tag the photo on the right, we used personal information. Our motivation in this chapter is to extend the above definitions of context to allow context aware systems to better extract relevant context from these various sources.
 
-Let us extend the tour guide example to demonstrate the different properties of context. In this extension, we assume that this is the tour guide software to manage a visitor's experience at the Alcatraz Island, San Francisco. The visitor is allowed to walk through the exhibits as s/he pleases, with the tour guide headset providing explanations on the current exhibit, by sensing the current location. The explanations provided are such that they take into consideration what the visitor has already seen at the prison. For example, if the current location requires knowledge of an event which happened at a different section of the prison, then it must not be told. The application must also ensure that all visitors make it to a ferry ride before the last one departs for the day. If there is any problem in that respect, it must present the appropriate data which informs the visitor on the reason for the problem. Since this application knows where every visitor is at a given time, it must ensure that some sections of the Island do not get more crowded that the others. It should either slow down or move the visitors faster if the number of people in a section are increased beyond a particular threshold.
-
-\begin{figure}[t]
+\begin{figure}[ht]
+\begin{minipage}[b]{0.48\linewidth}
 \centering
-\includegraphics[width=\textwidth]{media/chapter2/changes.png}
-\caption{The set of items which contributes relevant context changes as the relations of the primary object with them change.}
-\label{fig:turkey}
+\includegraphics[width=\textwidth]{media/chapter2/naaman.jpg}
+\caption{Mor Naaman at ICMR.}
+\label{fig:naaman-icmr}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter1/kasturi-show.jpg}
+\caption{Kasturi and Jain.}
+\label{fig:example-kasturi-show}
+\end{minipage}
 \end{figure}
 
-Let's assume that the Island is divided into sections, each of which contains a person counter sensor. The counter sensor can be queried to determine how many people are present in the section. Each visitor carries a handheld device which is capable of sensing its location, and proximity to an exhibit. The ferry maintains a schedule, which is read by the system to make decisions. If there is a problem with the ferry, a maintenance schedule which can be queried to check for any damages to the ferry. We also assume we have access to a local weather channel to check for sudden changes in the weather which might affect the ferry.
+We define context of a given object at a particular time as \textbf{``the real world information which can be related to the object directly or indirectly through a known set of relationships''}. Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. In figure \ref{fig:cn-def}, the knowledge of relations between real world objects is marked in green, and those between the primary object and other objects in the environment are marked in orange.
 
-When a visitors enters the museum, all sensors are contributing towards the context of the visitor. The person counters are being queried to decide which section the user should move to next, the previous locations are used to form coherent explanations at each new stop. The ferry schedule is checked to make sure there are no disruptions along the way. But what happens when the visitor has finished seeing all the exhibits? We can now ignore all the previous locations, and traffic situation at the different sections. Even though these sensors are in the proximity of the visitor, they are no longer needed. And therefore, contribute no useful context. We can also say \textbf{that the relationships between the visitor, and his environment has changed through time}. Thus, it holds to say that the exact configuration of relationships, at that instant of time, is pivotal in deciding what real world information contributes to context, and what is unecessary.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{media/chapter2/cn.png}
-\caption{Utilizing relations to define context for the primary object.}
-\label{fig:cn-def}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter2/cn.png}
+% \caption{Utilizing relations to define context for the primary object.}
+% \label{fig:cn-def}
+% \end{figure}
 
 Relationships can be of different types. They can be simple labels like \texttt{friend-of} signifying a social relationship. Or they can more actionable like \texttt{located-at}, which relates a person to a particular location, and therefore causes a particular audio stream to play through the handheld device. This relation is not just a label, it imposes constraints on the properties of objects which it relates. Here, the spatial attributes of the the person and the exhibit must match if they are being related through a \texttt{located-at} attribute. In this dissertation, we will see that such relations, which impose such property constraints are critical in algorithmically determining which information is relevant context.
 
-We define context of a given object at a particular time as \textbf{``the real world information which can be related to the object directly or indirectly through a known set of relationships''}. Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. In figure \ref{fig:cn-def}, the knowledge of relations between real world objects is marked in green, and those between the primary object and other objects in the environment are marked in orange.
+Using this relation centric view, we now look at how the examples from chapter 1 can be converted to a systematic process to discover context. A system to discover context must establish a set of relationships its context objects can be connected with. For the two photos, we choose \textbf{participant-of}, which indicates that an entity is a participant in an event, and \textbf{subevent-of} which indicates that an event is occurring within another super-event.
 
 \section{Properties of Context}
 \subsection{Object Specificity}
