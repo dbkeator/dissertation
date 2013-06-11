@@ -80,18 +80,66 @@ We define context of a given object at a particular time as \textbf{``the real w
 
 Relationships can be of different types. They can be simple labels like \texttt{friend-of} signifying a social relationship. Or they can more actionable like \texttt{located-at}, which relates a person to a particular location, and therefore causes a particular audio stream to play through the handheld device. This relation is not just a label, it imposes constraints on the properties of objects which it relates. Here, the spatial attributes of the the person and the exhibit must match if they are being related through a \texttt{located-at} attribute. In this dissertation, we will see that such relations, which impose such property constraints are critical in algorithmically determining which information is relevant context.
 
-Using this relation centric view, we now look at how the examples from chapter 1 can be converted to a systematic process to discover context. A system to discover context must establish a set of relationships its context objects can be connected with. For the two photos, we choose \textbf{participant-of}, which indicates that an entity is a participant in an event, and \textbf{subevent-of} which indicates that an event is occurring within another super-event.
+Using this relation centric view, we now look at how the examples from chapter 1 can be converted to a systematic process to discover context. A system to discover context must establish a set of relationships its context objects can be connected with. For the two photos, we choose \textbf{participant-of}, which indicates that an entity is a participant in an event, and \textbf{subevent-of} which indicates that an event is occurring within another super-event. Thus, any entity can be related to other objects through a \texttt{participant-of} edge. but events can be related to events as well as entities through \texttt{subevent-of} and the \texttt{participant-of} edge respectively.
+
+\begin{figure}[ht!]
+\begin{minipage}[b]{0.48\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/naaman-1.png}
+\caption{}
+\label{fig:naaman-example-1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/naaman-2.png}
+\caption{}
+\label{fig:naaman-example-2}
+\end{minipage}
+\begin{minipage}[b]{0.48\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/white.png}
+\label{fig:naaman-example-x}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/white.png}
+\label{fig:naaman-example-y}
+\end{minipage}
+\begin{minipage}[b]{0.48\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/naaman-3.png}
+\caption{}
+\label{fig:naaman-example-3}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/naaman-4.png}
+\caption{}
+\label{fig:naaman-example-4}
+\end{minipage}
+\end{figure}
+
+Figures \ref{fig:naaman-example-1} through \ref{fig:naaman-example-4} show how the same two relationships can be used to gather context for the photo in figure \ref{fig:naaman-icmr}. Figure \ref{fig:naaman-example-1} shows the initial graph created using the \texttt{photo-capture-event} and the photographer, \texttt{entity:ent81}. Figure \ref{fig:naaman-example-2} shows the result of adding context by associating an event with \texttt{entity:ent81}. Given this new graph with three nodes, a context aware system can find more context by trying to find objects which can be related through the two edges. Since one of the nodes is a \texttt{conference} event, it proceeds to find events occurring within it, and adds the keynote event, which also happens to be the super-event of the \texttt{photo-capture-event}. The result is shown in figure \ref{fig:naaman-example-3}. Finally, the keynote event is extended with relations to associate subevents or participants. In this case, the only new context available are the participants of the event. These two entities are associated with the event as shown in figure \ref{fig:naaman-example-4}.
+
+In summary, we can say that by using two relationships, context objects can be directly or indirectly related to the input photo.
 
 \section{Properties of Context}
-\subsection{Object Specificity}
+
+Now, we will list the properties contextual objects must satisfy for the photo tagging problem to be addressed in this dissertation.
+
+\subsection{Primary Objects}
+
 Context is always specified with respect to a real world object. This primary object must be uniquely identifiable in the computational system, and must be an instance of one of the known classes. This object must have some real world attributes. For example, if the object is an event, then the interval during which it occurs, and location of occurence are two real world attributes. In the tour guide application, the visitor is one possible primary object whose context needs to determined.
 
-\subsection{Relation Centric View}
+\subsection{Relationships}
 We believe that any context is any event or entity which can be \textit{related} to the variables in a problem. It must be noted that focus has now shifted from finding objects which are of a specific type, and that to objects (of any type), but related to the problem variables through specific relationship types.
 
 We can design two relations for tour guide system: present-at, proceeds-to. The present-at relation relates an Island section to the primary context (the visitor), and the proceeds to relates the future sections to the visitor. 
 
-\subsection{Temporal Relevance}
+\subsection{Temporal Semantics}
 The nature of relations between data in the environment and the primary object is temporal. If a source to be relevant throughout the entire interval of interaction between the primary object and the environment, we say that the relevance is high. And if the object provides context for a short duration of time, we say that the relevance is low. In the tour guide system, the relevance of the earlier sections is lower than the later ones.
 
 \section{Properties of Context-aware System}
