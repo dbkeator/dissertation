@@ -51,9 +51,9 @@ More recently, Vaninha Vieira et al.\ \cite{vieira2011designing} uses a rule cen
 
 \section{Relation-Centric View of Context}
 
-The common ground behind these definitions is their object centric view of context. Context is largely a set of objects that ``surrounds'' a primary object (whose context is in question). This view is insufficient while addressing applications which are very broad in scope, the photo tagging application for example, where users can take photos in very diverse environment, and a large number of sensors and sources of context exist. The two examples from chapter 1, are shown in figures \ref{fig:naaman-icmr} and \ref{fig:example-kasturi-show}. In order to tag the photo on the left, we exclusively used conference calendar information. In order to tag the photo on the right, we used personal information. Our motivation in this chapter is to extend the above definitions of context to allow context aware systems to better extract relevant context from these various sources.
+The common ground behind these definitions is their object centric view of context. Context is largely a set of objects that ``surrounds'' a primary object (whose context is in question). This view is insufficient while addressing applications which are very broad in scope, the photo tagging application for example, where users can take photos in very diverse environment, and a large number of sensors and sources of context exist. Specifically, given the very large amounts of real-world information, it is non trivial to identify which subset of it is relevant context for the given photo, and which is not. The two examples from chapter 1, are shown in figures \ref{fig:naaman-icmr} and \ref{fig:example-kasturi-show}. In order to tag the photo on the left, we exclusively used conference calendar information. Whereas, to tag the photo on the right, we used personal information. Our motivation in this chapter is to extend the above definitions of context to allow context aware systems to better extract relevant context from these various sources.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \begin{minipage}[b]{0.48\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter2/naaman.jpg}
@@ -69,14 +69,14 @@ The common ground behind these definitions is their object centric view of conte
 \end{minipage}
 \end{figure}
 
-We define context of a given object at a particular time as \textbf{``the real world information which can be related to the object directly or indirectly through a known set of relationships''}. Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. In figure \ref{fig:cn-def}, the knowledge of relations between real world objects is marked in green, and those between the primary object and other objects in the environment are marked in orange.
+We define context of a given object at a particular time as \textbf{``the real world information which can be \uline{related to the object directly or indirectly} through a known set of relationships''}. Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. In figure \ref{fig:cn-def}, the knowledge of relations between real world objects is marked in green, and those between the primary object and other objects in the environment are marked in orange.
 
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=\textwidth]{media/chapter2/cn.png}
-% \caption{Utilizing relations to define context for the primary object.}
-% \label{fig:cn-def}
-% \end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/cn.png}
+\caption{Utilizing relations to define context for the primary object.}
+\label{fig:cn-def}
+\end{figure}
 
 Relationships can be of different types. They can be simple labels like \texttt{friend-of} signifying a social relationship. Or they can more actionable like \texttt{located-at}, which relates a person to a particular location, and therefore causes a particular audio stream to play through the handheld device. This relation is not just a label, it imposes constraints on the properties of objects which it relates. Here, the spatial attributes of the the person and the exhibit must match if they are being related through a \texttt{located-at} attribute. In this dissertation, we will see that such relations, which impose such property constraints are critical in algorithmically determining which information is relevant context.
 
@@ -86,14 +86,14 @@ Using this relation centric view, we now look at how the examples from chapter 1
 \begin{minipage}[b]{0.48\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter2/naaman-1.png}
-\caption{}
+\caption{Primary objects.}
 \label{fig:naaman-example-1}
 \end{minipage}
 \hspace{0.5cm}
 \begin{minipage}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter2/naaman-2.png}
-\caption{}
+\caption{Associating \texttt{conference event} using the \texttt{participant-of} relation}
 \label{fig:naaman-example-2}
 \end{minipage}
 \begin{minipage}[b]{0.48\linewidth}
@@ -110,21 +110,28 @@ Using this relation centric view, we now look at how the examples from chapter 1
 \begin{minipage}[b]{0.48\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter2/naaman-3.png}
-\caption{}
+\caption{Associating the keynote event.}
 \label{fig:naaman-example-3}
 \end{minipage}
 \hspace{0.5cm}
 \begin{minipage}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter2/naaman-4.png}
-\caption{}
+\caption{Associating the participants using the \texttt{participant-of} relation}
 \label{fig:naaman-example-4}
 \end{minipage}
 \end{figure}
 
 Figures \ref{fig:naaman-example-1} through \ref{fig:naaman-example-4} show how the same two relationships can be used to gather context for the photo in figure \ref{fig:naaman-icmr}. Figure \ref{fig:naaman-example-1} shows the initial graph created using the \texttt{photo-capture-event} and the photographer, \texttt{entity:ent81}. Figure \ref{fig:naaman-example-2} shows the result of adding context by associating an event with \texttt{entity:ent81}. Given this new graph with three nodes, a context aware system can find more context by trying to find objects which can be related through the two edges. Since one of the nodes is a \texttt{conference} event, it proceeds to find events occurring within it, and adds the keynote event, which also happens to be the super-event of the \texttt{photo-capture-event}. The result is shown in figure \ref{fig:naaman-example-3}. Finally, the keynote event is extended with relations to associate subevents or participants. In this case, the only new context available are the participants of the event. These two entities are associated with the event as shown in figure \ref{fig:naaman-example-4}.
 
-In summary, we can say that by using two relationships, context objects can be directly or indirectly related to the input photo.
+In the above example, given a graph containing primary objects, we grew it by relating objects from the real-world using a fixed set of relationships \{\texttt{participant-of}, \texttt{subevent-of}\}. Such a graph representing the primary objects, the context objects and their inter-relationships is a \textbf{context network}. A similar procedure can be invoked on the photo in figure \ref{fig:example-kasturi-show} to discover its context network.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter2/naaman-4.png}
+\caption{Context Network for Mor Naaman's photo.}
+\label{fig:cn-def}
+\end{figure}
 
 \section{Properties of Context}
 
