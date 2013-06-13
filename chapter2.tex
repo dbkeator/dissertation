@@ -154,19 +154,15 @@ Among the various constraints a relationship can impose, many of them are tempor
 \subsection{Spatial Semantics}
 Similarly, spatial constraints between objects in a context network need to modeled. For example, the subevent relationship asserts the constraint that the super-event must spatially contain the sub-event.
 
-\section{Properties of Context-aware System}
+\section{Real-world Context-aware Systems}
 
-Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. 
+Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. Mostefaoui et.\ al provide many definitions of context-awareness, and the general idea is the ability of a system to adapt according to certain stimuli. There are two important properties of real-world context-aware systems which are required to construct context networks for the photo tagging application.
 
 \subsection{Real-World Knowledge}
 Modeling real world knowledge (what are the different objects in the world, and how do they precisely interact with each other) is critical in context based systems. This is in contrast with rule based systems, where a set of real world conditions are sensed to trigger a particular action. Examples of knowledge are: An academic conference has atleast one keynote talk; or Sodium reacts with atmospheric oxygen at room temperature; or water expands when it freezes. A network of knowledge constitutes the model for a context based system. This paves the way of it to expand its knowledge about the current situation of the primary object based on what is already known about the object, and what is needed. For example, if an Object is associated with a keynote talk, data about the co-occuring conference should be obtained. Alternatively, if the system had associated a conference with the object, data about the keynote must be sought out. This `guiding light' trait of knowledge is a pre-requisite in a context-aware system.
 
 \subsection{Dynamic Linking}
 The relation centric view, and temporal relevance properties lead us to how the primary object is linked to different sources in the environment. If the primary object is linked to all sources in the environment, we say that it \textit{statically links} to these sources. For example, if the tour guide application which brings in data from all sources all times. On the other hand, dynamic linking with only relevant sources has the ability to restrict input from many sources, and therefore be more capable in future ecosystems where thousands of sensors from the web or in the local network are availble. Also, such a design allows system developers to add more sources in the case of ``Black Swan'' events, which were not foreseen before, but are now posing a challenge to the performance of the system.
-
-Also, context has been used in many non-real world problems. For instance, in natural language processing \cite{lee1990context}, ranking pages of the web \cite{page1999pagerank}, entity resolution \cite{chen2009exploiting}, face clustering in images \cite{zhang2013unified} and therefore it must not mean that contextual techniques must apply only to real world problems. For the purposes of this dissertation, we ignore the application of context in such problems.
-
-
 
 %%% Combine this section with the previous one?
 
