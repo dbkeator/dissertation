@@ -135,12 +135,16 @@ Because of the type of relationships chosen, some information which was readily 
 \label{fig:context-network}
 \end{figure}
 
-\section{Modeling Context for Real-world Problems}
-
 It must be noted that asserting the need for a relation-centric view of context is not discounting the importance of objects. Rather, it is a way of saying that relationships are atleast as important as objects are. Keeping this in mind, we will see what are the primitives required to model context for real-world problems in this section.
 
-%[TBD] 
-There is no silver bullet to model context (no single tool). The requirements must be split across different available tools (a more systems approach to modeling). Henrickson's CxG approach. Get rid of context awareness FULLY? 2.4.1, 2.4.2 part of 2.3; Dynamic linking is actually talking about source declaration. Write context awareness as a separate topic in the end of the chapter -- ``future work'', how the same tool now assist in multiple applications which involve photo taking.
+\section{Modeling Context for Real-world Problems}
+
+There is no silver bullet to model context. Henricksen et al.\ \cite{henricksen2002modeling} model context using context graphs, and \cite{reignier2007context} provides a technique to construct petri nets for given context graphs to implement context-aware behavior. Although, these techniques work for specific domain (for example, \cite{reignier2007context} presents a domain of class presentations, and \cite{henricksen2002modeling} presents a case study in context-aware communications), creating context graphs to exist for each and every case which might occur in the real world is non-trivial. Also, with the rapidly changing relations in the real-world, it is not clear what are the good principles and practices to build scalable systems around context graphs.
+
+If we are to represent context networks computationally, we first need to understand what are the basic building blocks of such a network. The following sections list these blocks, and present their properties which are essential in constructing such networks. These blocks are fairly generic, and can be utilized to model context for various application.
+
+% NOTES
+%The requirements must be split across different available tools (a more systems approach to modeling). Henrickson's CxG approach. Get rid of context awareness FULLY? 2.4.1, 2.4.2 part of 2.3; Dynamic linking is actually talking about source declaration. Write context awareness as a separate topic in the end of the chapter -- ``future work'', how the same tool now assist in multiple applications which involve photo taking.
 
 \subsection{Object Types and Semantics}
 
@@ -152,105 +156,22 @@ Different objects bring with them very specific semantics. While modeling object
 Context is any event or entity which can be \textit{related} to the objects in a problem. Instead of finding objects which are of a specific type, and qualifying them as context, objects related to the problem variables through specific relationship types are to be considered context. These relationships can impose certain constraints on the objects which they relate. For example, the subevent relation requires that the super-event spatio-temporally contain the smaller event. Such constraints are very common in real-world relationships. Many examples can be seen in applications involving chemical reactions, where it is not sufficient to have just two reactants at the same time and place, but the reaction could demand very specific environmental factors (like temperature or pressure). The specification of the relationships for modeling context should permit the specification of these specific constraints.
 
 \subsection{Temporal Semantics}
-Among the various constraints a relationship can impose, many of them are temporal. The subevent relationship asserts a very specific constraint between the temporal attributes of the two events it relates. Modeling context requires the ability to express relationships which assert such temporal constraints. Temporal relations have been studied in literature, and can be reused for the purpose \cite{allen1983maintaining, wolter2000spatio}.
+Among the various constraints a relationship can impose, many of them are temporal. Modeling context requires the ability to express relationships which assert such temporal constraints. Temporal relations have been studied in literature \cite{allen1983maintaining, wolter2000spatio}, and can be reused for this purpose. Temporal relationships defined in Allen's Interval Algebra are \texttt{before}, \texttt{meets}, \texttt{overlaps}, \texttt{starts}, \texttt{during}, \texttt{finishes} and \texttt{equal-to}. Figure shows these relationships. In order to relate events with entities, we use the \texttt{occurs-at} relation defined in \cite{gupta2011managing}.
 
 \subsection{Spatial Semantics}
-Similarly, spatial constraints between objects in a context network need to modeled. For example, the subevent relationship asserts the constraint that the super-event must spatially contain the sub-event.
+Real-world events play an important role in context, and therefore, we need to pay special attention to the spatial relationships between entities and events. 
 
-\section{Real-world Context-aware Systems}
+% \section{Real-world Context-aware Systems}
 
-Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. Mostefaoui et.\ al provide many definitions of context-awareness, and the general idea is the ability of a system to adapt according to certain stimuli. There are two important properties of real-world context-aware systems which are required to construct context networks for the photo tagging application.
+% Context-awareness of a system is its \textbf{``ability to explore different types of information to identify context relevant to the objects in its ecosystem, and using this context to reduce the complexity of a given task''}. Mostefaoui et.\ al provide many definitions of context-awareness, and the general idea is the ability of a system to adapt according to certain stimuli. There are two important properties of real-world context-aware systems which are required to construct context networks for the photo tagging application.
 
 \subsection{Real-World Knowledge}
-Modeling real world knowledge (what are the different objects in the world, and how do they precisely interact with each other) is critical in context based systems. This is in contrast with rule based systems, where a set of real world conditions are sensed to trigger a particular action. Examples of knowledge are: An academic conference has atleast one keynote talk; or Sodium reacts with atmospheric oxygen at room temperature; or water expands when it freezes. A network of knowledge constitutes the model for a context based system. This paves the way of it to expand its knowledge about the current situation of the primary object based on what is already known about the object, and what is needed. For example, if an Object is associated with a keynote talk, data about the co-occuring conference should be obtained. Alternatively, if the system had associated a conference with the object, data about the keynote must be sought out. This `guiding light' trait of knowledge is a pre-requisite in a context-aware system.
+Modeling real world knowledge (what are the different objects in the world, and how do they precisely interact with each other) is critical in context based systems. This is in contrast with rule based systems, where a set of real world conditions are evaluated to trigger a particular action. Examples of knowledge are: An academic conference has atleast one keynote talk; or Sodium reacts with atmospheric oxygen at room temperature; or water expands when it freezes. A network of knowledge constitutes the model for a context based system. This paves the way of it to expand its knowledge about the current situation of the primary object based on what is already known about the object, and what is needed. For example, if an Object is associated with a keynote talk, data about the co-occuring conference should be obtained. Alternatively, if the system had associated a conference with the object, data about the keynote must be sought out. This `guiding light' trait of knowledge is a pre-requisite in a context-aware system.
 
-\subsection{Dynamic Linking}
-The relation centric view, and temporal relevance properties lead us to how the primary object is linked to different sources in the environment. If the primary object is linked to all sources in the environment, we say that it \textit{statically links} to these sources. For example, if the tour guide application which brings in data from all sources all times. On the other hand, dynamic linking with only relevant sources has the ability to restrict input from many sources, and therefore be more capable in future ecosystems where thousands of sensors from the web or in the local network are availble. Also, such a design allows system developers to add more sources in the case of ``Black Swan'' events, which were not foreseen before, but are now posing a challenge to the performance of the system.
+\subsection{Source Agnosticism}
+Most context based techniques rely on sensors or data sources to gather context. Therefore, it must be imperative to separate the sources from how context is obtained. Context must be modelled irrespective of the nature of sources or their query abilities \cite{yerneni1999computing}. This provides the following advantage: context is now entirely defined in terms of objects, their possible inter-relationships and real world knowledge decides how objects are related to each other, irrespective of what data actually can be obtained. Second, with the growing number of data sources, personal and public sensors, this allows system engineers to plug-and-play different sources with ease, without disturbing the model. 
 
-%%% Combine this section with the previous one?
-
-% \section{Modeling Primitives}
-
-% \subsection{Types}
-
-% \subsection{Models}
-
-% \subsection{Relationships and Constraints}
-
-
-
-
-
-
-% \section{Parallels}
-% The real world is very big. Modeling it can be a very hard task. Do we really need such large and elaborate models if we are to call our application ``context-aware"? In this section, we look at how \textit{contextual thinking}\cite{capra1997web} has helped understand, and in some cases solve, many of the long standing problems in different disciplines. We will start with an anecdotal example, and move to more elaborate examples which demonstrate how to reason in real world problems. The reason for this section is to justify the need for modeling many different types of real world information, which is a pre-requisite for employing context based techniques. 
-
-% \subsection{Black Swans}
-% In his widely acclaimed book, The Black Swan\cite{taleb2010black}, Nassim Nicholas Taleb presents many arguments against solely relying on prediction based techniques. Citing examples from stock markets to clinical psychology trials he presents the case that historical evidence is insufficient to position oneself in the future. 
-
-% His example of a turkey brings to light an interesting point ``Consider a turkey that is fed every day. Every single feeding will firm up the bird's belief that it is the general rule of life to be fed every day by friendly members of the human race \textit{looking out for its best interest}. On the afternoon of the Wednesday before Thanksgiving, something unexpected will happen to the turkey. It will incur a revision of belief.''
-
-% Any amount of prediction is futile in this case. Taleb plots the graph \ref{fig:turkey} showing the belief of the turkey in mankind. How could the turkey protect itself, yet reaping the benefits of the food given to it? 
-
-% The answer lies not in developing complex techniques about reasoning what is already known. But to look at the problem from different vantage points. From the standpoint of the turkey, the Wednesday event is a Black Swan event. But from the standpoint of the butcher, it is not, since its occurrence is not unexpected. So, if the turkey explores the world around it, it will soon reach a point where it is able to reason the nature of human behavior, their customs, and finally arrive at the conclusion, that there exists one such custom which is absolutely disastrous for the turkey's well being.
-
-% The simple example shows how new objects bring with them different semantics. And highlights that interactions can be disrupted heavily with even the slight change in relations. The second thing it shows is the need for awareness in the turkey to ``look-out'' for potential causes of harm. This action of being context-awareness is criticial in any real world systems.
-
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=0.75\textwidth]{media/chapter2/turkey.png}
-% \caption{Expectations of a Turkey as Thanksgiving approaches.}
-% \label{fig:turkey}
-% \end{figure}
-
-% \subsection{Context in History}
-% Historians love context. Almost all their works heavily rely on finding interesting events in a particular timeframe which can explain the events that followed. In his book, Guns, Germs and Steel \cite{diamond1997guns}, Jared Diamond argues the need to understand specific environmental diversities, and use them to reason why history happened the way it did. We are familiar with the conquest story of the Inca emperor Atahuallpa by the Spanish conquistador Francisco Pizzaro at Cajamarca, Peru in 1532\cite{wiki:spanishconquest}. Historians attribute the success of Pizzaro to better Spanish ammunition and warfare techniques. But the more interesting question is \textit{Why was Pizzaro at Cajamarca conquering the Incas, and not Atahuallpa crossing the Atlantic to conquer Spain?} Effectively, how did South Americans evolve so different from Europeans? The answer, it turns out, lies in different environmental conditions.
-
-% Diamond outlines the various steps that led to such cultural diversity in a flowchart similar to \ref{fig:axis-flowchart}. Let us see how he arrived at it. Any conflict usually favors the party with a stronger political, military, economic and social structure. The South American society consisted of the high ranking chiefs who were treated as Gods, and were the only people permitted to read and write. Everyone else was engaged in the daily activities of food production. Thus, a majority of the man power was spent in solving the daily food problem. There was no scope for any organizations to develop which would construct and develop military and economic disciplines. On the other hand, these organizations not only existed in Europe, but also \textit{co-existed} each other, thereby driving each other to be more mature and stronger. The stronger organizations led to creation of stronger ammunition (guns, steel, sword), transport services (ships which could travel across the atlantic), writing technology (since everyone in Pizzaro's army was capable of communicating messages through time and space).
-
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=\textwidth]{media/chapter2/axis.png}
-% \caption{Reasons for diversity among cultures.}
-% \label{fig:axis-flowchart}
-% \end{figure}
-
-% \textbf{Why did the Europeans form such a stratified society, and not the South Americans?} The majority of the south americans were concerned about procuring food for the next day. Food production systems in Europe reached a critical peak, because of which they developed technology for storing food. Because day-to-day food was no longer a concern, a significant section of the population now was ``free'' to indulge in other activities. This led to development of art, policital, military units, economic systems, which in turn evolved each.
-
-% \textbf{Why did food production reach an all time high in Europe and not in South America?} The reason lies in three environmental factors: the soil, flora and fauna of the area and how they interacted over a larger time span. Europe and Asia has been home to a more diverse set of animals and plans. Since 6000B.C., farmers and animals of the area were able to choose from this bigger variety of plants, and evolve them over thousands of years to form better crops. The role of a larger set of animals in the area is interesting too. Over the years, Europeans have domesticated most of the animals than people from any part of the world. Big mammals like cows and bulls were found in plenty in Europe and Asia. This led to much higher yields than tilling the soil by hand. Regions like South America lacked such variety of domesticable animals. For example, there is no point in domesticating an elephant, as it takes 14-15 years to reach adulthood and be of use. Animals like Rhinos are very strong, and therefore, can be excellent farm animals, but are very hard to tame (in fact they are extremely dangerous). These reasons led the South Americans to rely only on man power to tackle the daily food problem.
-
-% \textbf{Finally, why did biodiversity emerge in Europe/Asia, and not in the Americas or Africa?} Thousands of years ago, the biggest deterrent in sustaining life was the climate. People lived nomadic lifestyles which came in contact with different weather, and acclimatizing to it required almost a reboot of their knowledge, environmental know-how and customs. Now, lets take a look at the map of the world, shown in \ref{fig:continental-axis} -- what do we see? Europe and Asia span longitudinally, whereas Americas and Africa extend along the Earth's latitude. What is the biggest advantage this offers Eurasians? When they moved from place to place, the structure of their continent allowed them to move to places with \textbf{similar weather}. This allowed them to move to different regions and enjoy the same weather, grow similar crops and domesticate the same animals. But people in Africa or America had to move out of their comfort zone, and move to area containing different weather and biodiversity, and had to redo everything from scratch. Effectively, cultures which could move freely without rebooting their knowledge found it easier to develop than others.
-
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=\textwidth]{media/chapter2/continents-e.png}
-% \caption{Horizontal/vertical extents of different continents.}
-% \label{fig:continental-axis}
-% \end{figure}
-
-% There is also this idea that cultures which had to undergo such reboots frequently had to deal with more complexities of the world, and could rely less on objective knowledge, and therefore made people rely more on religious principles to lead their lives. This led to prevalence, and eventually domination by religious organizations.
-
-% % http://pocketcultures.com/topicsoftheworld/files/2009/06/map-importance-of-religion-by-country.png
-
-% % http://en.wikipedia.org/wiki/File:Religion_in_the_world.PNG
-
-% Diamond's book is an exploration of the broadest pattern of history. What it tells us is that explicit modeling of real world objects with their native properties are extremely important in reasoning about the world.
-
-% \subsection{The Gaia Hypothesis}
-% Charles Darwin's work describes how living being have evolved over billions on years. But it does not answer the question -- how does life sustain itself on Earth? It turns out that the few billion years of life we have had is too little to let life have evolved randomly, and just let natural selection determine who succeeds. There had to be other factors which let life sustain and grow in specific ways.
-
-% One of the theories put forward by James Lovelock and Lynn Margulis in the 1970s, more commonly known as the Gaia Theory, proposes the presence of natural feedback loops to explain the sustanence of life\cite{margulis1974biological}. Their argument is that for life to sustain, the amount of carbon dioxide in the atmosphere must not exceed a certain threshold. But who keeps this in check? How has the amount of $CO_2$ in the atmosphere been almost constant for the last millions of years. Their reasoning is as follows:
-
-% The Earth's volcanoes have spewed out huge amounts of carbon dioxide for millions of years. Plant and animals recycle massive amounts of $CO_2$ in the process of photosynthesis, respiration and decay. According to the Gaia theory, the excess of $CO_2$ is recycled by a vast feedback loop, which involves rock weathering as a key ingredient. Rainwater washes atmospheric $CO_2$ onto rocks. In the process of rock weathering, rocks, rainwater and $CO_2$ form chemicals known as carbonates. The carbonates are then washed down where tiny algae invisble to the naked eye, absorb them and use them to make shells of chalk. So the $CO_2$ that was in the atmosphere has now ended up in the shells of those minute algae. In addition, ocean algae also absorb $CO_2$ from the surface of the ocean.
-
-% When the algae die their shells are then washed down into the ocean, where they form sediments of limestone. Limestone is very heavy, and gradually sinks into the mantle of the earth. Eventually, some of the $CO_2$ is released back to the atomsphere by volcanoes. The entire cycle -- linking volcanoes to rock weathering, to soil bacteria, to oceanic algae, to limestone sediments, and back to volcanoes -- acts as a feedback loop which regulates the Earth's temperature. It turns out that bacteria in the soil vastly increases the rate of rock weathering (acting as a catalyst). In the sun gets hotter, the bacteria in the soil get higher than average ambient temperature, which causes them to increase the rock weathering activity, causing more $CO_2$ to be removed from the atmosphere and sent to the ocean, thus cooling the planet.
-
-% This remarkable explanation involves rocks, bacteria and ocean dynamics and the even the sun to explain how earth's temperature is regulated. By studying one or more objects in isolation makes the analysis far from complete. More interestingly, the relations between the objects are very precise, involving specific biochemical reactions within some acceptable ambient conditions.
-
-% \subsection{Significance}
-% These examples are not to present here to report the latest advances in different disciplines, but to glance at how reasoning is done in the real world. Both the use cases require very precise knowledge of relations between different objects in the world (for example, how the sun can affect bacterial growth in the soil), and have access to a large amount of sensors and data sources. Once these two have been established, the computational challenge is how to form accurate models of the models of the world, and how to use those models to either reduce the complexity of the problem so a human can operate with ease, or apply additional algorithms to solve the problem. 
-
-% In the next section, we see what we types of information we shall consider as context for the problem of tagging personal photos.
+This design requirement also brings a problem. How does context-aware system know what data sources are at its disposal, and how does it interact with them? In short, a large amount of literature has been devoted towards data integration techniques \cite{doan2005semantic, halevy2001answering, lenzerini2002data}, and it is advisable to re-use the ideas presented in these techniques to realize a fully working context-based system. The later chapters will describe in detail the data integration framework used to obtain data for the photo application.
 
 \section{Context for Personal Photos}
 Our justification for the use of context in a personal face tagging application begins with the assumption: \textit{For a given user, the correctness of face tags for a photograph containing people she has never met is undefined}. This observation prepares us to understand what context is, and how contextual reasoning assists in tagging photos. The description of any problem domain requires a set of abstract data types, and a model of how these types are related to each other. We define contextual types as those which are semantically different from these data types, but can be directly or indirectly related to them via an extended model which encapsulates the original one. Contextual reasoning assists in the following two ways. \textbf{First}, contextual data restricts the number of people who might appear in the photographs. We can also argue that all the personal data of a user (her profile on Facebook, LinkedIn, email exchanges, phone call logs) provides a reasonable estimate of all these people who might appear in her photos. \textbf{Second}, by reasoning on abstractions in the contextual domain, we can infer conclusions on the original problem. We exploit this property to develop our algorithm in the later sections. Though CueNet can be applied to a variety of recognition problems, we focus on tagging people in personal photos for concreteness, where, the image and person tag form the abstractions in the problem domain. The types used in the contextual domain, but not limited to, are the following:
