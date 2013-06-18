@@ -156,10 +156,24 @@ Different objects bring with them very specific semantics. While modeling object
 Context is any event or entity which can be \textit{related} to the objects in a problem. Instead of finding objects which are of a specific type, and qualifying them as context, objects related to the problem variables through specific relationship types are to be considered context. These relationships can impose certain constraints on the objects which they relate. For example, the subevent relation requires that the super-event spatio-temporally contain the smaller event. Such constraints are very common in real-world relationships. Many examples can be seen in applications involving chemical reactions, where it is not sufficient to have just two reactants at the same time and place, but the reaction could demand very specific environmental factors (like temperature or pressure). The specification of the relationships for modeling context should permit the specification of these specific constraints.
 
 \subsection{Temporal Semantics}
-Among the various constraints a relationship can impose, many of them are temporal. Modeling context requires the ability to express relationships which assert such temporal constraints. Temporal relations have been studied in literature \cite{allen1983maintaining, wolter2000spatio}, and can be reused for this purpose. Temporal relationships defined in Allen's Interval Algebra are \texttt{before}, \texttt{meets}, \texttt{overlaps}, \texttt{starts}, \texttt{during}, \texttt{finishes} and \texttt{equal-to}. Figure shows these relationships. In order to relate events with entities, we use the \texttt{occurs-at} relation defined in \cite{gupta2011managing}.
+Among the various constraints a relationship can impose, many of them are temporal. Modeling context requires the ability to express relationships which assert such temporal constraints. Temporal relations have been studied in literature \cite{allen1983maintaining, wolter2000spatio}, and can be reused for this purpose. Temporal relationships defined in Allen's Interval Algebra are shown in figure \ref{fig:allen}. Figure shows these relationships. In order to relate events with entities, we use the \texttt{occurs-during} relation defined in \cite{gupta2011managing}. Additional relations \texttt{occurs-sometime-during} and \texttt{occurs-during-n} are also defined in \cite{gupta2011managing}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter2/allen.png}
+\caption{Relations in Allen's Interval Algebra.}
+\label{fig:allen}
+\end{figure}
 
 \subsection{Spatial Semantics}
-Real-world events play an important role in context, and therefore, we need to pay special attention to the spatial relationships between entities and events. 
+Real-world events play an important role in context, and therefore, we need to pay special attention to the spatial relationships between entities and events. A large amount of literature is available on spatial representation and reasoning framework known as RCC-8. Some of its common relationships are shown in figure \ref{fig:rcc8}. The important relations in the figure are \texttt{disconnected-from} (B and D), \texttt{externally-connected} (B and C), \texttt{tangentially-proper-part} (A and B), \texttt{contained-in} (E and D) and \texttt{partial-overlaps} (C and D). In order to represent spatial relations between events and entities, we use the \texttt{occurs-at} relation defined in \cite{gupta2011managing}. An event E is said to \texttt{occur-at} region X if the spatial extent of E lies anywhere within X. Additional relations \texttt{occurs-somewhere-at} and \texttt{occurs-at-n} are also defined in \cite{gupta2011managing}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter2/rcc8-combined.png}
+\caption{Spatial Relations described in RCC-8.}
+\label{fig:rcc8}
+\end{figure}
 
 % \section{Real-world Context-aware Systems}
 
