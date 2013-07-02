@@ -2,27 +2,40 @@
 
 In this chapter, we will look at the state-of-the-art understanding of different topics presented in a variety of areas, which context relies on. These include techniques to annotate photos using image features, techniques to represent knowledge in ontologies, techniques to query data from a variety of sources.
 
-\section{Photo Annotation}
+\section{Photos and Annotation}
 
-\subsection{Need for Annotation}
+Kindberg \cite{kindberg2005ubiquitous} conducted a study on multiple subjects to analyze photo capture behavior. Specifically, they were trying to understand the different motivations for people to take photos. They found two main motivations -- \textit{affective} and \textit{functional}. A significant number of photos are captured to enrich a shared experience, or to share an experience with absent members like friends or family. Much lower, but a significant amount of photos were taken to share photos who were present at the event. Their study shows that photos are mostly used in social context, and lesser in personal context. Ames and Frohlich \cite{ames2007we, frohlich2002requirements} independently describe a survey conducted to study motivations for people to tag their photos. They noticed two broad motivations: Organization of photos and Communication with photos. Almost orthogonal to the applications observed by Kindberg, Ames and Frolich are brave new world applications for photography described in \cite{gemmell2002mylifebits, dumais2003stuff}, where life logs were collected in the form of photos, emails, document scans and stored in SQL Server database, and photos were retrieved using SQL queries. The photo content was tagged by the user in this case. The annotated photos are used exclusively for personal \textit{feedback} to improve quality of life. The medical advantages of collecting photos to log personal health are becoming very well known \cite{bell2010total}.
 
-Why do we need to annotate photos?
+\subsection{Spatio-Temporal Annotation}
+The EXIF metadata of JPEG photos have been exploited to organize pictures. Apple's iPhoto is the most common example of using just time and space to organize personal photos. Naaman et al.\ have exploited GPS attributes to extract place and person information \cite{naaman2005leveraging, naaman2005identity}. Rattenbury \cite{rattenbury2009methods} devised techniques to find tags which describe events or places by analyzing their spatiotemporal usage patterns. Time alone is used for organizing photos in \cite{graham2002time, hailpern2011youpivot}. Sinha et al.\ \cite{sinha2008concept} and Boutell et al.\ \cite{boutell2005beyond} have used EXIF metadata to predict concepts such as (Indoor, Outdoor, Portrait, Landscape) to further organize these photos.
 
 \subsection{Computer Vision}
 
-\textbf{Face Verification}
+The Computer Vision community has contributed extensive work in the area of detecting scenes \cite{xiao2010sun}, humans \cite{dalal2005histograms} or geo localization \cite{hays2008im2gps}. 
 
 \textbf{Face Recognition}
+The face recognition problem is one of the main problems taken on by the computer vision community. One of the earliest works on recognizing people in faces was attempted by Turk and Pentland in \cite{turk1991eigenfaces}. The essence of the technique put forward here was to extract useful features which can be represented mathematically and compared using some distance measures (such as euclidean, mahalanobis or cosine distance) to features in an image database. This resulted in a quest to find more meaningful and powerful features, which led to Fisherfaces \cite{belhumeur1997eigenfaces} and more recently, local binary pattern \cite{ahonen2006face} features. SIFT features have also been used to identify faces \cite{bicego2006use, geng2009sift, luo2007person}. One of the big difficulties of such feature-based representation is the scalability of the technique. It is now well known that with the increasing number of candidates, these distance based techniques provide in lower performance \cite{wu2004probability}. A quick alternative is to increase the dimensions in the features to allow for more diversity, but it has been proven that as the number of dimensions increase, the distance between the nearest point and the furthest one shrinks, and if the number of dimensions is as less as 32, the distance is almost negligible \cite{beyer1999nearest}. Thus, an pure feature based technique cannot be used to build large scale real world photo tagging frameworks.
+
+\textbf{Face Verification}
+More recently, face verification techniques have attracted a lot of attention in the computer vision community. One of the earliest efforts towards robust face verification was undertaken by Huang et al.\ in \cite{huang2007labeled}. They constructed and annotated a dataset of profile photos of celebrities taken in unrestricted environments. Previous datasets such as FRGC \cite{phillips2005overview}, BioID \cite{jesorsky2001robust} and the color FERET database \cite{phillips1998feret} were criticized to have photos taken at very constrained environments thereby reducing the complexity of the face tagging problem. But the techniques which worked on such photos could not duplicate their performance in real-world photos. Huang's database, commonly known as the \textit{Faces In the Wild} has allowed many researchers to implement various face verification technologies. A recent and important development on top of Huang's work is that of Neeraj Kumar et al.\ \cite{nk_attribute_classifiers}, where the confidence of presence or absence of facial attributes such as range, skin color, hair style, gender, eye color features are used to train various classifiers to ultimately test if two given faces are of the same person or not? The technique was able to achieve up to 85.29\% accuracy on the LFW dataset. More recently, Berg \cite{berg2012tom} increased this accuracy to 93\% by automatically finding distinguishing features.
+
+The interesting aspect of face verification is the different protocol involved in tagging photos. The movement in the community from complex feature extraction to simpler features, and entirely different comparison technique. Face verification depends on some external component to make the right calls 
 
 \textbf{Probabilistic Techniques}
+Both face verification and recognition techniques seen so far assume that none of the input photos contain any annotation. But what if this assumption could be relaxed? A large number of photos on Facebook, Flickr or Google+ are annotated. If we further assume that these annotations are mostly true, the label propagation technique by Cao et al.\ \cite{cao2008annotating} can be applied to annotate the rest of the dataset. This technique was tested on propagating concept based tags (such as beach, fun, dinner, yard) on personal photo datasets. Also, Barthelmess et al.\ extract semantic tags from noisy datasets containing discussions, speeches about a set of photos in question\cite{barthelmess2007toward}. 
 
-Barthelmess et al.\ extract semantic tags from noisy datasets containing discussions, speeches about a set of photos in question\cite{barthelmess2007toward}. 
+\textbf{Other Techniques}
+Collaborative games also have been evaluated as a possible way to tag photos\cite{diakopoulos2007photoplay}. Systems like Picasa, iPhoto and \cite{graham2002time} organize photos based on time, GPS coordinates and sometimes faces in the photo. These attributes of the photo do not capture event semantics \cite{sawant2011automatic}. Events are a natural way of categorizing photo media. Events also allow large number of photos captured during a single event be organized hierarchically using subevents.
 
 \section{Context}
+
+The role of context in computing has been studied in \cite{chen2000survey}. The use of context in image retrieval is emphasized in \cite{jain2010content, datta2008image}. 
 
 \subsection{Definitions}
 
 \subsection{Role in Photo Annotation}
+Context information and image features are used in conjunction by \cite{o2009context, cao2008annotating, boutell2005beyond, cao2008eventscene} identify tags. The semantic web community is using linked data technologies to annotate and query photographs \cite{monaghan2006automating, nowack2006confoto}. 
+
 
 \subsection{Other uses in Computing}
 
@@ -41,10 +54,6 @@ Barthelmess et al.\ extract semantic tags from noisy datasets containing discuss
 \subsection{Managing Large Ontologies}
 
 \subsection{Data Integration using Ontologies}
-
-The role of context in computing has been studied in \cite{chen2000survey}. The use of context in image retrieval is emphasized in \cite{jain2010content, datta2008image}. 
-
-Naaman et al.\ have exploited GPS attributes to extract place and person information \cite{naaman2005leveraging, naaman2005identity}. Rattenbury \cite{rattenbury2009methods} devised techniques to find tags which describe events or places by analyzing their spatiotemporal usage patterns. Ames and Frohlich \cite{ames2007we, frohlich2002requirements} independently describe a survey conducted to study motivations for people to tag their photos. They noticed two broad motivations: Organization of photos and Communication with photos. Time alone is used for organizing photos in \cite{graham2002time, hailpern2011youpivot}. Brave new world applications for photography have been described in \cite{gemmell2002mylifebits, dumais2003stuff}, where life logs were collected in the form of photos, emails, document scans and stored in SQL Server database, and photos were retrieved using SQL queries. The photo content was tagged by the user in this case. The Computer Vision community has contributed extensive work in the area of detecting scenes \cite{xiao2010sun}, humans \cite{dalal2005histograms} or geo localization \cite{hays2008im2gps}. Context information and image features are used in conjunction by \cite{o2009context, cao2008annotating, boutell2005beyond, cao2008eventscene} identify tags. The semantic web community is using linked data technologies to annotate and query photographs \cite{monaghan2006automating, nowack2006confoto}. Collaborative games also have been evaluated as a possible way to tag photos\cite{diakopoulos2007photoplay}. Systems like Picasa, iPhoto and \cite{graham2002time} organize photos based on time, GPS coordinates and sometimes faces in the photo. These attributes of the photo do not capture event semantics \cite{sawant2011automatic}. Events are a natural way of categorizing photo media. Events also allow large number of photos captured during a single event be organized hierarchically using subevents.
 
 The core of their view comes from the earlier proposed definition from Brezillon [CITE], who considers context to be formed from three types of knowledge: Contextual knowledge (knowledge about entities, their environments), external knowledge (knowledge which is currently not relevant), and proceduralized context, which has to do with the reasoning applied to the current situation.
 
