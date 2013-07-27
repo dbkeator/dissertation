@@ -369,8 +369,86 @@ Results from data source wrappers are returned in the form of event graphs. Thes
 Figure \ref{fig:exec-cycle} shows the various stages in the algorithm graphically. (a) shows an example event graph describing a photo taken at a meeting. The meeting consists of three participants AG, SR and AS. The photo contains SR and AS. (b) shows two events returned from the data sources. One is a meeting event which is semantically identical to the input. The other is a conference event with AG. (c) shows the result of merging these graphs. (d) The \texttt{prune-up} function removes the duplicate reference to AG. \underline{A live visualization of these steps for different photos can be found at \href{http://cuenet.site44.com/}{http://cuenet.site44.com}}.
 
 \section{Merging Context Networks}
+In this section, we look more closely at the merge function. Algorithm \ref{alg:merge-alg} presents the pseudo-code for merging a secondary context network, $S$, into a primary context network $P$. A terminology of primary and secondary is to signify that all data instances from a secondary network will be merged into a primary network. While merging networks, we also assume that events have atmost one super-event. Thus, no diamond structures are found in either network. In, algorithm \ref{alg:merge-alg} shows how two networks with a single root event are merged. A root event is one which has no super-events.
+
+\restylealgo{ruled}
+\SetAlgoSkip{}
+\begin{algorithm}[h!]
+\dontprintsemicolon 
+\KwData{Context Network P and S, where S will be merged into P.}
+\KwResult{All event instances in S will be merged into P.}
+\Begin{
+  
+  $ $\;
+
+  function merge(P, S): \{ \;
+  \Indp 
+    \texttt{[Pr]} = root event of P \;
+    \texttt{[Sr]} = root event of S \;
+    recursive\_merge(P, Pr, S, Sr) \;
+  \Indm 
+  \} 
+
+  $ $\;
+
+  function recursive\_merge(P, Pr, S, Sr): \{ \;
+  \Indp
+    addAsSubevent = true \;
+    containedSubevents $\leftarrow$ \texttt{[ ]} \;
+    $\forall_{se}$ (\texttt{ps} of P) \{ \;
+    \Indp
+      if (equals(ps, Sr)) \{ \;
+      \Indp
+        addAsSubevent = false \;
+        mergeInformation(ps, Sr) \;
+        $\forall_{se}$ (\texttt{s} of Sr): recursive\_merge(P, ps, S, se) \;
+      \Indm
+      \} \;
+      if (contains(ps, Sr)) \{ \;
+      \Indp
+        addAsSubevent = false \;
+        recursive\_merge(P, ps, S, Sr) \;
+      \Indm
+      \} \;
+      if (contains(Sr, ps)) \{ \;
+      \Indp
+        addAsSubevent = false \;
+        containedSubevents.add(ps) \;
+      \Indm
+      \} \;
+    \Indm
+    \} \;
+
+    $ $\;
+
+    if (addAsSubevent) \{ \;
+    \Indp
+      addSubeventEdge(Pr, Sr) \;
+      if (containedSubevents.size() $>$ 0) \{ \;
+      \Indp
+      removeSubevents(Pr, containedSubevents) \;
+      createSubevents(Sr, containedSubevents) \;
+      \Indm
+      \} \;
+      $\forall_{se}$ (\texttt{s} of Sr): recursiveMerge(subtree, Sr, other, s); \;
+    \Indm
+    \} \;
+
+  \Indm
+  \} \;
+  $ $\;
+}
+\caption{The Merge Algorithm}
+\label{alg:merge-alg}
+\end{algorithm}
+
+Once the two root nodes, $Pr$ and $Sr$ have been identified, we descend the subevent trees of the two context networks, and do one of the following operations. For each subevent of $Pr$, we check if any subevent is equal to $Sr$, then merge the information from $Sr$ to this subevent, and continue recursively merging the children of $Sr$ into the children of the subevent. If a subevent of $Pr$ contains the new instance, $Sr$, we simply continue recursion. But, if $Sr$ can contain the subevent node, then we add of the siblings sub-events which can become subevents of $Sr$ to a list \texttt{containedSubevents}, and add $Sr$ as a subevent of $Pr$, remove all the children from $Pr$ in \texttt{containedSubevents}, and add them as subevents of $Sr$. Recursion is continued on the children of $Sr$ from the newly connected $Sr$ node in the primary network.
 
 \section{Implementation}
+
+In this section, we will look at the current implementation of the CueNet framework. Figure \ref{fig:d-concept-arch} shows a detailed conceptual architecture of the framework. It consists of three verticals: the data integration modules on the left side, the discovery algorithm and its supporting components in the middle, and the candidate management and face verification tools on the right side. Let's look at them one by one. The data integration module is configured using a source script. This script contains the schema declarations of the various sources, and specifications of how the objects in these sources are related to the objects in the ontology. The complete script listing is provided in Appendix A. We use JavaCC to construct the compiler for this script. The schema and the relations are stored as graphs which can be queried by other modules. Any discover query to be executed on the multitude of sources is checked upon each graph to see if can respond to the type of query. For example, exclude social networks when queries are requesting event information. Each source requires mediator code to align its content with that of the tuples requested in the query engine. This approach is more reminiscent of GAV designs in data integration vocabulary. We chose this because of simpler query processing designs, and the fact that although we required to plug-in and out sources easily, these sources themselves changed very rarely. At the bottom of the data integration stack, we find some common utilities to make HTTP requests and DB query requests, which are used by the source mediators. The discover queries are created in SPARQL. The query engine uses Jena's SPARQL query processing framework, and extracts triple patterns and predicates using the framework's visitor pattern capabilities.
+
+Now, lets look at the various components making up the discovery algorithm. Our knowledge base is specified using OWL ontologies. This is parsed using the open source Jena library, and the objects and relations specified are loaded into in memory DAGs. When a tag discovery request is made by a user, the discovery algorithm is initialized with a photo-capture-event, EXIF information is extracted through perl-based exiftool, and the seed context network is constructed and provided to the discovery algorithm. The algorithm initiates the discover and merge operations using the query engine, and the candidate manager. As new relations are discovered, the related entities are then checked for their presence in the photo using verification tools. We used face.com until its termination in mid-2012, after which we use the system based on \cite{nk_attribute_classifiers} until early 2013, after which we resorted to manual verification upon the top ranked candidates.
 
 \begin{figure}[t]
 \centering
@@ -378,10 +456,6 @@ Figure \ref{fig:exec-cycle} shows the various stages in the algorithm graphicall
 \caption{Sources used to tag all faces.}
 \label{fig:d-concept-arch}
 \end{figure}
-
-In this section, we will look at the current implementation of the CueNet framework. Figure \ref{fig:d-concept-arch} shows a detailed conceptual architecture of the framework. It consists of three verticals: the data integration modules on the left side, the discovery algorithm and its supporting components in the middle, and the candidate management and face verification tools on the right side. Let's look at them one by one. The data integration module is configured using a source script. This script contains the schema declarations of the various sources, and specifications of how the objects in these sources are related to the objects in the ontology. The complete script listing is provided in Appendix A. We use JavaCC to construct the compiler for this script. The schema and the relations are stored as graphs which can be queried by other modules. Any discover query to be executed on the multitude of sources is checked upon each graph to see if can respond to the type of query. For example, exclude social networks when queries are requesting event information. Each source requires mediator code to align its content with that of the tuples requested in the query engine. This approach is more reminiscent of GAV designs in data integration vocabulary. We chose this because of simpler query processing designs, and the fact that although we required to plug-in and out sources easily, these sources themselves changed very rarely. At the bottom of the data integration stack, we find some common utilities to make HTTP requests and DB query requests, which are used by the source mediators. The discover queries are created in SPARQL. The query engine uses Jena's SPARQL query processing framework, and extracts triple patterns and predicates using the framework's visitor pattern capabilities.
-
-Now, lets look at the various components making up the discovery algorithm. Our knowledge base is specified using OWL ontologies. This is parsed using the open source Jena library, and the objects and relations specified are loaded into in memory DAGs. When a tag discovery request is made by a user, the discovery algorithm is initialized with a photo-capture-event, EXIF information is extracted through perl-based exiftool, and the seed context network is constructed and provided to the discovery algorithm. The algorithm initiates the discover and merge operations using the query engine, and the candidate manager. As new relations are discovered, the related entities are then checked for their presence in the photo using verification tools. We used face.com until its termination in mid-2012, after which we use the system based on \cite{nk_attribute_classifiers} until early 2013, after which we resorted to manual verification upon the top ranked candidates.
 
 When a tag request is initiated, a message is passed to the candidate manager, which scans the user's database to create a list of all entities. This is done by invoking scan queries on all data sources through the query engine. Each data sources has a different representation for the same entity. The job of the candidate manager is to aggregate entities by using cues based on their common names or emails, pass them to an entity resolver (if the data is stored on a web-page), and if needed ask a user to correct any mistakes it made in this process. Ultimately, at the end of its processing, we obtain a list of candidates, each which holds identifiers which are local to each data source. When a context network is created by the source mediator, it looks up the candidate reference through the candidate manager before emitting the network back to the discover algorithm. This step makes the nature of data sources oblivious to the discovery algorithm.
 
