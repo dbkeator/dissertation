@@ -369,7 +369,7 @@ Results from data source wrappers are returned in the form of event graphs. Thes
 Figure \ref{fig:exec-cycle} shows the various stages in the algorithm graphically. (a) shows an example event graph describing a photo taken at a meeting. The meeting consists of three participants AG, SR and AS. The photo contains SR and AS. (b) shows two events returned from the data sources. One is a meeting event which is semantically identical to the input. The other is a conference event with AG. (c) shows the result of merging these graphs. (d) The \texttt{prune-up} function removes the duplicate reference to AG. \underline{A live visualization of these steps for different photos can be found at \href{http://cuenet.site44.com/}{http://cuenet.site44.com}}.
 
 \section{Merging Context Networks}
-In this section, we look more closely at the merge function. Algorithm \ref{alg:merge-alg} presents the pseudo-code for merging a secondary context network, $S$, into a primary context network $P$. A terminology of primary and secondary is to signify that all data instances from a secondary network will be merged into a primary network. While merging networks, we also assume that events have atmost one super-event. Thus, no diamond structures are found in either network. In, algorithm \ref{alg:merge-alg} shows how two networks with a single root event are merged. A root event is one which has no super-events.
+In this section, we look more closely at the merge function. Algorithm \ref{alg:merge-alg} presents the pseudo-code for merging a secondary context network, $S$, into a primary context network $P$. A terminology of primary and secondary is to signify that all data instances from a secondary network will be merged into a primary network. While merging networks, we also assume that events have atmost one super-event. Thus, no diamond structures are found in either network. In, algorithm \ref{alg:merge-alg} shows how two networks with a single root event are merged. A root event is one which has no super-events. The symbol $\forall_{se}$ stands for ``for all subevents''.
 
 \restylealgo{ruled}
 \SetAlgoSkip{}
@@ -442,9 +442,57 @@ In this section, we look more closely at the merge function. Algorithm \ref{alg:
 \label{alg:merge-alg}
 \end{algorithm}
 
-Once the two root nodes, $Pr$ and $Sr$ have been identified, we descend the subevent trees of the two context networks, and do one of the following operations. For each subevent of $Pr$, we check if any subevent is equal to $Sr$, then merge the information from $Sr$ to this subevent, and continue recursively merging the children of $Sr$ into the children of the subevent. If a subevent of $Pr$ contains the new instance, $Sr$, we simply continue recursion. But, if $Sr$ can contain the subevent node, then we add of the siblings sub-events which can become subevents of $Sr$ to a list \texttt{containedSubevents}, and add $Sr$ as a subevent of $Pr$, remove all the children from $Pr$ in \texttt{containedSubevents}, and add them as subevents of $Sr$. Recursion is continued on the children of $Sr$ from the newly connected $Sr$ node in the primary network.
+Once the two root nodes, $Pr$ and $Sr$ have been identified, we descend the subevent trees of the two context networks, and do one of the following operations. For each subevent of $Pr$, we check if any subevent is equal to $Sr$, then merge the information from $Sr$ to this subevent, and continue recursively merging the children of $Sr$ into the children of the subevent. If a subevent of $Pr$ contains the new instance, $Sr$, we simply continue recursion. But, if $Sr$ can contain the subevent node, then we add of the siblings sub-events which can become subevents of $Sr$ to a list \texttt{containedSubevents}, and add $Sr$ as a subevent of $Pr$, remove all the children from $Pr$ in \texttt{containedSubevents}, and add them as subevents of $Sr$. Recursion is continued on the children of $Sr$ from the newly connected $Sr$ node in the primary network. Any new literal properties, spatio-temporal attributes and participant information in events which exist in the primary networks are copied using the \texttt{mergeInformation} function.
 
-Coming up: example showing all the three steps.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{media/chapter4/merge-example-setup.png}
+\caption{Example Primary and Secondary Networks.}
+\label{fig:merge-setup}
+\end{figure}
+
+Let's consider an example to understand the merge function. Assume we have to merge network \ref{fig:merge-setup}(b) into \ref{fig:merge-setup}(a). To simplify the example, we will assume that all the events are occurring at the same location. The time intervals occupied by the events are provided in the table \ref{tab:intervals} below.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|cc|}
+\hline
+Event & Time Interval \\
+\hline
+1 & 0 - 120 \\
+2 & 10 - 45 \\
+3 & 70 - 100 \\
+4 & 10 - 15 \\
+5 & 28 - 37 \\
+6 & 70 - 80 \\
+7 & 90 - 100 \\
+\hline
+\end{tabular}
+\quad
+\begin{tabular}{|cc|}
+\hline
+Event & Time Interval \\
+\hline
+A & 10 - 105 \\
+B & 10 - 45 \\
+C & 80 - 90 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Time Intervals for Events in Primary and Secondary Networks shown in \ref{fig:merge-setup}}
+\label{tab:intervals}
+\end{table}
+
+We first check if the root of the primary would contain the secondary. Since, event \texttt{1}'s time interval completely contains event \texttt{A}, this is true, and we initiate the merge function where \texttt{Sr=A, Pr=1}. The subevents \texttt{2, 3} of event \texttt{1} are both contained within A, the lines 23-24 from the algorithm populate the \texttt{containedSubevents} list. This list is used to remove the edges between \texttt{1} and \texttt{2, 3} and create subevent edges between \texttt{1} and \texttt{A} and \text{A} and \texttt{2, 3} in the lines 28-36. The new primary network is shown in figure \ref{fig:merge-output-stages}(a). Now, the algorithm recursively proceeds to add events \texttt{B, C} as subevents of A in the primary network \texttt{Sr=A, Pr=B}. Since the temporal extents of \texttt{2} and \texttt{B} are identical, the event \texttt{B} is merged into \texttt{2} as shown in \ref{fig:merge-output-stages}(b). All participant information which exists in \texttt{B}, and not in \texttt{2} is copied. This is done in lines 13-17 of the algorithm. Finally, the event \texttt{C} is compared with event \texttt{3}, and found to be contained within it. The recursion proceeds to the subevents of \texttt{3} in lines 18-21. Here, the algorithm realizes that none of the events \texttt{6, 7} could contain \texttt{3}, and hence it is made a subevent of \texttt{3} itself. This is done at the line 29. Figure \ref{fig:merge-output-stages}(c) shows the final primary network with all events from the secondary merged into it.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{media/chapter4/merge-example-output.png}
+\caption{The three steps taken to merge the different nodes of the secondary into the primary network.}
+\label{fig:merge-output-stages}
+\end{figure}
+
+
 
 \section{Implementation}
 
@@ -455,7 +503,7 @@ Now, lets look at the various components making up the discovery algorithm. Our 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/detailed-concept-arch.png}
-\caption{Sources used to tag all faces.}
+\caption{Main components of the current CueNet implementation.}
 \label{fig:d-concept-arch}
 \end{figure}
 
