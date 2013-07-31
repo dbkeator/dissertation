@@ -1,27 +1,11 @@
-\chapter{Analysis and Experiments}
+\chapter{Experiments and Analysis}
 
-\section{Analysis}
-%
-% Is the photo capture event the best seed? 
-% Or is there a better one? Probably not -- can we prove by contradiction?
-% -- or by taking another node, and proving that the goodness of this 
-% node is atmost equal to the photo seed.
+In this chapter, we will present experiments to show the efficacy of the context discovery approach. Experiments will be performed on real-world data from real users using a variety of social and personal media applications, public data sources. The motivation behind these experiments is to tag faces in thousands of personal photos taken by various people at a different events. We will also perform experiments on generated data to simulate large scale use cases. Here, the motivation is to analyze the performance characteristics of the merge algorithm.
 
+\section{Experiments on Real-World Data}
+In this section, we analyze how CueNet helps tags a person's photos taken at different types of events. For a given person, we will construct a dataset consisting of photos taken at a particular event, where faces are tagged from a candidate set.
 
-\section{Experiments}
-%0. what are you going to do.
-%
-%1. how did you do this? *********
-%
-%2. give an example.
-%
-%3. what did you find?
-%
-%4. conclusion.
-
-In this section, we analyze how CueNet drives a real world face tagging application. The application contains a set of photos, and a database of people, and its goal is to associate the right persons for each photo, with high accuracy. The goal of CueNet, and the focus of our analysis, is to provide small search spaces so that the application can exhibit high accuracy in all datasets.
-
-In the following evaluation, we investigate three hypotheses. \textbf{First}, what sources provide the most interesting context? \textbf{Second}, how small are the candidates lists constructed by the discovery algorithm, which are provided to the classification algorithm as a ``pruned" version of the search space? And \textbf{third}, what percentage of true positives does this pruned search space contain?
+In the following evaluation, we investigate answers to three questions. \textbf{First}, what sources provide the most interesting context? \textbf{Second}, how small are the candidates lists constructed by the discovery algorithm, which are provided to the classification algorithm as a ``pruned" version of the search space? And \textbf{third}, what percentage of true positives does this pruned search space contain? \textbf{Fourth}: does performance vary from person to person depending on whose content is more noisier.
 
 \subsection{Setup}
 We use 368 photos taken at 7 different conferences in our face tagging experiment. The person database consists of 660 people. Each photo contains one or more persons from this database. The owner of the photos was asked to provide access to their professional Google Calendar to access personal events. Information from social networks was gathered. Specifically, events, social graph, photos of user and their friends from Facebook. In order to obtain information of the conference event, we used the Stanford NER\cite{finkel2005incorporating} to extract names of people from the conference web pages. Descriptions of the keynote, session and banquet events were manually entered into the database. Our sources also included personal emails, access to public events website upcoming.com (Yahoo! Upcoming) and used Yahoo! PlaceFinder for geocoding addresses.
@@ -148,3 +132,11 @@ An exhaustive scientific characterization of noise in social media is beyond the
 \textbf{\textbf{Execution Patterns}}: When is a good time to execute the algorithm? When a user takes a photo? Or before she uploads it to her favorite photo sharing site? For the current evaluation, contextual sources are assumed to be immutable. This is not true in the real world. Contextual sources are constantly being appended with new information, and old information is being updated. These updates may be vital in tagging a certain photo. So the question of when to execute the algorithm, or how and when to query the sources is an open question. If a large number of photos are to be tagged, and a busy source like Facebook is being used for context, the CueNet query engine must take into account various freshness metrics and crawling policies of the sources. 
 
 \textbf{\textbf{Open Datasets}}: The unavailability of a large public data set over which different techniques can be evaluated against each other is an open problem. As seen in our experiments, personal information is vital to contextual approaches, and this data is largely personal, and therefore cannot be shared openly. Optimal anonymization techniques need be to invented such that the privacy of the experiment participants are maintained, and at the same time the data is meaningful to be applied in contextual approaches to problems. This need to be solved so that new context discovery techniques can be evaluated independently and against each other, over a common platform.
+
+\section{Analysis}
+%
+% Is the photo capture event the best seed? 
+% Or is there a better one? Probably not -- can we prove by contradiction?
+% -- or by taking another node, and proving that the goodness of this 
+% node is atmost equal to the photo seed.
+
