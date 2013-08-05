@@ -3,29 +3,67 @@
 In this chapter, we will present experiments to show the efficacy of the context discovery approach. Experiments will be performed on real-world data from real users using a variety of social and personal media applications, public data sources. The motivation behind these experiments is to tag faces in thousands of personal photos taken by various people at a different events. We will also perform experiments on generated data to simulate large scale use cases. Here, the motivation is to analyze the performance characteristics of the merge algorithm.
 
 \section{Experiments on Real-World Data}
-In this section, we analyze how CueNet helps tags a person's photos taken at different types of events. For a given person, we will construct a dataset consisting of photos taken at a particular event, where faces are tagged from a candidate set.
-
-In the following evaluation, we investigate answers to three questions. \textbf{First}, what sources provide the most interesting context? \textbf{Second}, how small are the candidates lists constructed by the discovery algorithm, which are provided to the classification algorithm as a ``pruned" version of the search space? And \textbf{third}, what percentage of true positives does this pruned search space contain? \textbf{Fourth}: does performance vary from person to person depending on whose content is more noisier.
+In this section, we analyze how CueNet helps tags a person's photos taken at different types of events. For a given users, we will construct a dataset consisting of photos taken at a particular event. For each of these users, we will create a candidate set by aggregating people over personal, public and social data sources. In order to evaluate CueNet, we will attempt to reduce this candidate set, and analyze how many of the faces can be correctly tagged by this reduced set. We will also compare this performance over metrics like location based ranking, where candidates are ranked according to their last known location, and (if time permits) tie strength. Our final conclusion is that, in order to rank candidates for tagging faces in photos, CueNet provides an event-agnostic platform, where as other techniques perform inconsistently across different types of events.
 
 \subsection{Setup}
-We use 368 photos taken at 7 different conferences in our face tagging experiment. The person database consists of 660 people. Each photo contains one or more persons from this database. The owner of the photos was asked to provide access to their professional Google Calendar to access personal events. Information from social networks was gathered. Specifically, events, social graph, photos of user and their friends from Facebook. In order to obtain information of the conference event, we used the Stanford NER\cite{finkel2005incorporating} to extract names of people from the conference web pages. Descriptions of the keynote, session and banquet events were manually entered into the database. Our sources also included personal emails, access to public events website upcoming.com (Yahoo! Upcoming) and used Yahoo! PlaceFinder for geocoding addresses.
+We user photos taken three different \textbf{types of events}: Social Parties, Academic Conferences and Trips. This collections allows for different distributions of people from different aspects of a user's life. Social Parties generally tend to have close friends who are spatially co-located. Conferences generally tend to have people from different parts of the world, but those who are affiliated with the area of the conferences. Trips, cannot always rely on location as a useful metric. Trips can involve people from either social, personal or professional circles from a user's life. 
 
-The ground truth was annotated by the user with our annotation interface. For each photo, this essentially consisted of the ID of the persons in it.  We will denote each dataset as `Di' (where 1 $\leq$ $i$ $\leq$ 8 for each dataset). Table \ref{tbl:unique-persons} describes each dataset in terms of number of photos, unique annotations in ground truth and the year they were captured. The total number of unique people who could have appeared in any photo in our experiments is 660. This set forms the exhaustive search space, $L$ from section \ref{sec:first-k}.
+For each event type, we collect multiple datasets from 6 different people. A \textbf{dataset} consists of multiple photos during the event, the user's personal information, which contains information from sources like Google Calendar, personal email and profile information from social networks like Facebook and Twitter. We also collect a person's social networking information which consists of tweets written by the user or their friend during the time the event was occurring, the social network itself (friends on Facebook and Twitter, along with their profile information). Conference proceedings are downloaded from DBLP and the conference website. Facebook events are also obtained and stored in our database. Besides, location databases like Yahoo Placefinder were used to geocode addresses and reverse geocode EXIF GPS coordinates. We assume that all photos have a valid EXIF tag, especially the timestamp and GPS coordinates. This assumption is not a very hard one, as almost all photos captured in the last two years are through iPhone or Android smartphones, which add reasonably accurate GPS tags and accurate timestamps (where the phone clock is synced with the cell tower). The domination of iPhone in the photo market is shown in figure \ref{fig:flickr-camera-popularity}. The ground truth was annotated by the user with our annotation interface. For each photo, an annotation consisted of the ID of the person in the candidate set in it. 
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/flickr-camera-popularity.png}
+\caption{Popularity of iPhone at Flickr.com (October 2011).}
+\label{fig:flickr-camera-popularity}
+\end{figure}
+
+In order to construct a \textbf{candidate set} for each dataset, we construct a so-called \texttt{CandidateSet}. A \texttt{CandidateSet} datastructure performs two functions. It is a persistent set of candidates each of which have a unique identifier. Second, each datasource, which has its own identifier for a candidate can look up the candidate set with this identifier to obtain the candidate set indentifier. Here is an example of a simple candidate set:
+
+\begin{verbatim}
+[
+{csid: 1010-poqs, name: `Arjun Satish', email: `arjun@uci.edu', 
+                                        email: `arjun.satish@gmail.com',
+                                        facebook-id: `656563332'}
+{csid: 2010-pasd, name: `Ramesh Jain', email: `jain@ics.uci.ed',
+                                       name: `Dad',
+                                       email: `jain49@gmail.com',
+                                       facebook-id: `10004290384'}
+{csid: 1255-juen, name: `Peter Boncz', confid: `cf-12-candidate-322'}
+{csid: 7585-kdye, name: `Amarnath Gupta', email: `gupta@sdsc.edu',
+                                          twitter: `aguptasd'}
+{csid: 1111-bmel, name: `Arjun', twitter: `@wicknicks'}
+]
+\end{verbatim}
+
+The above snippet is a part of the candidate set created during the tagging of my personal photos. A \texttt{CandidateSet} is a multimap where the keys are the unique IDs (shown as csid above). The values are a list of key-value attribute pairs. The key could be a global key, such as name or email address, which can be added by any data source. In the above example, different sources could contribute different names for the same entity. Same values for the same key are not duplicated. The list could contain keys which are local to a data source, for example the facebook identifier key: \texttt{facebook-id}. This primarily helps in querying the candidate set to obtain a reference to the candidate during the discovery phase. 
+
+The construction of the \texttt{CandidateSet} happens when the system is brought up. For each user, a unique \texttt{CandidateSet} is created, or loaded if it exists on disk. In order to create it, each data source is probed individually to provide a list of unique persons. The data source mediator checks if the user already exists in the \texttt{CandidateSet} through its local primary key, and if he does, adds additional key value pairs to the attribute list. If a candidate corresponding to its primary key does not exist, a new candidate is created in the set, and the local primary key is added as an attribute pair. This technique will fail to merge different identities of people if they use multiple email addresses or do not store email information on social networks. Thus, we create a merge file, which lists a set of merges between candidates. In the above example, we will use this functionality to combine the entries with IDs \texttt{1111-bmel} and \texttt{1010-poqs} into a unified candidate. This gurantees that context discovered for one online identity is propagated to other identities of the same person.
+
+We use 1889 photos taken at 17 different events in our face tagging experiment. Each photo contains one or more faces. We will denote each dataset as `Di' (where 1 $\leq$ $i$ $\leq$ 8 for each dataset). Table \ref{tbl:unique-persons} describes each dataset in terms of number of photos, unique annotations in ground truth, the year they were captured and the type of the event. 
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{ |c|p{1.5cm}|p{1.5cm}|c| }
+\begin{tabular}{ |c|p{1.5cm}|p{1.5cm}|c|c| }
   \hline
-  \texttt{Dataset} & \texttt{Unique People} & \texttt{No.\ of Photos} & \texttt{Year} \\
+  \texttt{Dataset} & \texttt{Unique People} & \texttt{No.\ of Photos} & \texttt{Year} & \texttt{Event Type}\\
   \hline
-%  D0 & TBD & TBD & 2009\\
-  D1 & 43 & 78 & 2012\\
-  D2 & 24 & 108 & 2012\\
-  D3 & 6 & 16 & 2010\\
-  D4 & 7 & 10 & 2010\\
-  D5 & 36 & 80 & 2009\\
-  D6 & 18 & 65 & 2013\\
-  D7 & 7 & 11 & 2013\\
+    D1  &   43   &   78   &  2012  &  conference \\
+    D2  &   24   &   108  &  2012  &  conference \\
+    D3  &   6    &   16   &  2010  &  conference \\
+    D4  &   7    &   10   &  2010  &  conference \\
+    D5  &   36   &   80   &  2009  &  conference \\
+    D6  &   18   &   65   &  2013  &  conference \\
+    D7  &   7    &   11   &  2013  &  conference \\
+    D8  &   12   &   25   &  2009  &  conference \\
+    D9  &   14   &   65   &  2011  &  party \\
+    D10  &   13  &   131  &  2010  &  party \\
+    D11  &   6   &   85   &  2008  &  party \\
+    D12  &   50  &   74   &  2012  &  party \\
+    D13  &   19  &   330  &  2009  &  party \\
+    D14  &   14  &   363  &  2009  &  trip \\
+    D15  &   2   &   208  &  2010  &  trip \\
+    D16  &   4   &   217  &  2011  &  trip \\
+    D17  &   7   &   23   &  2011  &  trip \\
   \hline
 \end{tabular}
 \caption{Profile of datasets used in the experiments.}
@@ -34,6 +72,9 @@ The ground truth was annotated by the user with our annotation interface. For ea
 \end{table}
 
 We divide the sources into different categories to facilitate a more general discussion. The categories are ``Personal Information" (same as Owner Information in section \ref{sec:discovery-algorithm}), ``Event sources", and ``Social Networks". Event sources include Facebook events, Yahoo Upcoming web service, our conference events database among other sources. Social networks include Facebook's social graph. Personal information contained information about the user, and a link to their personal calendars. An annotation is considered ``Out of Context Network" if it is not in any of these sources.
+
+
+    
 
 \begin{figure}[t]
 \centering
@@ -105,33 +146,6 @@ These experiments validate our three hypotheses. \textbf{First}, Event sources c
 \caption{Graph showing the contribution of each source type in context discovery.}
 \label{fig:tag-distribution}
 \end{figure}
-
-\section{Known Issues}
-In this section, we list some of the issues encountered in designing and building CueNet. Some of these are active areas of research, and whereas others are specific to our framework, and can be considered potential areas of research. Our experience with CueNet indicates that the following issues should be approached in a holistic manner, i.e., in conjunction with each other. Approaching these problems in the context of each other reduces the individual complexity of each sub-problem by possibly increasing the complexity of the entire framework, but making the problem more tractable.
-
-\textbf{\textbf{Noise in Social Media}}: The problem of noise filtering in web data is a prominent one, and is being addressed by various communities in different ways. These range from entity matching and record linkage problems \cite{elmagarmid2007duplicate} to correcting missing data in information networks \cite{sadikov2011correcting}. These problems get trickier because of the different variations in representing tiny details such as representation names of people, addresses of places, and time. In fact, there is a whole school of anthroponomastics \cite{schneider2009s} dedicated to studying variations in human names. Ideas in this field indicate that these differences arise due to cultural, historical and environmental issues\cite{al2009socio}. Such issues cannot be trivially addressed. 
-
-%Consider, for example, the Hebrew name below:
-%
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=0.15\textwidth]{media/ronen.png}
-%\label{fig:exp-general-loc-cx}
-%\end{figure}
-%
-%It can be translated to English as ``Waisenberg" or ``Vaisenberg". So are Mr.\ X Waisenberg who authored a paper in a Security conference and Dr.\ X Vaisenberg who works at Google, the same person? They might be if X has semitic origins!
-
-Face tagging in social media sources like Facebook can also be very noisy. This strictly prohibits directly using this data to train verification/recognition models. Also, the quality of photos are poor, resulting in weaker features, which would have otherwise allowed better matching. 
-
-An exhaustive scientific characterization of noise in social media is beyond the scope of this paper, and is being investigated step by step in social media research communities.
-
-\textbf{\textbf{CPU Efficiency}}: The query engine in CueNet is responsible for extracting data from different sources. If a very large number of photos are being tagged, our scheme of query generation and merging will prove inefficient. Processing many photos from different people provides a very rich opportunity to develop interesting heuristics using event semantics for the multi-query optimization problem. Also, partitioning the discovery algorithm such that the computations can occur in a distributed manner is a complex problem. Such steps will be required if the application workload is of the scales of Facebook or processing photos in real time at the scales of Instagram.
-
-\textbf{\textbf{Face Verification}}: Even though face recognition has been studied in research for the last two decades, face verification, and its specific application to faces in the wild has been a relatively recent venture. Although the accuracy of these systems is commendable, the problems of occlusion, image quality, face alignment and differing lighting conditions exist. These hard problems need to be solved before ``perfect" or ``near-perfect" verification can be established. 
-
-\textbf{\textbf{Execution Patterns}}: When is a good time to execute the algorithm? When a user takes a photo? Or before she uploads it to her favorite photo sharing site? For the current evaluation, contextual sources are assumed to be immutable. This is not true in the real world. Contextual sources are constantly being appended with new information, and old information is being updated. These updates may be vital in tagging a certain photo. So the question of when to execute the algorithm, or how and when to query the sources is an open question. If a large number of photos are to be tagged, and a busy source like Facebook is being used for context, the CueNet query engine must take into account various freshness metrics and crawling policies of the sources. 
-
-\textbf{\textbf{Open Datasets}}: The unavailability of a large public data set over which different techniques can be evaluated against each other is an open problem. As seen in our experiments, personal information is vital to contextual approaches, and this data is largely personal, and therefore cannot be shared openly. Optimal anonymization techniques need be to invented such that the privacy of the experiment participants are maintained, and at the same time the data is meaningful to be applied in contextual approaches to problems. This need to be solved so that new context discovery techniques can be evaluated independently and against each other, over a common platform.
 
 \section{Analysis}
 %
