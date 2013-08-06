@@ -151,7 +151,7 @@ These experiments validate our three hypotheses. \textbf{First}, Event sources c
 In this section, we will look at the performance characteristics of the CueNet algorithm. More specifically, the merge function in the discovery algorithm. In order to achieve this, we will present a generative model to generate large workloads of context networks, which will be merged with each other. Using the generative model, networks of varying sizes will be created so that the time and space complexity of the algorithm can be studied.
 
 \subsection{Generative Models}
-The generative model requires three main components. A set of places where events occur. An ontology which determines what events occur, and how certain events are more likely to occur as sub-events of already occurring events and the event instances themselves. We will describe each of the components in turn.
+The generative model requires three main components. A set of places where events occur. An ontology which determines what events occur, and how certain events are more likely to occur as sub-events of already occurring events and the event instances themselves. We will describe each of the components in turn. 
 
 
 \begin{figure}[t]
@@ -163,11 +163,6 @@ The generative model requires three main components. A set of places where event
 
 A large number of road network databases are available online. Instead of designing a generative model for places, it is advisable to use one of these real world databases and select a sample of it to obtain a list of places where events can occur. Some commonly used databases are shapefiles \cite{esri:tigerline} for road network information about a particular area. Stanford's SNAP database contains the entire road networks of the USA \cite{stanford:snap}. The FSU dataset available at \cite{fsu:spatial} provides detailed road networks with GPS coordinates from various parts of the country. For our work, we found the spatial database available from OpenStreetMap as the best resource. Their database provides information about road networks, as well as the places themselves. At the same time, road maps can be downloaded from their website using the download tool or maps for entire cities or states or countries can be downloaded from \cite{cloudmade:download}. The road map of UCI downloaded from their website and converted to KML format is shown in figure \ref{fig:osm-roadmap-uci}. The map data also contains information about different types of objects which can be found on these roads. Please look at their extensive taxonomy \cite{osm:taxonomy} regarding what types of objects can be found here. We select a sample of the nodes in such a network to be our place set.
 
-The ontology generation module provides three parameters. $O_d$, which controls the depth of subevent trees. $O_{ms}$ which is the maximum number of subevents an event can have. $D$, which is the distribution type. The distribution type decides which events are selected into a hierarchy. A distribution could be Gaussian or Poisson or Uniform distribution. Once the distribution is selected, parameters of the distribution are also provided. We will use a Gaussian distribution as an example to explain the generation of ontologies. But the ideas can be applied to any kind of distribution. 
-
-We want to model events into three categories depending on their generate rate of occurrence. Some events are very commonly occurring, a majority of events occur average number of times, and events in the third category occur very rarely. Figure \ref{fig:gaussian-split} shows how a gaussian random value generator can be used to bucket events into these three zones. The random values are compared with the values $a$, $b$ and $c$. If the $|value|$ is between 0 and $a$, then the event falls into the first category. If it lies between $a$ and $b$, then it lies in the second category. Otherwise it is in the third category.
-
-We consider events in the first category to be atomic events. That is, they occur independently and do not have a subevent hierarchy. An example could be a tweet event or a \texttt{photo-capture} event. We want to create two types of hierarchies. One which is short and fat, and the other which is long and tall. We choose category two to correspond to the former, and category three to contain the latter type of hierarchies. A hierarchy is generated as follows: choose an event, if it is from category 2 or 3, a hierarchy with atmost depth $O_d$ is generated.
 
 \begin{figure}[t]
 \centering
@@ -176,8 +171,137 @@ We consider events in the first category to be atomic events. That is, they occu
 \label{fig:gaussian-split}
 \end{figure}
 
+
+The ontology generation module provides three parameters. $O_d$, which controls the depth of subevent trees. $O_{ms}$ which is the maximum number of subevents an event can have. $D$, which is the distribution type. The distribution type decides which events are selected into a hierarchy. A distribution could be Gaussian or Poisson or Uniform distribution. Once the distribution is selected, parameters of the distribution are also provided. We will use a Gaussian distribution as an example to explain the generation of ontologies. But the ideas can be applied to any kind of distribution. 
+
+We want to model events into three categories depending on their generate rate of occurrence. Some events are very commonly occurring, a majority of events occur average number of times, and events in the third category occur very rarely. Figure \ref{fig:gaussian-split} shows how a gaussian random value generator can be used to bucket events into these three zones. The random values are compared with the values $a$, $b$ and $c$. If the $|value|$ is between 0 and $a$, then the event falls into the first category. If it lies between $a$ and $b$, then it lies in the second category. Otherwise it is in the third category.
+
+We consider events in the first category to be atomic events. That is, they occur independently and do not have a subevent hierarchy. An example could be a tweet event or a \texttt{photo-capture} event. We want to create two types of hierarchies. One which is short and fat, and the other which is long and tall. We choose category two to correspond to the former, and category three to contain the latter type of hierarchies. A hierarchy is generated as follows: choose an event, if it is from category 2 or 3, a hierarchy with atmost depth $O_d$ and each super event having max $O_{ms}$ subevents is generated. The events are randomly chosen based on their ``real-world'' frequency. These hierarchies are serialized into files. For events in category 3, we double the value of $O_{ms}$. This will allow us to get \textit{fatter} instance hierarchies as we will see later.
+
+In order to generate instances, we randomly select an event based on its ``real-world'' frequency, and load the hierarchy structure from the file, and for subevent class, generate $n$ instances. Thus, if an event $x$ has a subevent $y$ in its hierarchy, then the instance $x_i$ will have subevent instances $\{y_1, y_2 ... y_{|Y|}\}$ where $|Y| < n$. The number $n$ is decided on the basis of an input metric $C$, where for events in category 2, $n = c/2$, and for events in category 3, $n = C$. It must be noted that the $n$ is the maximum number of subevents a super event can contain. The actual number of subevent instances is decided by a uniform random number generator. These hierarchies are serialized into files and stored for the merge tests.
+
 \subsection{Procedure}
+In order to understand the time and space complexity of the merge function, we load multiple networks from instance hierarchy into in-memory data structures, and perform a sequence of merges. In order to simulate the workload similar to the discovery algorithm, we select a network, and perform a sequence of merges on it. We will refer to the initially selected network as a \textbf{primary} network and the networks which are merged into it as \textbf{secondary} networks. Thus, given a primary network and a set of secondary networks, we perform the following set of experiments.
+
+First, we fix the size of the primary networks (in terms of node count), and merge secondary networks with varying size, and measure the time taken for the merges to complete.
+
+Second, we fix the size of the primary networks (in terms of depth), and merge secondary networks with varying depth, and measure the time taken for the merges to complete.
+
+Third, we merge a context network with an exact replica of itself, and measure the time taken for the operation. We also change the size of the heap size, and see if there is any effect on the merge operation.
+
+Fourth, we measure the sizes of the networks once they are in memory.
+
+It must be noted that the event instances being used in the experiments do not have event metadata associated with the in-memory instance object. It is assumed that these are being stored separately. The networks used below are simply events with type, spatio-temporal and identification information and references to their subevents and to entities who participate in the events. Any additional information, for example the image object which constitutes the experiential aspect of an event, is stored separately.
 
 \subsection{Performance Study}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/mergebignodetest.png}
+\caption{Graph showing merge times for different sizes of primary networks.}
+\label{fig:agg}
+\end{figure}
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10.png}
+\caption{10 Nodes}
+\label{fig:pic1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100.png}
+\caption{100 Nodes}
+\label{fig:pic2}
+\end{minipage}
+
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1000.png}
+\caption{10 Nodes}
+\label{fig:pic1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10K.png}
+\caption{100 Nodes}
+\label{fig:pic2}
+\end{minipage}
+
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100K.png}
+\caption{100K Nodes}
+\label{fig:pic2}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1M.png}
+\caption{1M Nodes}
+\label{fig:pic3}
+\end{minipage}
+\end{figure}
+
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.28\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_3.png}
+\caption{depth = 3}
+\label{fig:pic1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.28\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_5.png}
+\caption{depth = 5}
+\label{fig:pic2}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.32\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_7.png}
+\caption{depth = 7}
+\label{fig:pic3}
+\end{minipage}
+
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/mergedepthtest.png}
+\caption{Time to merge networks with varying depth.}
+\label{fig:agg}
+\end{figure}
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/selfmerge_10K.png}
+\caption{1K-10K Nodes Self Merge}
+\label{fig:pic1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{media/chapter5/perf/selfmerge_1M.png}
+\caption{100K-1M Nodes Self Merge}
+\label{fig:pic2}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/size-10K.png}
+\caption{Sizes.}
+\label{fig:sizes}
+\end{figure}
+
+
 \subsection{Conclusion}
+
+In analysing the above figures, we have seen that the in-memory merge algorithm performs very well for networks upto 500K nodes. Beyond this point, the performance exponentially decays, both as a combination of large graphs, and the JVM's garbage collector trying to clean up unwanted objects. And therefore it is best recommended to approach an disk based solution or partition the context networks across different machines.

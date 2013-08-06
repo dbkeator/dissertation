@@ -394,7 +394,7 @@ In this section, we look more closely at the merge function. Algorithm \ref{alg:
   function recursive\_merge(P, Pr, S, Sr): \{ \;
   \Indp
     addAsSubevent = true \;
-    containedSubevents $\leftarrow$ \texttt{[ ]} \;
+    containedSubevents $\leftarrow$ \texttt{\{$\phi$\}} \;
     $\forall_{se}$ (\texttt{ps} of P) \{ \;
     \Indp
       if (equals(ps, Sr)) \{ \;
