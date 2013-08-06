@@ -47,23 +47,23 @@ We use 1889 photos taken at 17 different events in our face tagging experiment. 
   \hline
   \texttt{Dataset} & \texttt{Unique People} & \texttt{No.\ of Photos} & \texttt{Year} & \texttt{Event Type}\\
   \hline
-    D1  &   43   &   78   &  2012  &  conference \\
-    D2  &   24   &   108  &  2012  &  conference \\
-    D3  &   6    &   16   &  2010  &  conference \\
-    D4  &   7    &   10   &  2010  &  conference \\
-    D5  &   36   &   80   &  2009  &  conference \\
-    D6  &   18   &   65   &  2013  &  conference \\
-    D7  &   7    &   11   &  2013  &  conference \\
-    D8  &   12   &   25   &  2009  &  conference \\
-    D9  &   14   &   65   &  2011  &  party \\
-    D10  &   13  &   131  &  2010  &  party \\
-    D11  &   6   &   85   &  2008  &  party \\
-    D12  &   50  &   74   &  2012  &  party \\
-    D13  &   19  &   330  &  2009  &  party \\
-    D14  &   14  &   363  &  2009  &  trip \\
-    D15  &   2   &   208  &  2010  &  trip \\
-    D16  &   4   &   217  &  2011  &  trip \\
-    D17  &   7   &   23   &  2011  &  trip \\
+     D1  &  43   &   78   &  2012  &  conference \\
+     D2  &  24   &   108  &  2012  &  conference \\
+     D3  &  6    &   16   &  2010  &  conference \\
+     D4  &  7    &   10   &  2010  &  conference \\
+     D5  &  36   &   80   &  2009  &  conference \\
+     D6  &  18   &   65   &  2013  &  conference \\
+     D7  &  7    &   11   &  2013  &  conference \\
+     D8  &  12   &   25   &  2009  &  conference \\
+     D9  &  14   &   65   &  2011  &  party \\
+    D10  &  13   &   131  &  2010  &  party \\
+    D11  &  6    &   85   &  2008  &  party \\
+    D12  &  50   &   74   &  2012  &  party \\
+    D13  &  19   &   330  &  2009  &  party \\
+    D14  &  14   &   363  &  2009  &  trip \\
+    D15  &  2    &   208  &  2010  &  trip \\
+    D16  &  4    &   217  &  2011  &  trip \\
+    D17  &  7    &   23   &  2011  &  trip \\
   \hline
 \end{tabular}
 \caption{Profile of datasets used in the experiments.}
@@ -137,9 +137,6 @@ Finally, we compare the various search spaces constructed by discovery algorithm
 
 It can be seen that CueNet prunes the search space very differently for different datasets. As we move from dataset to dataset, the data sources present different items of information, and therefore CueNet constructs very search spaces. Dataset D2, D4 and D5 are very large conferences hosting hundreds of people in the same field. This explains why a large portion of the grid is covered. Also, this was the same conference held in three different years, and therefore, had a lot of common attendees resulting in overlap.
 
-\subsection{Conclusion}
-These experiments validate our three hypotheses. \textbf{First}, Event sources contain a large portion of true positives. From 70\% in D1 to 100\% in D7. There are events for which there is no documentation, and event sources are not able to contribute anything here, as in the case of D4. \textbf{Second}, the discovery algorithm is able to prune the search space using event, personal and social information. The reduction is atleast 50\% for D2 (338 candidates out of 660) but can be very large in some cases (7 candidates for D7). \textbf{Third}, The reduced search space retains a high number of true positives. The hit rate is between 83\% to 100\% (with the exception of D4, where the search space provided no true positives). We also saw how unique the search spaces are, to each dataset, thereby demonstrating the dynamic nature of the algorithm.
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{media/discovery-distro-stacked-2.png}
@@ -147,10 +144,40 @@ These experiments validate our three hypotheses. \textbf{First}, Event sources c
 \label{fig:tag-distribution}
 \end{figure}
 
-\section{Analysis}
-%
-% Is the photo capture event the best seed? 
-% Or is there a better one? Probably not -- can we prove by contradiction?
-% -- or by taking another node, and proving that the goodness of this 
-% node is atmost equal to the photo seed.
+\subsection{Conclusion}
+These experiments validate our three hypotheses. \textbf{First}, Event sources contain a large portion of true positives. From 70\% in D1 to 100\% in D7. There are events for which there is no documentation, and event sources are not able to contribute anything here, as in the case of D4. \textbf{Second}, the discovery algorithm is able to prune the search space using event, personal and social information. The reduction is atleast 50\% for D2 (338 candidates out of 660) but can be very large in some cases (7 candidates for D7). \textbf{Third}, The reduced search space retains a high number of true positives. The hit rate is between 83\% to 100\% (with the exception of D4, where the search space provided no true positives). We also saw how unique the search spaces are, to each dataset, thereby demonstrating the dynamic nature of the algorithm.
 
+\section{Performance Analysis}
+In this section, we will look at the performance characteristics of the CueNet algorithm. More specifically, the merge function in the discovery algorithm. In order to achieve this, we will present a generative model to generate large workloads of context networks, which will be merged with each other. Using the generative model, networks of varying sizes will be created so that the time and space complexity of the algorithm can be studied.
+
+\subsection{Generative Models}
+The generative model requires three main components. A set of places where events occur. An ontology which determines what events occur, and how certain events are more likely to occur as sub-events of already occurring events and the event instances themselves. We will describe each of the components in turn.
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/map-locations.png}
+\caption{Roadmap containing places where events could occur.}
+\label{fig:osm-roadmap-uci}
+\end{figure}
+
+A large number of road network databases are available online. Instead of designing a generative model for places, it is advisable to use one of these real world databases and select a sample of it to obtain a list of places where events can occur. Some commonly used databases are shapefiles \cite{esri:tigerline} for road network information about a particular area. Stanford's SNAP database contains the entire road networks of the USA \cite{stanford:snap}. The FSU dataset available at \cite{fsu:spatial} provides detailed road networks with GPS coordinates from various parts of the country. For our work, we found the spatial database available from OpenStreetMap as the best resource. Their database provides information about road networks, as well as the places themselves. At the same time, road maps can be downloaded from their website using the download tool or maps for entire cities or states or countries can be downloaded from \cite{cloudmade:download}. The road map of UCI downloaded from their website and converted to KML format is shown in figure \ref{fig:osm-roadmap-uci}. The map data also contains information about different types of objects which can be found on these roads. Please look at their extensive taxonomy \cite{osm:taxonomy} regarding what types of objects can be found here. We select a sample of the nodes in such a network to be our place set.
+
+The ontology generation module provides three parameters. $O_d$, which controls the depth of subevent trees. $O_{ms}$ which is the maximum number of subevents an event can have. $D$, which is the distribution type. The distribution type decides which events are selected into a hierarchy. A distribution could be Gaussian or Poisson or Uniform distribution. Once the distribution is selected, parameters of the distribution are also provided. We will use a Gaussian distribution as an example to explain the generation of ontologies. But the ideas can be applied to any kind of distribution. 
+
+We want to model events into three categories depending on their generate rate of occurrence. Some events are very commonly occurring, a majority of events occur average number of times, and events in the third category occur very rarely. Figure \ref{fig:gaussian-split} shows how a gaussian random value generator can be used to bucket events into these three zones. The random values are compared with the values $a$, $b$ and $c$. If the $|value|$ is between 0 and $a$, then the event falls into the first category. If it lies between $a$ and $b$, then it lies in the second category. Otherwise it is in the third category.
+
+We consider events in the first category to be atomic events. That is, they occur independently and do not have a subevent hierarchy. An example could be a tweet event or a \texttt{photo-capture} event. We want to create two types of hierarchies. One which is short and fat, and the other which is long and tall. We choose category two to correspond to the former, and category three to contain the latter type of hierarchies. A hierarchy is generated as follows: choose an event, if it is from category 2 or 3, a hierarchy with atmost depth $O_d$ is generated.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/gaussian-split.png}
+\caption{Gaussian distribution split to generate randon events in ontology.}
+\label{fig:gaussian-split}
+\end{figure}
+
+\subsection{Procedure}
+
+\subsection{Performance Study}
+
+\subsection{Conclusion}
