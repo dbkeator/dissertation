@@ -8,7 +8,7 @@ In this section, we analyze how CueNet helps tags a person's photos taken at dif
 \subsection{Setup}
 We use photos taken during three different \textbf{types of events}: Social Parties, Academic Conferences and Trips. This diversity allows for different distributions of face tags across different aspects of a user's life. Social Parties generally tend to have close friends who are spatially co-located. Conferences tend to have people from different parts of the world, but those who are affiliated with the area of the conferences. Trips, cannot always rely on location as a useful metric and can involve people from either social, personal or professional circles from a user's life. 
 
-For each event type, we collect multiple datasets from 6 different people. A \textbf{dataset} consists of multiple photos during the event, the user's personal information, which contains information from sources like Google Calendar, personal email and profile information from social networks like Facebook and Twitter. We also collect a person's social networking information which consists of tweets written by the user or their friend during the time the event was occurring, the social network itself (friends on Facebook and Twitter, along with their profile information). Conference proceedings are downloaded from DBLP and the conference website. Facebook events are also obtained and stored in our database. Besides, location databases like Yahoo Placefinder were used to geocode addresses and reverse geocode EXIF GPS coordinates. We assume that all photos have a valid EXIF tag, especially the timestamp and GPS coordinates. This assumption is not a very hard one, as almost all photos captured in the last two years are through iPhone or Android smartphones, which add reasonably accurate GPS tags and accurate timestamps (where the phone clock is synced with the cell tower). The domination of iPhone in the photo market is shown in figure \ref{fig:flickr-camera-popularity}. The ground truth was annotated by the user with our annotation interface. For each photo, an annotation consisted of the ID of the person in the candidate set in it. 
+For each event type, we collect multiple datasets from 6 different people. A \textbf{dataset} consists of multiple photos during the event, the user's personal information, which contains information from sources like Google Calendar, personal email and profile information from social networks like Facebook and Twitter. We also collect a person's social networking information which consists of tweets written by the user or their friend during the time the event was occurring, the social network itself (friends on Facebook and Twitter, along with their profile information). Conference proceedings are downloaded from DBLP and the conference website. Facebook events are also obtained and stored in our database. Besides, location databases like Yahoo Placefinder were used to geocode addresses and reverse geocode EXIF GPS coordinates. We assume that all photos have a valid EXIF tag, especially the timestamp and GPS coordinates. This assumption is not a very hard one, as almost all photos captured in the last two years are through iPhone or Android smartphones, which add reasonably accurate GPS tags and accurate timestamps (where the phone clock is synced with the cell tower). The domination of iPhone in the photo market is shown in figure \ref{fig:flickr-camera-popularity}. The ground truth was annotated by the user with our annotation interface. For each photo, an annotation consisted of the ID of the person in the candidate set in it. Face verification was achieved initially with Face.com, but after their website was shutdown, we used the web service, Automatic Face Systems, maintained by Neeraj Kumar. After this service was terminated, we resorted to manual face verification. We use the manual verification for the experiments described below, unless otherwise mentioned.
 
 \begin{figure}[t]
 \centering
@@ -43,27 +43,27 @@ We use 1889 photos taken at 17 different events in our face tagging experiment. 
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{ |c|p{1.5cm}|p{1.5cm}|c|c| }
+\begin{tabular}{ |c|p{1.5cm}|p{1.5cm}|c|p{2.5cm}|c| }
   \hline
-  \texttt{Dataset} & \texttt{Unique People} & \texttt{No.\ of Photos} & \texttt{Year} & \texttt{Event Type}\\
+  \texttt{Dataset} & \texttt{Unique People} & \texttt{No.\ of Photos} & \texttt{Year} & \texttt{CandidateSet Size} & \texttt{Event Type}\\
   \hline
-     D1  &  43   &   78   &  2012  &  conference \\
-     D2  &  24   &   108  &  2012  &  conference \\
-     D3  &  6    &   16   &  2010  &  conference \\
-     D4  &  7    &   10   &  2010  &  conference \\
-     D5  &  36   &   80   &  2009  &  conference \\
-     D6  &  18   &   65   &  2013  &  conference \\
-     D7  &  7    &   11   &  2013  &  conference \\
-     D8  &  12   &   25   &  2009  &  conference \\
-     D9  &  14   &   65   &  2011  &  party \\
-    D10  &  13   &   131  &  2010  &  party \\
-    D11  &  6    &   85   &  2008  &  party \\
-    D12  &  50   &   74   &  2012  &  party \\
-    D13  &  19   &   330  &  2009  &  party \\
-    D14  &  14   &   363  &  2009  &  trip \\
-    D15  &  2    &   208  &  2010  &  trip \\
-    D16  &  4    &   217  &  2011  &  trip \\
-    D17  &  7    &   23   &  2011  &  trip \\
+     D1  &  43   &   78   &  2012  &  660   & conference \\
+     D2  &  24   &   108  &  2012  &  660   & conference \\
+     D3  &  6    &   16   &  2010  &  660   & conference \\
+     D4  &  7    &   10   &  2010  &  660   & conference \\
+     D5  &  36   &   80   &  2009  &  660   & conference \\
+     D6  &  18   &   65   &  2013  &  660   & conference \\
+     D7  &  7    &   11   &  2013  &  660   & conference \\
+     D8  &  12   &   25   &  2009  &  1894  & conference \\
+     D9  &  14   &   65   &  2011  &  215   & party \\
+    D10  &  13   &   131  &  2010  &  561   & party \\
+    D11  &  6    &   85   &  2008  &  656   & party \\
+    D12  &  50   &   74   &  2012  &  1049  & party \\
+    D13  &  19   &   330  &  2009  &  691   & party \\
+    D14  &  14   &   363  &  2009  &  711   & trip \\
+    D15  &  2    &   208  &  2010  &  715  & trip \\
+    D16  &  4    &   217  &  2011  &  711  & trip \\
+    D17  &  7    &   23   &  2011  &  584  & trip \\
   \hline
 \end{tabular}
 \caption{Profile of datasets used in the experiments.}
