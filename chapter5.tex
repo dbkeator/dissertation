@@ -249,115 +249,134 @@ It must be noted that the event instances being used in the experiments do not h
 
 We use the following system setup in all our experiments. We use a 8 core Intel(R) Xeon(R) E5504 processor clocking at 2.01Ghz with 8 gigabytes of main memory. We use a single thread to load networks from the file on the disk and proceeds to merge them. The memory footprints of the networks are measured by the classmexer library \cite{classmexer}. The \texttt{Xmx} and \texttt{Xms} JVM parameters were set to be 6000m and 256m respectively.
 
-\subsection{Results}
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{media/chapter5/perf/mergebignodetest.png}
 \caption{Graph showing merge times for different sizes of primary networks.}
-\label{fig:agg}
+\label{fig:agg-merge-tests}
 \end{figure}
 
-\begin{figure}[ht]
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10.png}
-\caption{10 Nodes}
-\label{fig:pic1}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100.png}
-\caption{100 Nodes}
-\label{fig:pic2}
-\end{minipage}
-
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1000.png}
-\caption{10 Nodes}
-\label{fig:pic1}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10K.png}
-\caption{100 Nodes}
-\label{fig:pic2}
-\end{minipage}
-
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100K.png}
-\caption{100K Nodes}
-\label{fig:pic2}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1M.png}
-\caption{1M Nodes}
-\label{fig:pic3}
-\end{minipage}
-\end{figure}
-
-
-\begin{figure}[ht]
-\begin{minipage}[b]{0.28\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_3.png}
-\caption{depth = 3}
-\label{fig:pic1}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.28\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_5.png}
-\caption{depth = 5}
-\label{fig:pic2}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.32\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_7.png}
-\caption{depth = 7}
-\label{fig:pic3}
-\end{minipage}
-
-\end{figure}
+\subsection{Results}
+The graph shown in figure \ref{fig:agg-merge-tests} shows the time taken for merging secondary networks of increasing sizes to a primary network. The size of the primary network is increased from 10 nodes to a million nodes. For each such primary network, a number of secondary networks are merged. As we can see, the size of the primary network does not contribute to the time complexity of the algorithm. This is because the merge algorithm effectively searches the subevent structure to find the node which can best accommodate the secondary network. This is a walk down a single path of the tree. Thus, as long as small secondary networks are obtained from the sources, the merge operations will be less expensive. This is the reason why we tailor our discover queries to provide only very specific information. On the other hand, as the  size of the secondary network increases, we find that the performance increases linearly upto a point, after it which it exponentially increases. This is due to a combination of tree traversal on the secondary network, and the JVM's garbage collector removing outdated objects to accommodate the new objects being created in the primary network. In our implementation, we create new objects in the primary network, as opposed to copying them from the secondary network.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{media/chapter5/perf/mergedepthtest.png}
 \caption{Time to merge networks with varying depth.}
-\label{fig:agg}
+\label{fig:agg-depth}
 \end{figure}
+
+Similarly, in figure \ref{fig:agg-depth}, we test how merge time varies with increasing depth of the primary network. Here we fix the depth of the primary network to 3, 5 or 7 levels, and load a set of secondary networks from depth 1 to 9. The secondary networks are merged in sequence to the primary network. Each run of the algorithm corresponds to a single primary network (effectively, we reboot the JVM for each primary network). Here the exponential rise after the depth of the secondary network reaches 8 levels is more obvious. This again, shows the importance of constructing selective queries during the discover phase of the algorithm. The loading of all the secondary networks prior to the merge sequence allows us to study the cost of merges in an environment where  memory is not available, and is shared by other citizen objects of the JVM heap. 
+
+Figures \ref{fig:1k-self-merge} and \ref{fig:1m-self-merge} show the time complexity of self merges. A self merge is merging a network with an identical copy of itself. The perforance characteristics are very similar to the merge tests seen before.
 
 \begin{figure}[ht]
 \begin{minipage}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter5/perf/selfmerge_10K.png}
 \caption{1K-10K Nodes Self Merge}
-\label{fig:pic1}
+\label{fig:1k-self-merge}
 \end{minipage}
 \hspace{0.5cm}
 \begin{minipage}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter5/perf/selfmerge_1M.png}
 \caption{100K-1M Nodes Self Merge}
-\label{fig:pic2}
+\label{fig:1m-self-merge}
 \end{minipage}
 \end{figure}
 
+
+Now, we will look at how the merges behave with varying heap size (the \texttt{Xmx} runtime parameter provided to the JVM when it is initialized). In figure \ref{fig:agg-xmx}, we see 5 different curves, corresponding to \texttt{Xmx} values of 512m, 640m, 768m, 896m, and 1024m. We load a network twice, perform a merge (a \textit{self-merge}), and record the time the operation takes. The experiments is repeated 5 times for each merge on different randomly created networks. We perform these operations on networks containing 1000, 2000, 3000 nodes upto 700K, 800K, 900K and 1M nodes. As we can see in the figure, we run out of heap space when the networks contain 600K and the Xmx value is 512m. Beyond a 896m, we see that the merge operations only grow linearly, and can be considered a safe limit when self-merges of 1M node networks are to be performed. For heap spaces of less than 896m, the performance time increases exponentially when the network size exceeds 600K nodes. This is, again, because of the creation of nodes in the primary networks.
+
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter5/perf/size-10K.png}
-\caption{Sizes.}
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/selfmerge-increasing-xmx.png}
+\caption{Time to merge networks with varying available heap space.}
+\label{fig:agg-xmx}
+\end{figure}
+
+Finally, we use the Classmexer library \cite{classmexer} to measure the memory footprint of the in-memory context network. We generate random networks of size 1000, 2000 ... 10,000 nodes, and measure the size in kilobytes. The results are shown in figure \ref{fig:sizes}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter5/perf/size-tree-1000.png}
+\caption{Sizes of in-memory context networks contain a few thousand nodes.}
 \label{fig:sizes}
 \end{figure}
 
 
 \subsection{Conclusion}
 
-In analysing the above figures, we have seen that the in-memory merge algorithm performs very well for networks upto 500K nodes. Beyond this point, the performance exponentially decays, both as a combination of large graphs, and the JVM's garbage collector trying to clean up unwanted objects. And therefore it is best recommended to approach an disk based solution or partition the context networks across different machines.
+In analysing the above figures, we have seen that the in-memory merge algorithm performs very well for networks upto 500K nodes. Beyond this point, the performance exponentially decays, both as a combination of large graphs, and the JVM's garbage collector trying to clean up unwanted objects. And therefore it is best recommended to approach an disk based solution or partition the context networks across different machines. 
+
+Since performing many merges (especially with large secondary networks), it is advisable to not perform the merges when the rate of incoming networks is very high. Rather, the system can cache the networks, and utilize techniques like iterative dynamic programming or \textit{batch} the merges such that the overall load on the CPU is reduced. Such an algorithm, to the best of my knowledge, does not readily exist, and can be a very fruitful future research to improve the utility of context networks in various domains.
+
+% \begin{figure}[ht]
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10.png}
+% \caption{10 Nodes}
+% \label{fig:pic1}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100.png}
+% \caption{100 Nodes}
+% \label{fig:pic2}
+% \end{minipage}
+
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1000.png}
+% \caption{10 Nodes}
+% \label{fig:pic1}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_10K.png}
+% \caption{100 Nodes}
+% \label{fig:pic2}
+% \end{minipage}
+
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_100K.png}
+% \caption{100K Nodes}
+% \label{fig:pic2}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.45\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergebignodetest_1M.png}
+% \caption{1M Nodes}
+% \label{fig:pic3}
+% \end{minipage}
+% \end{figure}
+
+
+% \begin{figure}[ht]
+% \begin{minipage}[b]{0.28\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_3.png}
+% \caption{depth = 3}
+% \label{fig:pic1}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.28\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_5.png}
+% \caption{depth = 5}
+% \label{fig:pic2}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.32\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter5/perf/mergedepthtest_7.png}
+% \caption{depth = 7}
+% \label{fig:pic3}
+% \end{minipage}
+
+% \end{figure}
