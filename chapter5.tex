@@ -88,17 +88,17 @@ First, we look at how CueNet reduces the number of possible candidates for all p
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{media/reduced-list-sizes-d0.png}
-\caption{Pruned search space for photos in D8.}
+\caption{Pruned search space for photos in conference dataset D8.}
 \label{fig:exp-vldb-all-cx}
 \end{figure}
 
 \subsection{Results using Context Discovery}
 In order to evaluate 17 different datasets, we perform the following modification on each dataset. For a dataset, we select the photo with all annotations, and attempt to tag it. The numbers seen below will reflect the results for such a photo. Alternatively, the numbers below can be interpreted as tagging the event itself, and not individual photos. We do this modification to reduce the number of graphs drawn per experiment. We define a \textbf{hit} as a correctly tagged face. Figure \ref{fig:exp-cx-hits} shows the hits for datasets using the context discovery algorithm. The blue bars show the number of unique faces in the dataset. As we can see the number of hits is equal to the number of unique faces, which implies that our context discovery algorithm was able to find the correct face tags for almost all datasets. Only for dataset 4, this difference is significant. This is because there was no contextual information related to the people in this dataset.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter5/cx-unique-faces-hits.png}
-\caption{Hits for Datasets 9 - 17 using Context Discovery Algorithm.}
+\includegraphics[width=0.9\textwidth]{media/chapter5/cx-unique-faces-hits-all-datasets.png}
+\caption{Hit counts for all datasets using Context Discovery Algorithm.}
 \label{fig:exp-cx-hits}
 \end{figure}
 
@@ -106,8 +106,8 @@ Most of the datasets contain hundreds of candidates. If we have to perform face 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter5/cx-verification-ratio.png}
-\caption{Verification Ratio (x 100) for Datasets 9 - 17 using Context Discovery Algorithm.}
+\includegraphics[width=0.9\textwidth]{media/chapter5/cx-verification-ratio-all-datasets.png}
+\caption{Verification Ratio (x 100) obtained using the Context Discovery Algorithm.}
 \label{fig:exp-cx-verification-ratio}
 \end{figure}
 
@@ -116,15 +116,15 @@ In order to compare these results, we perform a tagging experiment using locatio
 \begin{figure}[ht]
 \begin{minipage}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter5/loc-unique-faces-hits.png}
-\caption{Hits for Datasets 9 - 17 using Location only.}
+\includegraphics[width=0.9\textwidth]{media/chapter5/loc-unique-faces-hits-all-datasets.png}
+\caption{Hit counts for all datasets using Location only.}
 \label{fig:exp-loc-hits}
 \end{minipage}
 \hspace{0.5cm}
 \begin{minipage}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=0.9\textwidth]{media/chapter5/loc-verification-ratio.png}
-\caption{Verification Ratio (x 100) for Datasets 9 - 17 using Context Discovery Algorithm.}
+\includegraphics[width=0.9\textwidth]{media/chapter5/loc-verification-ratio-all-datasets.png}
+\caption{Verification Ratio (x 100) for all datasets obtained using Location only.}
 \label{fig:exp-loc-verification-ratio}
 \end{minipage}
 \end{figure}
@@ -143,7 +143,7 @@ In figure \ref{fig:hits-ratio-comparison}, we compare the \textbf{hits ratio} of
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{media/chapter5/verification-ratio-comparison.png}
-\caption{Verification Ratio (x 100) for Datasets 9 - 17 using Context Discovery Algorithm.}
+\caption{Comparing Verification Ratio (x 100) for all datasets.}
 \label{fig:verification-ratio-comparison}
 \end{figure}
 
