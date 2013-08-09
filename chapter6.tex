@@ -1,0 +1,17 @@
+\chapter{Ranking Context Networks}
+
+So far, our treatment of context networks had made an assumption: context solely consists of events co-occurring with the photo-capture events, and these events are obtained from data sources. The second part of the assumption is not always true in practice. For example, a person's roommate might be a last minute addition to a road trip, who was neither on the email chain or the facebook event, will be ranked very low by the discovery algorithm. A professor whose students are receiving best paper award but was not part of the author list herself might be present at the award ceremony because the conference is being hosted 50 kilometers from her univeristy. Similarly, people at a concert might run into acquaintances because they share the same musical interests. In these cases, the data sources will provide incomplete contextual information which leads the discovery algorithm to rank some candidates poorly.
+
+In this chapter, we will attempt to address this problem of boosting the performance of the CueNet framework by introducing a technique to rank candidates based on their participation profile in previous context networks, personal interests or information. We will present our intuition through a series of examples, and introduce a technique similar to PageRank, which is used to rank pages on the world wide web. In our case, we will rank people in the \texttt{CandidateSet} given set of context networks. Our main differences will lie in the initialization of the score matrix and the propagation of scores \textit{across} the different context networks.
+
+\section{Intuition}
+
+Consider a user, who own 10 datasets of photos taken at different events. If we have context networks developed for the first 9 datasets, how can we utilize them to annotate the last dataset? Especially, in the light of partial information (for example, we know some participants of the 10th dataset or we know a few events that were occurring during the photo-capture which some of the participants were part of).
+
+\section{Preliminaries}
+
+\section{Event Rank}
+
+\subsection{Propagation Functions}
+
+\section{Experiments}

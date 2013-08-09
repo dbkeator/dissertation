@@ -1,10 +1,11 @@
 \chapter{Context Discovery Framework}
 
-In this chapter, we shall look at the the CueNet framework and its components: a \textit{data integration module} to model and query the various data sources and sensors, a \textit{discovery algorithm} to construct queries agnostic to what to the sources themselves, a \textit{knowledge representation module} to store relationships about the various real world objects, and finally how these parts integrate with a \textit{face verification algorithm}, which predicts if a person is present in a photo or not.
+In this chapter, we shall look at the the CueNet framework and its components: a \textit{data integration module} to model and query the various data sources and sensors, a \textit{discovery algorithm} to construct queries agnostic to what the sources are themselves, a \textit{knowledge representation module} to store relationships about the various real world objects, and finally mechanisms to interact with a \textit{face verification algorithm}, which computes the confidence score of a person being present in a photo or not.
 
 \section{Pruning Search Spaces with CueNet}
 
-Automatic media annotation algorithms essentially assign one or more labels from a search space to a given input image. Figure \ref{fig:with-without-cuenet} shows the various approaches of constructing such a search space for such an algorithm. The traditional approach is shown in \ref{fig:with-without-cuenet}(a). These spaces were limited to a set of labels chosen by an expert, with no way of pruning the search space in case it got very large. The focus was instead on extracting the best features from images, to obtain high overall classification accuracy\cite{turk1991eigenfaces}.
+Automatic media annotation algorithms essentially assign one or more labels from a search space to a given input image. Figure \ref{fig:with-without-cuenet} shows the various approaches of constructing such a search space for such an algorithm. The traditional approach is shown in \ref{fig:with-without-cuenet}(a). These spaces were limited to a set of labels chosen by an expert, with no way of pruning the search space in case it got very large. 
+The focus was instead on extracting the best features from images, to obtain high overall classification accuracy\cite{turk1991eigenfaces}.
 
 \begin{figure}[t]
 \centering
@@ -13,7 +14,7 @@ Automatic media annotation algorithms essentially assign one or more labels from
 \label{fig:with-without-cuenet}
 \end{figure}
 
-With the popularity of global social networks and proliferation of mobile phones, information about people, their social connections and day-to-day activities are becoming available at a very large scale. The web provides an open platform for documenting many real world events like conferences, weather events and sports games. With such context sources, the search space construction is being delegated to one or a few sources \cite{henter2012tag, li2012fusing, naaman2005identity, o2009context,  stone2008autotagging} (figure \ref{fig:with-without-cuenet}(b)). These approaches rely on a single \textit{type} of context. For example, time and location information or social network information from Facebook to solve the face recognition problem. We refer to such a direct dependency between the search space and a data source as \textbf{static linking}. Although these systems are meritorious in their own right, they suffer from the following drawbacks: they do not employ multiple sources, and therefore the \textbf{relations} between them. By realizing that these sources are interconnected in their own way, we are able to treat the entire source topology as a network. Our intuition in this work is to navigate this network to progressively discover the search space for a given media annotation problem. Figure \ref{fig:with-without-cuenet}(c) shows how context discovery can provide substantially smaller search spaces for a set of images, which contain a large number of correct tags. A small search space with large number of true positives provides the ideal ground for a classification algorithm to exhibit superior performance.
+With the popularity of global social networks and proliferation of mobile phones, information about people, their social connections and day-to-day activities becoming available at a very large scale. The web provides an open platform for documenting many real world events like conferences, weather events and sports games. With such context sources, the search space construction is being delegated to one or a few sources \cite{henter2012tag, li2012fusing, naaman2005identity, o2009context,  stone2008autotagging} (figure \ref{fig:with-without-cuenet}(b)). These approaches rely on a single \textit{type} of context. For example, time and location information or social network information from Facebook to solve the face recognition problem. We refer to such a direct dependency between the search space and a data source as \textbf{static linking}. Although these systems are meritorious in their own right, they suffer from the following drawbacks: they do not employ multiple sources, and therefore the \textbf{relations} between them. By realizing that these sources are interconnected in their own way, we are able to treat the entire source topology as a network. Our intuition in this work is to navigate this network to progressively discover the search space for a given media annotation problem. Figure \ref{fig:with-without-cuenet}(c) shows how context discovery can provide substantially smaller search spaces for a set of images, which contain a large number of correct tags. A small search space with large number of true positives provides the ideal ground for a classification algorithm to exhibit superior performance.
 
 \textbf{The CueNet framework}, provides access to multiple data sources containing event, social, and geographical information through a unified query interface to extract information from them. CueNet encapsulates our \textbf{Context Discovery Algorithm}, which utilizes the query interface to discover the most relevant search space for a media annotation problem. To ensure a hands-on discussion, we show the use of context discovery in a real world application: face tagging in personal photos. As a case study, we will attempt to tag photos taken at conference events by different users. These photos could contain friends, colleagues, speakers giving very interesting talks, or newly found acquaintances (who are not yet connected to the user through any social network). This makes the conference photos particularly interesting because no single source can provide all the necessary information. It emphasizes the need to utilize multiple sources in a meaningful way.
 
@@ -72,7 +73,7 @@ Now, the algorithm traverses the graph to list all the possible queries it can e
 
 \begin{itemize}
 \item Does any data source contain participant information related to the photo capture event?
-\item What events is the owner (entity:ArjunSatish) participating at time, t and location, l?
+\item At time t, and location l, which events contain the owner (entity:ArjunSatish) as a participant?
 \end{itemize}
 
 The data integration system looks at the different sources and says that none of them store information about photo capture events, and skips executing the first query. But many sources describe events, and store their participants too (Google Calendar, Facebook, Conference Calendar). These query is converted to their native formats (API calls or relational database queries) and results, are sent back to the data integration module. We see that there was a calendar entry returned be the Google Calendar source, as shown in \ref{fig:stacktrace-simple-calendar}. This information is now merged with the existing context graph to produce a context graph similar to that shown in \ref{fig:stacktrace-simple-context-network}.
@@ -93,21 +94,41 @@ The data integration system looks at the different sources and says that none of
 
 Now, we have new entities related to the photo. The face verification algorithm is invoked with the new set of candidates. It must be noted that this verification problem is much easier than trying to verify out of many thousands of candidates. Once the correct entity is identified, the photo is annotated as shown in figure \ref{fig:stacktrace-simple-torsten-tagged}.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-tagged.png}
-\caption{The Conceptual Architecture of CueNet.}
-\label{fig:stacktrace-simple-torsten-tagged}
-\end{figure}
-
 One last look at the source diagram in figure \ref{fig:stacktrace-simple-all} shows which data sources revealed interesting information related to this photo. In this case, EXIF provided some relevant context on when and where the photo was taken. The owner's personal calendar provided information on what event was occurring during the time of photo capture, and who else was involved in it.
 
-\begin{figure}[h]
+
+\begin{figure}[h!]
+\begin{minipage}[b]{0.9\linewidth}
 \centering
-\includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
-\caption{Sources which provided relevant context are highlighted by green circles.}
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-tagged.png}
+\caption{Face tagged with the correct person.}
+\label{fig:stacktrace-simple-torsten-tagged}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.9\linewidth}
+\centering
+\includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
+\caption{Highlighted Sources Provided Relevant Context.}
 \label{fig:stacktrace-simple-all}
+\end{minipage}
 \end{figure}
+
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.9\textwidth]{media/chapter4/stacktrace/torsten-tagged.png}
+% \caption{The Conceptual Architecture of CueNet.}
+% \label{fig:stacktrace-simple-torsten-tagged}
+% \end{figure}
+
+
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.75\textwidth]{media/chapter4/stacktrace/time-space-calendar-selected.png}
+% \caption{Sources which provided relevant context are highlighted by green circles.}
+% \label{fig:stacktrace-simple-all}
+% \end{figure}
 
 \subsection{Complex Case}
 Now, we will consider a more complex case which requires more than just metadata and personal sources for successful tagging. The photo under consideration is shown in \ref{fig:vldb-hidden}. We will use the same set of data sources, shown again in \ref{fig:vldb-sources}.
@@ -192,7 +213,7 @@ Figure \ref{fig:vldb-network-4} shows the various attendees discovered by the al
 
 Since we have more candidates tagged in the photo, we can repeat the above procedure to discover more relation between the entites related to the photo and those who are present in the conference. This time results are returned from Gmail, and none from Facebook and Twitter (because these people had sent emails to each other during the conference, but did not connect through Facebook or Twitter). The changes in the context network are shown in \ref{fig:vldb-network-7} and \ref{fig:vldb-network-8}. Figure \ref{fig:vldb-network-3} highlights all sources which returned relevant context for this trace. 
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{minipage}[b]{0.5\linewidth}
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-network-7.png}
@@ -208,7 +229,7 @@ Since we have more candidates tagged in the photo, we can repeat the above proce
 \end{minipage}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-source-3.png}
 \caption{Sources used to tag all faces.}
@@ -225,13 +246,6 @@ Our ontologies extend the E* model\cite{gupta2011managing} to specify relationsh
 \end{aligned}
 \end{equation}
 The symbols $\sqsubset_L$ and $\sqsubset_T$ indicate spatial and temporal containment respectively. Please refer to \cite{gupta2011managing} for more details. In later sections, we refer to the location and time of the event, $\mathcal{L}_E$ and $\mathcal{T}_E$ as $E$.\textbf{occurs-at} and $E.$\textbf{occurs-during} respectively. 
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{media/exec/exec-cycle-one-line.png}
-\caption{The various stages in an iteration of algorithm \ref{alg:cx-alg}.}
-\label{fig:exec-cycle}
-\end{figure*}
 
 \section{Data Sources}
 \label{sec:data-sources}
@@ -299,15 +313,30 @@ v^I_i = v^R_r \iff (v^I_i.\text{\textbf{type-of}} = v^R_r.\text{\textbf{type-of}
 \end{equation}
 Here $v^I_i.$\textbf{Endurants} is defined as a set $\{w | w \in V^I_i \wedge w.$type-of$ = $Endurant$\}$. If equation \eqref{eq:sube-entity-containment} does not hold, we say that $v^I_i$ and $v^R_r$ co-occur.
 
+\begin{figure*}[h]
+\centering
+\includegraphics[width=\textwidth]{media/exec/exec-cycle-one-line.png}
+\caption{The various stages in an iteration of algorithm \ref{alg:cx-alg}.}
+\label{fig:exec-cycle}
+\end{figure*}
+
 \textbf{Merging Event Graphs}: Given the above conditions, we can now describe an important building block for the context discovery algorithm: the steps needed to merge two event graphs. An example for this is shown in figure \ref{fig:exec-cycle}(b-d). Given the event graph consisting of the photo capture event on the left of (b) and a meeting event $m$ and conference event $c$, containing their respective participants. In this example, the meeting event graph, $m$ is semantically equivalent to the original graph. But the conference event, $c$ is telling that the person $AG$ is also participating in a conference at the time the photo was taken. The result of merging is shown in (d). An event graph merge consists of two steps. The first is a \texttt{subevent hierarchy join}, and the second is a \texttt{prune-up} step. 
 
 Given an original graph, $O_m$, and a new graph $N_m$, the join function works as follows: All nodes in $N_m$ are checked against all nodes in $O_m$ to find identical counterparts. For entities, the identity is verified through an identifier, and for events, equation \eqref{eq:identity} is used. Because of the entity existence and participation semantics axioms, all events which contain a common participant are connected to their respective super event using the subevent relation (equations \eqref{eq:sube-st-containment} and \eqref{eq:sube-entity-containment} must be satisfied by the events). Also, if two events have no common participant, then they can be still be related with the subevent edge, if the event model says it is possible. For example, if in a conference event model, keynotes, lunches and banquets are declared as known subevents of an event. Then every keynote event, or banquet event to be merged into an event graph is made a subevent of the conference event, if the equation \eqref{eq:sube-st-containment} holds between the respective events. 
 
 It must be noted that node $AG$ occurs twice in graph (c). In order to correct this, we use the participation semantics axiom. We traverse the final event graph from the leaves to the root events, and remove every person node if it appears in a subevent. This is the \texttt{prune-up} step. Using these formalisms, we now look at the working of the context discovery algorithm. 
 
+\subsection{Context Discovery Algorithm}
+\label{sec:discovery-algorithm}
+Algorithm \ref{alg:cx-alg} below outlines the tail recursive discovery algorithm. The input to the algorithm is a photo (with EXIF tags) and an associated owner (the user). It must be noted that by seeding the graph with owner information, we bias the discovery towards his/her personal information. An event instance graph is created where each photo is modeled as a photo capture event. Each event and entity is a node in the instance graph. Each event is associated with time and space attributes. All relationships are edges in this graph. All EXIF tags are literals, related to the photo with data property edges. Figure \ref{fig:exec-cycle} graphically shows the main stages in a single iteration of the algorithm.
+
+The event graph is traversed to produce a queue of entity and event nodes, which we shall refer to as DQ (discovery queue). The algorithm consists of two primary functions: \textbf{discover} and \textbf{merge}. The discover function is tail recursive, invoking itself until a termination condition is reached (when at most $k$ tags are obtained for all faces or no new data is obtained from all data sources for all generated queries). The behavior of the query function depends on the type of the node. If the node is an event instance, the function consults the ontology to find any known sub-events, and queries data sources to find all these subevents, its properties and participants of the input event node. On the other hand, if it is an entity instance, the function issues a query to find all the events it is participating in. 
+
+Results from data source wrappers are returned in the form of event graphs. These event graphs are merged into the original event graph by taking the following steps. First, it identifies \textbf{duplicate} events using the conditions mentioned above. Second, it identifies subevent hierarchies using the graph merge conditions described above, and performs a \textbf{subevent hierarchy join}. Third, the function \textbf{prune-up} removes entities from an event when its subevent also lists it as a participant node. Fourth, \textbf{push-down} is the face verification step if the number of entities in the parents of the photo-capture events is small (less than $T$). 
+
 \restylealgo{ruled}
 \SetAlgoSkip{}
-\begin{algorithm}[h]
+\begin{algorithm}[h!]
 \dontprintsemicolon 
 \KwData{A photograph H, with a set of detected faces F. Voting threshold, T. The owner O of the photo.}
 \KwResult{For each face f $\in$ F, a set of atmost $k$ person tags.}
@@ -338,13 +367,13 @@ It must be noted that node $AG$ occurs twice in graph (c). In order to correct t
     prune\_up(\texttt{M}) \;
     if (less than \texttt{T} new candidates were discovered): \; {
     \Indp
-  	    push\_down(\texttt{M}) \;
-  	\Indm
+        push\_down(\texttt{M}) \;
+    \Indm
     } else: \; 
     \Indp
-	    vote\_and\_verify(\texttt{M}) \;
-  	\Indm
- 	return \texttt{M}; \;
+      vote\_and\_verify(\texttt{M}) \;
+    \Indm
+  return \texttt{M}; \;
   \Indm
   \} 
   
@@ -358,13 +387,7 @@ It must be noted that node $AG$ occurs twice in graph (c). In order to correct t
 \label{alg:cx-alg}
 \end{algorithm}
 
-\subsection{Context Discovery Algorithm}
-\label{sec:discovery-algorithm}
-Algorithm \ref{alg:cx-alg} below outlines the tail recursive discovery algorithm. The input to the algorithm is a photo (with EXIF tags) and an associated owner (the user). It must be noted that by seeding the graph with owner information, we bias the discovery towards his/her personal information. An event instance graph is created where each photo is modeled as a photo capture event. Each event and entity is a node in the instance graph. Each event is associated with time and space attributes. All relationships are edges in this graph. All EXIF tags are literals, related to the photo with data property edges. Figure \ref{fig:exec-cycle} graphically shows the main stages in a single iteration of the algorithm.
-
-The event graph is traversed to produce a queue of entity and event nodes, which we shall refer to as DQ (discovery queue). The algorithm consists of two primary functions: \textbf{discover} and \textbf{merge}. The discover function is tail recursive, invoking itself until a termination condition is reached (when at most $k$ tags are obtained for all faces or no new data is obtained from all data sources for all generated queries). The behavior of the query function depends on the type of the node. If the node is an event instance, the function consults the ontology to find any known sub-events, and queries data sources to find all these subevents, its properties and participants of the input event node. On the other hand, if it is an entity instance, the function issues a query to find all the events it is participating in. 
-
-Results from data source wrappers are returned in the form of event graphs. These event graphs are merged into the original event graph by taking the following steps. First, it identifies \textbf{duplicate} events using the conditions mentioned above. Second, it identifies subevent hierarchies using the graph merge conditions described above, and performs a \textbf{subevent hierarchy join}. Third, the function \textbf{prune-up} removes entities from an event when its subevent also lists it as a participant node. Fourth, \textbf{push-down} is the face verification step if the number of entities in the parents of the photo-capture events is small (less than $T$). Push down will try to verify if any of the newly discovered entities are present in the photo and if they are (if the tagging confidence is higher than the given threshold), the entities are removed from the super event, and linked to the photo capture event as its participant. On the other hand, if this number is larger than T, the algorithm initiates the \textbf{vote-and-verify} method, which ranks all the candidates based on social relationships with people already identified in the photo. For example, if a candidate is related to two persons present in the photo through some social networks, then its score is 2. Ranking is done by simply sorting the candidate list by descending order of score. The face verification runs only on the top ranked $T$ candidates. If there are still untagged faces after the termination of the algorithm, we vote over all the remaining people, and return the ranked list for each untagged face.
+Push down will try to verify if any of the newly discovered entities are present in the photo and if they are (if the tagging confidence is higher than the given threshold), the entities are removed from the super event, and linked to the photo capture event as its participant. On the other hand, if this number is larger than T, the algorithm initiates the \textbf{vote-and-verify} method, which ranks all the candidates based on social relationships with people already identified in the photo. For example, if a candidate is related to two persons present in the photo through some social networks, then its score is 2. Ranking is done by simply sorting the candidate list by descending order of score. The face verification runs only on the top ranked $T$ candidates. If there are still untagged faces after the termination of the algorithm, we vote over all the remaining people, and return the ranked list for each untagged face.
 
 Figure \ref{fig:exec-cycle} shows the various stages in the algorithm graphically. (a) shows an example event graph describing a photo taken at a meeting. The meeting consists of three participants AG, SR and AS. The photo contains SR and AS. (b) shows two events returned from the data sources. One is a meeting event which is semantically identical to the input. The other is a conference event with AG. (c) shows the result of merging these graphs. (d) The \texttt{prune-up} function removes the duplicate reference to AG. \underline{A live visualization of these steps for different photos can be found at \href{http://cuenet.site44.com/}{http://cuenet.site44.com}}.
 
@@ -516,7 +539,7 @@ When a tag request is initiated, a message is passed to the candidate manager, w
 \label{fig:web-stack}
 \end{figure}
 
-The web interface to the system is shown in figure \ref{fig:web-stack}. This stack is essential in aggregating data from various sources, and is instrumental in dealing with their intricacies related to authentication, API requests and data formatting. Sources like Facebook and Google have rigid authentication mechanisms which need to be bypassed before any personal data can be accessed. Obtaining user permission needs to be done via a web client for Google APIs, whereas Facebook requires a valid session key from a user. These small details prompted us to implement the data aggregations using Javascript APIs which are served using an asynchronous web server based on node.js. The asynchronous nature of the server allows to implement client which execute a large number of HTTP callbacks without worrying about multi-threading issues -- a design decision which is becoming increasingly popular for web architecture. Once the data has been aggregated at the client, it is passed back to the server which pushes it to specific process which can deal with processing it. For example, email information is sent to an independent Python process which initiates the IMAP protocol on the user's message server to aggregate emails. The Facebook events, social network, photo tag and Google calendar information is sent to a script which loads them into appropriate mongodb collections. Unstructured data like conference webpages are sent to a process which initiates the SNER over them to aggregate entities. These entities are stored in appropriate collections. The server communicates through these processes using REDIS, an in memory cache/database which supports PubSub channels. Multiple channels are created, one for each \textit{type} of data source. Any process can listen to it, obtain the data, process it of its own accord.
+The web interface to the system is shown in figure \ref{fig:web-stack}. This stack is essential in aggregating data from various sources, and is instrumental in dealing with their intricacies related to authentication, API requests and data formatting. Sources like Facebook and Google have rigid authentication mechanisms which need to be bypassed before any personal data can be accessed. Obtaining user permission needs to be done via a web client for Google APIs, whereas Facebook requires a valid session key from a user. These small details prompted us to implement the data aggregations using Javascript APIs which are served using an asynchronous web server based on node.js. The asynchronous nature of the server allows to develop web clients which execute a large number of HTTP callbacks without worrying about multi-threading issues -- a design decision which is becoming increasingly popular for web architecture. Once the data has been aggregated at the client, it is passed back to the server which pushes it to specific process which can deal with processing it. For example, email information is sent to an independent Python process which initiates the IMAP protocol on the user's message server to aggregate emails. The Facebook events, social network, photo tag and Google calendar information is sent to a script which loads them into appropriate mongodb collections. Unstructured data like conference webpages are sent to a process which initiates the SNER over them to aggregate entities. These entities are stored in appropriate collections. The server communicates through these processes using REDIS, an in memory cache/database which supports PubSub channels. Multiple channels are created, one for each \textit{type} of data source. Any process can listen to it, obtain the data, process it of its own accord.
 
 \begin{figure}[h]
 \centering
