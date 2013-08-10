@@ -6,11 +6,35 @@ In this chapter, we will attempt to address this problem of boosting the perform
 
 \section{Intuition}
 
-Consider a user, who own 10 datasets of photos taken at different events. If we have context networks developed for the first 9 datasets, how can we utilize them to annotate the last dataset? Especially, in the light of partial information (for example, we know some participants of the 10th dataset or we know a few events that were occurring during the photo-capture which some of the participants were part of).
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.65\textwidth]{media/chapter6/intuition-time-example.png}
+\caption{Propagating values through temporal relations.}
+\label{fig:time-example}
+\end{figure}
+
+Consider the very simple context networks shown in figure \ref{fig:time-example}. Each network contains an event, and they have a set of participants. Lets assume that all events \texttt{E1} - \texttt{E6} are of the same type, and occurred at the same location. But as shown in the figure the time of occurrence varies. Lets say that the hit ratio for tagging \texttt{E1} - \texttt{E5} is 100\%. But \texttt{E6} has a few untagged faces, and no more data source is able to provide additional context. The context discovery algorithm has a basic ranking algorithm which looks all social networks (temporal or not), and ranks entities based on whether they have any relations with its participants (in this case, \texttt{P6}). In this case, we could find that \texttt{P6} has participated with \texttt{P5} and \texttt{P4} in event \texttt{E5}. The voting algorithm stops if \texttt{P5} and \texttt{P4} are not found in the \texttt{E6}'s photo. But looking at all the networks, it makes sense to say that since these are all events of the same type, we could say that \texttt{P2}, \texttt{P3} and \texttt{P4} have participated in this same event a few months before \texttt{E6}'s occurrence, and therefore it is possible that \texttt{P2} and \texttt{P3} also participating in \texttt{E6}. With the same idea, we can also \texttt{P2} and \texttt{P1} participated in the same event many years, and therefore is a very low but non-zero chance that \texttt{P1} is present in the photo.
+
+Similarly, look at figure \ref{fig:location-example} where the context networks are exactly as before, but the types of events now vary. We show the type of the event above the event nodes. Their timestamps and location properties are exactly as before. Here, can we exploit some ontological properties about event similarities to propagate scores. If we know that \texttt{L1} is a \texttt{conference}, \texttt{L2} is a \texttt{music-event} and \texttt{L3} is a party, then can we say that \texttt{L2} events are more likely to contain the untagged person than the \texttt{conference} events. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.65\textwidth]{media/chapter6/intuition-location-example.png}
+\caption{Propagating values through ontological event relations.}
+\label{fig:location-example}
+\end{figure}
+
+Similarly, we can use social and spatial relationships to propagate rank scores to more individuals than just making a single hop as in the context discovery algorithm to reach a wider set of candidates.
+
+\subsection{Rank Propagation}
+
+The rank propagation technique is used to rank nodes in a directed graph. Most commonly seen versions are the HITS algorithm invented by Jon Kleinberg \cite{kleinberg1999authoritative} and the PageRank algorithm developed by Larry Page and Sergey Brin \cite{page1999pagerank}. The idea in the latter is to assign a set of initial values to a subset of nodes, and propagate a fraction of these values to their neighbours. Each iteration of the algorithm propagates their scores to the neighbouring nodes until the overall ordering of the nodes, according to their scores, does not change. In practice, a few iterations ($\leq$ 10) on web scale graphs is sufficient.
+
+In this chapter, we will modify the rank propagation technique to rank entities on a given set of context networks, to determine who might be participating in a new events. We will initialize scores of the nodes on the basis of what is known about the new event -- its type, the participating entities, and propagate the scores based on a set of propagation functions which we will introduce later. Since the basic propagation algorithm is an expensive one, we will look at some ways to reduce the size of the context networks, so the algorithm converges quickly, and still provides useful results.
 
 \section{Preliminaries}
 
-\section{Event Rank}
+\section{Rank Propagation in Context Networks}
 
 \subsection{Propagation Functions}
 
