@@ -2,15 +2,6 @@
 
 The existing definitions of the word context are usually tied to the applications they are supporting. In the photo tagging problem, photos can be taken in a variety of situations, and appropriate context can be obtained from a multitude of data sources. Existing definitions of context do not provide enough clues as to what context is relevant when many data sources are present. Should we consider all available objects and relations across time? Or, does context consist of co-occurring events only? Or, the entities in a social network? Or, a combination of both? In this chapter, we look deeper into these definitions, and extract a relation-centric perspective of contextual information. This perspective will equip us to associate all relevant objects, irrespective of their type, as context, and at the same time, provide a reasoning framework to evaluate which source is beneficial and which is not.
 
-Before looking at the different views on context, its advisable to distinguish between `objects' and `entities'. We use the word `Object' to collectively refer to events and entities. The term `object' has been used in literature to refer to things which have no temporal properties. But, in our discussion, an `object' could imply an event which exhibits temporal properties. An entity includes persons, places or organizations present in the world which do not temporal descriptors for their unique representation, for example `Starbucks, UC Irvine', `The Eiffel Tower, Paris, France', or organizations, for example `Google Inc', `Royal Society of London'. Effectively, they are objects which do not need temporal descriptors. Events, on the other hand, are objects which rely on temporal attributes.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.6\textwidth]{media/chapter1/terminology.png}
-\caption{Objects, Events and Entities.}
-\label{fig:terminology}
-\end{figure}
-
 Our justification for the use of context in a personal face tagging application begins with the assumption: \textit{For a given user, the correctness of face tags for a photograph containing people she has never met is undefined}. This observation prepares us to understand what context is, and how contextual reasoning assists in tagging photos. The description of any problem domain requires a set of abstract data types, and a model of how these types are related to each other. We define contextual types as those which are semantically different from these data types, but can be directly or indirectly related to them via an extended model which encapsulates the original one. Contextual reasoning assists in the following two ways. \textbf{First}, contextual data restricts the number of people who might appear in the photographs. We can also argue that all the personal data of a user (her profile on Facebook, LinkedIn, email exchanges, phone call logs) provides a reasonable estimate of all these people who might appear in her photos. \textbf{Second}, by reasoning on abstractions in the contextual domain, we can infer conclusions on the original problem. We exploit this property to develop our algorithm in the later sections. Though context based search space pruning can be applied to a variety of recognition problems, we focus on tagging people in personal photos for concreteness, where, the image and person tag form the abstractions in the problem domain, and events and event based relations constitute the contextual domain. 
 
 \section{Previous Definitons}
@@ -55,6 +46,17 @@ More recently, Vaninha Vieira et al.\ \cite{vieira2011designing} uses a rule cen
 
 The common ground behind these definitions is their object centric view of context. Context is largely a set of objects that ``surrounds'' a primary object (whose context is in question). This view is insufficient while addressing applications which are very broad in scope, the photo tagging application for example, where users can take photos in very diverse environment, and a large number of sensors and sources of context exist. Specifically, it is non-trivial to identify which subset of available data qualifies to be relevant context for the given photo, and which is not. The two examples from chapter 1, are shown in figures \ref{fig:naaman-icmr} and \ref{fig:example-kasturi-show}. In order to tag the photo on the left, we exclusively used conference calendar information. Whereas, to tag the photo on the right, we used personal information. Our motivation in this chapter is to extend the above definitions of context to allow context aware systems to better extract relevant context from these various sources.
 
+We define context of a given object at a particular time as \textbf{``the real world information which can be \uline{related to the object directly or indirectly} through a known set of relationships''}. Figure \ref{fig:cn-def} is an extension of \ref{fig:va-def} by making explicit the relations between various objects in the application ecosystem. Here, objects contained within two data sources can be related to each other. For example, an object in DS 9 can be related to another in DS 10 with the \texttt{related-to} edge. The primary object can be related to an object in DS 2 with an \texttt{occurs-at} relationship at time $t_1$. Whereas at time $t_2$, the relationship with DS 2 does not exist, but a new relationship \texttt{occurs-during} surfaces with DS 11.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{media/chapter2/cn.png}
+\caption{Utilizing relations to define context for the primary object.}
+\label{fig:cn-def}
+\end{figure}
+
+Relationships can be of different types. They can be simple labels like \texttt{friend-of} signifying a social relationship. Or they can more actionable like \texttt{located-at}, which relates a person to a particular location, and therefore causes a particular audio stream to play through the handheld device. This relation is not just a label, it imposes constraints on the properties of objects which it relates. Here, the spatial attributes of the the person and the exhibit must match if they are being related through a \texttt{located-at} attribute. In this dissertation, we will see that such relations, which impose such property constraints are critical in algorithmically determining which information is relevant context. Let us also assume that we have available to us the four types of data sources: event sources, place databases (like yelp.com), weather information sources and social networking information.
+
 \begin{figure}[t]
 \begin{minipage}[b]{0.48\linewidth}
 \centering
@@ -70,17 +72,6 @@ The common ground behind these definitions is their object centric view of conte
 \label{fig:example-kasturi-show}
 \end{minipage}
 \end{figure}
-
-We define context of a given object at a particular time as \textbf{``the real world information which can be \uline{related to the object directly or indirectly} through a known set of relationships''}. Figure \ref{fig:cn-def} is an extension of \ref{fig:va-def} by making explicit the relations between various objects in the application ecosystem. Here, objects contained within two data sources can be related to each other. For example, an object in DS 9 can be related to another in DS 10 with the \texttt{related-to} edge. The primary object can be related to an object in DS 2 with an \texttt{occurs-at} relationship at time $t_1$. Whereas at time $t_2$, the relationship with DS 2 does not exist, but a new relationship \texttt{occurs-during} surfaces with DS 11.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{media/chapter2/cn.png}
-\caption{Utilizing relations to define context for the primary object.}
-\label{fig:cn-def}
-\end{figure}
-
-Relationships can be of different types. They can be simple labels like \texttt{friend-of} signifying a social relationship. Or they can more actionable like \texttt{located-at}, which relates a person to a particular location, and therefore causes a particular audio stream to play through the handheld device. This relation is not just a label, it imposes constraints on the properties of objects which it relates. Here, the spatial attributes of the the person and the exhibit must match if they are being related through a \texttt{located-at} attribute. In this dissertation, we will see that such relations, which impose such property constraints are critical in algorithmically determining which information is relevant context. Let us also assume that we have available to us the four types of data sources: event sources, place databases (like yelp.com), weather information sources and social networking information.
 
 Using this relation centric view, we now look at how the examples from chapter 1 can be formulated in a systematic process to discover context. A system to discover context must establish a set of relationships its context objects can be connected with. For the two photos, we choose \textbf{participant-of}, which indicates that an entity is a participant in an event, and \textbf{subevent-of} which indicates that an event is occurring within another super-event. Thus, any entity can be related to other events through a \texttt{participant-of} edge, and events can be related to others events as well as entities through \texttt{subevent-of} and the \texttt{participant-of} edge respectively.
 
