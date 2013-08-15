@@ -76,14 +76,35 @@ For our application of face tagging, computing similar similarities across time,
 
 \subsection{Propagation Functions}
 
-In this section we introduce the propagation functions used in our work to order events for the face tagging application.
+In this section we introduce the propagation functions used in our work to rank events for the face tagging application.
 
 \begin{itemize}
-\item \textbf{Temporal Propagation}:
-\item \textbf{Spatial Propagation}:
-\item \textbf{Type Propagation}:
-\item \textbf{Object Propagation}:
-\item \textbf{Structural Propagation}:
+\item \textbf{Temporal Propagation}: The temporal propagation function $P_t (u, w)$ propagates a fraction of the score of node $u$ to $w$ proportional to the difference between \texttt{u.duration} and \texttt{v.duration}. The transfer function can be modeled using uniform gaussian or zipf distributions. The advantage with such distributions is to model high transfer of scores who occur nearby in the temporal dimension, and ignoring those which happened too far away. The distribution parameters will be constant and set by the designer.
+
+\item \textbf{Spatial Propagation}: Similar to the temporal propagation function, this takes into consider the spatial attributes of an event while transferring scores.
+
+\item \textbf{Type Propagation}: The class of the event instance is taken into consideration to compare two events. We use the concept of ontological distance to compute the type propagation score transfer. We extend the concept of \texttt{Is-A} distance given in \cite{ranwez2006ontological}. For given a subsumption hierarchy, $a$ is an ancestor of $b$ iff there is a path between $a$ and $b$. The set of concepts having a as ancestor is denoted by $desc(a)$, while its ancestors are denoted as $ansc(a)$. The set of exclusive ancestors (if a node is an ancestor of exactly one of the two nodes) of $a$ and $b$ is denoted by $exAnsc(a, b)$. The subsumption ontological distance is defined as:
+
+$d_{IS}(a, b) = |desc(exAnsc(a, b) \cup desc(a) \cup desc(b) - desc(a) \cap desc(b)|$.
+
+Events also exhibit subevent relationships. Two events could have very common subevents, but might have significant subsumption distance. In this case, we want to reduce this distance. We introduce the subevent distance as the number of common subevents as the number of common descendant in the subevent hierarchy of the ontology. For a node $a$, $subdesc(a)$ is the set of all $a$'s subevents and their transitive descendants.
+
+$d_{SE}(a, b) = |subdesc(a) \cap subdesc(b)|$
+
+Our ontology distance is the sum of subsumption distance and the subevent distance. This number can be normalized with the number of perdurant classes present in the ontology.
+
+$d(a, b) = D_{IS}(a, b) + D_{SE}(a, b)$
+
+\item \textbf{Object Propagation}: If two events have the same set of participating objects, then the score transfered through object propagation is very high. If they have no common objects, then this transfer would be 0. We use Jacquard index to compute this ratio. For two sets of objects $A$ and $B$, the jacquard index is computed as:
+\begin{equation}
+J(A, B) = \frac{A \cap B}{A \cup B} \nonumber
+\end{equation}
+
+\item \textbf{Structural Propagation}: The last propagation function we use is the propagation from an event to its instance subevents. Here we use a function which is similar to the one used in pagerank while computing the transfer from a graph node through an outgoing edge. If event $B$ is a subevent of $A$ (we can use the web graph as an analogy where the subevent edge is an outgoing edge from $A$ to $B$), and $A$ has $n$ subevents, then the propagation ratio from $A$ to $B$ is $1/n$.
+
 \end{itemize}
 
+We could create additional functions which are combinations of these functions. For example, if an event $A$ occurred a long before $B$, and it has common entities, then the object similarity could be weighed based on the spatio-temporal proximity of the two events. In this work, we do not consider such cases.
+
 \section{Experiments}
+We investigate the convergence behavior of our propagation algorithm, and evaluate the performance of the propagation algorithm on one of our datasets from chapter 5 in the absence of some context.
