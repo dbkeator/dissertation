@@ -34,8 +34,54 @@ In this chapter, we will modify the rank propagation technique to rank entities 
 
 \section{Preliminaries}
 
+Let us first take a look at how rank propagation works in simple directed graphs. The Pagerank \cite{page1999pagerank} algorithm, designed to rank large web graphs is an extension of this idea. The intuition behind Pagerank is known as the random surfer model. The rank propagation models the behavior of a random web surfer who follows a few links and then gets bored and jumps to a random part of the web graph. The final scores of the ranking algorithm converge to teh probabilities of such a surfer sees a particular page, while traversing the web in this fashion. Consider the graph in figure \ref{fig:pr-graph-example} \footnote{This example is adapted from Wikipedia (http://en.wikipedia.org/wiki/PageRank)}. Let the initial scores of all nodes be 0.25. In the first iteration of the algorithm, the score of node A would be computed as follows. Since A has three incoming edges from nodes B, C and D, each of these nodes would transfer a portion of their score to A. Since B has two outgoing edges, it transfers half of it scores through each of them, C transfers all of its score to A and D transfers one-third of its score to A. At the completion of this iteration, page A has a score of $PR(B)/2 + PR(C) + PR(D)/3 = 0.458$. In this fashion, the scores for all the nodes are computed in each iteration, until the scores converge.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.65\textwidth]{media/chapter6/pr-example-graph.png}
+\caption{Example graph to demonstrate the original Pagerank algorithm.}
+\label{fig:pr-graph-example}
+\end{figure}
+
+The model introduced by Page and Brin also included a damping factor. Extending the random surfer analogy, this damping factor corresponds to the probability that the surfer stops clicks. At every page the surfer visits, there is a non-zero probability that he will stop surfing. Taking this consideration, the above equation to compute the new pagerank of node A becomes $d(PR(B)/2 + PR(C) + PR(D)/3) = 0.41225$, for d = 0.85. 
+
+
+\restylealgo{ruled}
+\SetAlgoSkip{}
+\begin{algorithm}[h!]
+\dontprintsemicolon 
+\Begin{
+  
+$R_0$ $\leftarrow$ S  \\
+\textbf{loop}: \\
+\Indp
+  $R_{i+1}$ $\leftarrow$ $AR_i$ \\
+  d $\leftarrow$ $||R_i||_1$ - $||R_{i+1}||_1$ \\  
+  $R_{i+1}$ $\leftarrow$ $||R_i||_1$ + dE \\
+  $\delta$ $\leftarrow$ $||R_{i+1} - R_i||_1$ \\
+\Indm
+\textbf{while $\delta$ $>$ $\epsilon$}
+}
+\caption{Original Pagerank Algorithm}
+\label{alg:pr-alg}
+\end{algorithm}
+
+Mathematically, the pagerank algorithm is expressed as shown in algorithm \ref{alg:pr-alg}. R is a vector over all the nodes in the graph. A is an adjacency matrix where each cell measures is the reciprocal of outgoing edge count. If $u$ and $v$ are two nodes, and there are $N_u$ outgoing edges from $u$ and one of them ends in $v$, then $A(u, v) = 1/N_u$. The expression $||R||_1$ is the L1 or Manhattan norm of a vector $R$, which is computed as $\sum_{\forall i} |R_i|$. The vector $S$ is the initial score assigned to the nodes. On a large scale, pagerank scores are computed using the MapReduce framework \cite{dean2008mapreduce}.
+
 \section{Rank Propagation in Context Networks}
 
+main reason to do this: ranking heterogenous content across different axis.
+
+what are you doing: computing similar kinds of event occurrences on the basis or time, space, type and entity similarities.
+
 \subsection{Propagation Functions}
+
+\begin{itemize}
+\item \textbf{Temporal Propagation}:
+\item \textbf{Spatial Propagation}:
+\item \textbf{Type Propagation}:
+\item \textbf{Object Propagation}:
+\item \textbf{Structural Propagation}:
+\end{itemize}
 
 \section{Experiments}
