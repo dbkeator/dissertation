@@ -107,11 +107,44 @@ J(A, B) = \frac{A \cap B}{A \cup B} \nonumber
 We could create additional functions which are combinations of these functions. For example, if an event $A$ occurred a long before $B$, and it has common entities, then the object similarity could be weighed based on the spatio-temporal proximity of the two events. In this work, we do not consider such cases.
 
 \section{Experiments}
-We investigate the convergence behavior of our propagation algorithm, and evaluate the performance of the propagation algorithm on one of our datasets from chapter 5 in the absence of some context.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.85\textwidth]{media/chapter6/convergences.png}
-\caption{Varying values of decay factor.}
+\caption{Rate of convergence of the propagation algorithm for varying values of $d$.}
 \label{fig:convergences}
+\end{figure}
+
+We investigate the convergence behavior of our propagation algorithm. To simulate this experiment, we use the generative model described in section \ref{section:generative_models}. We generate an ontology using the following steps: A random number of entities are chosen, and a subsumption hierarchy is created (similar to the one shown in \ref{fig:sample-ontology}) a fraction of the events are assigned a subevent hierarchy, which uses the step described in section \ref{section:generative_models}. For this experiment we restrict the depth of the subevent hierarchy to be 2, and each event class has atmost 3 subevents. Events are instantiated randomly. We generate 1000 events for this experiment. It must be noted that this is a fairly large number as we are propagating scores for each event to all the others one due to temporal and spatial propagations. Thus, for 1000 events, we expect a million propagations per iteration. We use a linear transfer function for spatial and 
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{media/chapter6/sample-ontology.png}
+\caption{Example of a subsumption hierarchy created as part of the ontology generation process.}
+\label{fig:sample-ontology}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
+  \hline
+  \texttt{A} & \texttt{B} & \texttt{C} & \texttt{D} & \texttt{E} & \texttt{F} & \texttt{G} & \texttt{H} & \texttt{I} & \texttt{J} \\
+  \hline
+    0  &  6  &  9  &  2  &  7  &  1  &  7  &  7  &  5  &  5 \\
+    6  &  0  &  9  &  6  &  7  &  6  &  5  &  7  &  5  &  7 \\
+    9  &  9  &  0  &  7  &  9  &  8  &  8  &  9  &  5  &  6 \\
+    2  &  6  &  7  &  0  &  7  &  1  &  7  &  7  &  3  &  3 \\
+    7  &  7  &  9  &  7  &  0  &  7  &  3  &  2  &  6  &  5 \\
+    1  &  6  &  8  &  1  &  7  &  0  &  7  &  7  &  4  &  4 \\
+    7  &  5  &  8  &  7  &  3  &  7  &  0  &  3  &  5  &  6 \\
+    7  &  7  &  9  &  7  &  2  &  7  &  3  &  0  &  6  &  5 \\
+    5  &  5  &  5  &  3  &  6  &  4  &  5  &  6  &  0  &  3 \\
+    5  &  7  &  6  &  3  &  5  &  4  &  6  &  5  &  3  &  0 \\
+  \hline
+\end{tabular}
+\caption{The \texttt{is-A} distance between classes in figure \ref{fig:sample-ontology}.}
+\label{tbl:semantic-distance}
+
+\end{minipage}
 \end{figure}
