@@ -109,15 +109,6 @@ We could create additional functions which are combinations of these functions. 
 \section{Experiments}
 
 \begin{figure}[t]
-\centering
-\includegraphics[width=0.85\textwidth]{media/chapter6/convergences.png}
-\caption{Rate of convergence of the propagation algorithm for varying values of $d$.}
-\label{fig:convergences}
-\end{figure}
-
-We investigate the convergence behavior of our propagation algorithm. To simulate this experiment, we use the generative model described in section \ref{section:generative_models}. We generate an ontology using the following steps: A random number of entities are chosen, and a subsumption hierarchy is created (similar to the one shown in \ref{fig:sample-ontology}) a fraction of the events are assigned a subevent hierarchy, which uses the step described in section \ref{section:generative_models}. For this experiment we restrict the depth of the subevent hierarchy to be 2, and each event class has atmost 3 subevents. Events are instantiated randomly. We generate 1000 events for this experiment. It must be noted that this is a fairly large number as we are propagating scores for each event to all the others one due to temporal and spatial propagations. Thus, for 1000 events, we expect a million propagations per iteration. We use a linear transfer function for spatial and 
-
-\begin{figure}[ht]
 \begin{minipage}[b]{0.5\linewidth}
 \centering
 \includegraphics[width=0.7\textwidth]{media/chapter6/sample-ontology.png}
@@ -145,6 +136,24 @@ We investigate the convergence behavior of our propagation algorithm. To simulat
 \end{tabular}
 \caption{The \texttt{is-A} distance between classes in figure \ref{fig:sample-ontology}.}
 \label{tbl:semantic-distance}
-
 \end{minipage}
 \end{figure}
+
+We investigate the convergence behavior of our propagation algorithm. To simulate this experiment, we use the generative model described in section \ref{section:generative_models}. We generate an ontology using the following steps: A random number of entities are chosen, and a subsumption hierarchy is created (similar to the one shown in \ref{fig:sample-ontology}) a fraction of the events are assigned a subevent hierarchy, which uses the step described in section \ref{section:generative_models}. For this experiment we restrict the depth of the subevent hierarchy to be 2, and each event class has atmost 3 subevents. Events are instantiated randomly. We generate 1000 events for this experiment. It must be noted that this is a fairly large number as we are propagating scores for each event to all the others one due to temporal and spatial propagations. Thus, for 1000 events, we expect a million propagations per iteration. We use a linear distribution for spatial and temporal propagation functions. For the temporal function, this means that the propagation decreases linearly until 5\% of the total timespan of the events, at which point it becomes 0. Similarly spatial propagation decreases 10\% of the maximum distance between two event instances in the dataset (these percentages were arbitrarily chosen).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{media/chapter6/convergences.png}
+\caption{Rate of convergence of the propagation algorithm for varying values of $d$.}
+\label{fig:convergences}
+\end{figure}
+
+Figure \ref{fig:convergences} plots the L1 norm in the rank vector for different values of the decay factor per iteration. For a higher value of the decay factor, $d$, we see a faster convergence rate. It must be noted that for this convergence is achieved within a few iterations. We also plot the rate of convergence for datasets with different number of instances. In figure \ref{fig:convergences-inreasing-nodes}, we plot the decreasing value of $\delta$ on a log scale for two datasets, one containing 1000 nodes, and the other with 1500 nodes. The plot shows the increasing number of iterations for larger datasets to converge to the same value.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{media/chapter6/convergence-with-node-change.png}
+\caption{Rate of convergence with increasing number of instances, for $d$ = 0.85.}
+\label{fig:convergences-inreasing-nodes}
+\end{figure}
+
