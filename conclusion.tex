@@ -1,8 +1,7 @@
 \chapter{Future Work and Conclusion}
 
-In this dissertation, we presented a context based technique to prune the search space for the entity identification problem in multimedia objects, specifically personal photos. We used a relation centric perspective of contextual information to progressively discover context which is relevant to a given photo. In the cases where only partial context is available, we saw how propagation techniques can help us order persons by propagating context from nearby photos and other events.
+With the number of data sources and sensors networks increasing in the world, context discovery has a very exciting and promising future. More importantly, with the increase in sources, it will become extremely important to be selective about what information to consider context and what not. In this dissertation, we presented a context based technique to prune the search space for the entity identification problem in multimedia objects, specifically personal photos. We used a relation centric perspective of contextual information to progressively discover context which is relevant to a given photo. In the cases where only partial context is available, we saw how propagation techniques can help us order persons by propagating context from nearby photos and other events.
 
-With the number of data sources and sensors networks increasing in the world. Context discovery has a very exciting and promising future. More importantly, with the increase in sources, it will become extremely important to be selective about what information to consider context and what not. 
 
 \section{Future Work}
 The techniques described in this dissertation present a number of future opportunities. Here we list some of the open problems faced by context discovery techniques in general and some extensions to the algorithms described in the previous chapters. 
@@ -19,14 +18,17 @@ The techniques described in this dissertation present a number of future opportu
 \end{enumerate}
 
 \section{Applications}
-Besides identifying entities in multimedia objects, CueNet can be utilized in a variety of other applications.
+Besides identifying entities in multimedia objects, CueNet can be utilized in a variety of other applications. We identify some of the brave new world applications, and describe them below:
 
-\subsection{Contextual Narratives}
+\begin{enumerate}
+  \item \textbf{Contextual Narratives}: Multimodal stories are rich in context. Almost all social networks and public news feeds are overloaded with noise. There is so much content, and so little context, that the situation demands active attention from users to sift through the data to put information into context. With context discovery, models about real world events and heterogeneous information about entities from various sources can be combined and summarized to produce coarse or fine grained narratives about important public or personal events. Of course, there is sometimes no better substitute than adding a narrator in the loop to improve the final quality of such stories. In such a case, context discovery will have to be modified to symbiotically work with humans for better results.
 
-\subsection{Disease Identification}
+  \item \textbf{Disease Identification}: Studying the symptoms of a patient and coming up with a medical diagnosis is a very hard problem. Given the increasing number of medical sensors and personal health applications, it is becoming increasingly easy to construct a `full body scan kit right at home'. With large amounts of computational power becoming available, and using the large number of tests available from their literature, a version of CueNet can be tailor made to diagnose people who are showing signs of weakening health. Instead of verifying faces, this system would be conducting specific medical tests (such as blood sugar sampling, WBC count or temperature check) in conjunction with analyzing with what the person ate, where he traveled or with whom he spent time (and if any of these people had shown such symptoms). Progressively, the system will discover which parts of the body are infected, and proceed to raise appropriate warning, along with presenting detailed reports on the infection's origin, expected symptoms over the next few days and preventive measures.
 
-\subsection{Situation-Based Resource Allocation}
+  \item \textbf{Situation-Based Advertising}: Advertising on the web is largely driven by content on the web or textual results from search engines. Thus, many people see ads which are irrelevant at that time. But with context discovery, context networks can be matched for specific patterns which can lead to more precise ``needed-at-that-time" pattern. For example, suppose a person comes to know that a friend met with a skateboarding accident and is at the nearby hospital. The system can check this friend's wishlist on Amazon and find that it contains the new album by some of his favorite bands, which is available on a shop which is halfway between the friend and the person. The system can also check if any of these shops have signed copies of the records making the gift more meaningful.
 
+
+\end{enumerate}
 
 \section{Known Issues}
 In this section, we list some of the issues encountered in designing and building CueNet. Some of these are active areas of research, and whereas others are specific to our framework, and can be considered potential areas of research. Our experience with CueNet indicates that the following issues should be approached in a holistic manner, i.e., in conjunction with each other. Approaching these problems in the context of each other reduces the individual complexity of each sub-problem by possibly increasing the complexity of the entire framework, but making the problem more tractable.
@@ -53,7 +55,8 @@ An exhaustive scientific characterization of noise in social media is beyond the
 
 \textbf{\textbf{Open Datasets}}: The unavailability of a large public data set over which different techniques can be evaluated against each other is an open problem. As seen in our experiments, personal information is vital to contextual approaches, and this data is largely personal, and therefore cannot be shared openly. Optimal anonymization techniques need be to invented such that the privacy of the experiment participants are maintained, and at the same time the data is meaningful to be applied in contextual approaches to problems. This need to be solved so that new context discovery techniques can be evaluated independently and against each other, over a common platform.
 
-In short, we have introduced the challenging problem of context discovery. Which becomes harder when considering scaling issues. Which becomes even harder when considering domains more detailed and complex than face tagging in photos. But a problem which is inevitable, and must be tackled to improve many aspects of human society and push it to the next frontiers. To put it in words which every science fiction geek has heard before:
+In short, we have introduced the challenging, yet fascinating, problem of context discovery. Which becomes harder when considering scaling issues. Which becomes even harder when considering domains which are more detailed and complex than face tagging in photos. But a problem which is inevitable, and must be tackled to improve many aspects of human society and push it to the next frontiers. To put it in words which every science fiction geek has heard before:
 
 \centering
-To boldly go where no man has ever gone before.
+To boldly go where no man has ever gone before \\
+\setlength{\parindent}{8cm} \texttt{ Star Trek (1966 - ) } 
