@@ -1,27 +1,49 @@
 \chapter{Future Work and Conclusion}
 
-summarize dissertation
+In this dissertation, we presented a context based technique to prune the search space for the entity identification problem in multimedia objects, specifically personal photos. We used a relation centric perspective of contextual information to progressively discover context which is relevant to a given photo. In the cases where only partial context is available, we saw how propagation techniques can help us order persons by propagating context from nearby photos and other events.
 
-new applications: storytelling + (ones in chapter 1)
+With the number of data sources and sensors networks increasing in the world. Context discovery has a very exciting and promising future. More importantly, with the increase in sources, it will become extremely important to be selective about what information to consider context and what not. 
+
+\section{Future Work}
+The techniques described in this dissertation present a number of future opportunities. Here we list some of the open problems faced by context discovery techniques in general and some extensions to the algorithms described in the previous chapters. 
+
+\begin{enumerate}
+  \item The notion of relevance in context is currently specific to our application. Creating a generic notion, backed by mathematical infrastructure is an open problem. Since we are relating propagation techniques to context discovery, it might be possible to extend and relate some of the theoretical literature developed for random walks in graphs to events and time based context discovery. Any formulation of bounds in the sizes or growth rates of context network would result in very important implications of future algorithms.
+
+  \item All the data structures and algorithms described in the previous chapters cater to tagging few number of photos at a time. Performing the same work on a very large scale (billions of photos), is an open problem. It is also not clear if existing large scale computational infrastructures like Map Reduce or Pregel are an efficient foundation to perform context discovery.
+
+  \item In our work, we assume the correctness of context obtained from different sources. In the real world, this might not be so. Some context might be fake or some might just be incorrect. In order to deal with such cases, backtracking to a previously constructed accurate context network might become an important step in the discovery process. What data structures allow such an operation (in our case, we have no way of saying which nodes were merged in which previous stage) correctly, efficiently and in a scalable manner is not known.
+
+  \item The real world is very complicated. There are many entities which can influence each other, and in many different ways. Specifying real world knowledge has been one of the hardest problem faced by computer scientists for decades. OWL ontologies although meritorious in their own right, were designed to solve the data integration problem. It is cumbersome to describe many aspects of the real world knowledge using OWL, some of which is contradicting and contains exceptions. For example consider the piece of knowledge: bacteria \textit{Bacillus Subtilis} is a catalyst to rock weathering. So large quantities of this bacteria can lead to severe rock weathering, which is usually accompanied by carbon dioxide consumption. By reducing carbon dioxide in the atmosphere can lead to reduction in overall temperature. The bacteria can only exist in parts of the world with favorable weather (an assertion on atmospheric temperature value). Notice the cycle of causation here. It is non trivial to model and reason with such knowledge which is very common in many domains and is crucial for this technology to be improved or engineered before advancing CueNet to such domains.
+
+\end{enumerate}
+
+\section{Applications}
+Besides identifying entities in multimedia objects, CueNet can be utilized in a variety of other applications.
+
+\subsection{Contextual Narratives}
+
+\subsection{Disease Identification}
+
+\subsection{Situation-Based Resource Allocation}
+
 
 \section{Known Issues}
 In this section, we list some of the issues encountered in designing and building CueNet. Some of these are active areas of research, and whereas others are specific to our framework, and can be considered potential areas of research. Our experience with CueNet indicates that the following issues should be approached in a holistic manner, i.e., in conjunction with each other. Approaching these problems in the context of each other reduces the individual complexity of each sub-problem by possibly increasing the complexity of the entire framework, but making the problem more tractable.
 
-\textbf{\textbf{Noise in Social Media}}: The problem of noise filtering in web data is a prominent one, and is being addressed by various communities in different ways. These range from entity matching and record linkage problems \cite{elmagarmid2007duplicate} to correcting missing data in information networks \cite{sadikov2011correcting}. These problems get trickier because of the different variations in representing tiny details such as representation names of people, addresses of places, and time. In fact, there is a whole school of anthroponomastics \cite{schneider2009s} dedicated to studying variations in human names. Ideas in this field indicate that these differences arise due to cultural, historical and environmental issues\cite{al2009socio}. Such issues cannot be trivially addressed. 
+\textbf{\textbf{Noise in Social Media}}: The problem of noise filtering in web data is a prominent one, and is being addressed by various communities in different ways. These range from entity matching and record linkage problems \cite{elmagarmid2007duplicate} to correcting missing data in information networks \cite{sadikov2011correcting}. These problems get trickier because of the different variations in representing tiny details such as representation names of people, addresses of places, and time. In fact, there is a whole school of anthroponomastics \cite{schneider2009s} dedicated to studying variations in human names. Ideas in this field indicate that these differences arise due to cultural, historical and environmental issues\cite{al2009socio}. Such issues cannot be trivially addressed. Consider, for example, the Hebrew name below:
 
-%Consider, for example, the Hebrew name below:
-%
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=0.15\textwidth]{media/ronen.png}
-%\label{fig:exp-general-loc-cx}
-%\end{figure}
-%
-%It can be translated to English as ``Waisenberg" or ``Vaisenberg". So are Mr.\ X Waisenberg who authored a paper in a Security conference and Dr.\ X Vaisenberg who works at Google, the same person? They might be if X has semitic origins!
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{media/ronen.png}
+\label{fig:exp-general-loc-cx}
+\end{figure}
 
-Face tagging in social media sources like Facebook can also be very noisy. This strictly prohibits directly using this data to train verification/recognition models. Also, the quality of photos are poor, resulting in weaker features, which would have otherwise allowed better matching. 
+It can be translated to English as ``Waisenberg" or ``Vaisenberg". So are Mr.\ X Waisenberg who authored a paper in a Security conference and Dr.\ X Vaisenberg who works at Google, the same person? They might be if X has semitic origins!
 
-An exhaustive scientific characterization of noise in social media is beyond the scope of this paper, and is being investigated step by step in social media research communities.
+Face tags in social media sources like Facebook can also be very noisy. This strictly prohibits directly using this data to train verification/recognition models. Also, the quality of photos are poor, resulting in weaker features, which would have otherwise allowed better matching. 
+
+An exhaustive scientific characterization of noise in social media is beyond the scope of this dissertation, and is being investigated step by step in social media research communities.
 
 \textbf{\textbf{CPU Efficiency}}: The query engine in CueNet is responsible for extracting data from different sources. If a very large number of photos are being tagged, our scheme of query generation and merging will prove inefficient. Processing many photos from different people provides a very rich opportunity to develop interesting heuristics using event semantics for the multi-query optimization problem. Also, partitioning the discovery algorithm such that the computations can occur in a distributed manner is a complex problem. Such steps will be required if the application workload is of the scales of Facebook or processing photos in real time at the scales of Instagram.
 
@@ -31,11 +53,4 @@ An exhaustive scientific characterization of noise in social media is beyond the
 
 \textbf{\textbf{Open Datasets}}: The unavailability of a large public data set over which different techniques can be evaluated against each other is an open problem. As seen in our experiments, personal information is vital to contextual approaches, and this data is largely personal, and therefore cannot be shared openly. Optimal anonymization techniques need be to invented such that the privacy of the experiment participants are maintained, and at the same time the data is meaningful to be applied in contextual approaches to problems. This need to be solved so that new context discovery techniques can be evaluated independently and against each other, over a common platform.
 
-
-Problems/Opportunities:
-
-  1. Absence of a language/tool which can be used to express real world models. Ontologies are logic driven. Usually deal with true/false.
-
-  2. Starting points of such a language -- physical variables, graphics world modeling, entity identification.
-
-  3. Backtracking based algorithms.
+In short, we have introduced the challenging problem of context discovery. Which becomes harder when considering scaling issues. Which becomes even harder when considering domains more detailed and complex than face tagging in photos. But a problem which is inevitable, and must be tackled to improve many aspects of human society and push it to the next frontiers. which is one of the primary motivations of science and technology.
