@@ -325,7 +325,7 @@ Finally, we use the Classmexer library \cite{classmexer} to measure the memory f
 
 In analysing the above figures, we have seen that the in-memory merge algorithm performs very well for networks upto 500K nodes. Beyond this point, the performance exponentially decays, both as a combination of large graphs, and the JVM's garbage collector trying to clean up unwanted objects. And therefore it is best recommended to approach an disk based solution or partition the context networks across different machines. 
 
-Since performing many merges (especially with large secondary networks), it is advisable to not perform the merges when the rate of incoming networks is very high. Rather, the system can cache the networks, and extend techniques such as dynamic programming or \textit{batch merges} to improve the overall performance. Such an algorithm, to the best of my knowledge, does not readily exist, and can be a very important future research to improve the utility of context networks in various domains with large workloads.
+Since performing many merges (especially with large secondary networks), it is advisable to not perform the merges when the rate of incoming networks is very high. Rather, the system can cache the networks, and extend techniques such as dynamic programming or \textit{batch merges} to improve the overall performance. Such an algorithm, does not already exist, and can prove to be a very important future research problem to improve the utility of context networks in various domains with large workloads.
 
 % \begin{figure}[ht]
 % \begin{minipage}[b]{0.45\linewidth}
