@@ -6,18 +6,63 @@ In this chapter, we will attempt to address this problem of boosting the perform
 
 \section{Preliminaries}
 
-Rank propagation techniques have been used to rank nodes in directed graphs. Most commonly seen versions in today's literature are the HITS algorithm invented by Jon Kleinberg \cite{kleinberg1999authoritative} and the PageRank algorithm developed by Larry Page and Sergey Brin \cite{page1999pagerank}. The idea in the latter is to assign a set of initial values to a subset of nodes, and propagate a fraction of these values to their neighbors. Each iteration of the algorithm propagates their scores to the neighboring nodes until the overall ordering of the nodes, according to their scores, does not change. In practice, a few iterations ($\leq$ 100) on web scale graphs is sufficient to achieve convergence.
+Rank propagation techniques have been used to rank nodes in directed graphs. Most commonly seen versions in today's literature are the HITS algorithm invented by Jon Kleinberg \cite{kleinberg1999authoritative} and the PageRank algorithm developed by Larry Page and Sergey Brin \cite{page1999pagerank}. The idea in the latter is to assign a set of initial values to a subset of nodes, and propagate a fraction of these values to their neighbors. Each iteration of the algorithm propagates their scores to the neighboring nodes until the overall ordering of the nodes, according to their scores, does not change. In practice, a few iterations ($<$ 100) on web scale graphs is sufficient to achieve convergence.
 
-The Pagerank \cite{page1999pagerank} algorithm, designed to rank large web graphs is an extension of this idea. The intuition behind Pagerank is known as the random surfer model. The rank propagation models the behavior of a random web surfer who follows a few links and then gets bored and jumps to a random part of the web graph. The final scores of the ranking algorithm converge to the probabilities of such a surfer sees a particular page, while traversing the web in this fashion. Let us first take a look at how rank propagation works in simple directed graphs. Consider the graph in figure \ref{fig:pr-graph-example} \footnote{This example is adapted from Wikipedia (http://en.wikipedia.org/wiki/PageRank)}. Let the initial scores of all nodes be 0.25. In the first iteration of the algorithm, the score of node A would be computed as follows. Since A has three incoming edges from nodes B, C and D, each of these nodes would transfer a portion of their score to A. Since B has two outgoing edges, it transfers half of it scores through each of them, C transfers all of its score to A and D transfers one-third of its score to A. At the completion of this iteration, page A has a score of $PR(B)/2 + PR(C) + PR(D)/3 = 0.458$. In this fashion, the scores for all the nodes are computed in each iteration, until the scores converge.
+The page rank \cite{page1999pagerank} algorithm, designed to rank large nodes in web graphs is an extension of this idea. The intuition behind page rank is that of the random surfer model. The rank propagation models the behavior of a random web surfer who follows a few links and then gets `bored' and jumps to a random part of the web graph. The final scores of the ranking algorithm converge to the probabilities of such a surfer spending time at a particular page. Another analogy to understand PageRank would be the following: If many surfers (where number of surfers is greater than number of nodes) uniformly choose a page to start surfing from, and move to either one of the outgoing nodes or decide to jump to another page in the graph, then after some iterations, the page rank of a node is fraction of surfers left on it. Mathematically, the page rank of a given web page $i$ at the $k^{th}$ iteration of the rank computation algorithm, denoted as $PR(i, k)$ is defined recursively according to the equation \cite{borodin2001finding}:
 
-\begin{figure}[t]
+\begin{align}
+\label{eq:pagerank}
+% PR(i) = dD(i) + (1 - d) \sum_{j \rightarrow i} [PR(j)/N(j)] \\  %Equation from Borodin's paper
+PR(i, k) = dD(i) + (1 - d) \sum_{j \rightarrow i} [PR(j, k - 1)/N(j)]
+\end{align}
+
+In equation \ref{eq:pagerank}, $d$ is the probability with which the random surfer will jump to a sample from the distribution $D(.)$, and with probability (1-d) jumps uniformly at random to one of the pages linked from the current page.
+
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.65\textwidth]{media/chapter6/pr-example-graph.png}
 \caption{Example graph to demonstrate the original Pagerank algorithm.}
 \label{fig:pr-graph-example}
 \end{figure}
 
-The model introduced by Page and Brin also included a damping factor. Extending the random surfer analogy, this damping factor corresponds to the probability that the surfer stops clicks. At every page the surfer visits, there is a non-zero probability that he will stop surfing. Taking this consideration, the above equation to compute the new pagerank of node A becomes $d(PR(B)/2 + PR(C) + PR(D)/3) = 0.41225$, for d = 0.85. 
+Let us first take a look at how rank propagation works in simple graphs. Consider the directed graph in figure \ref{fig:pr-graph-example} \footnote{This example is adapted from Wikipedia (http://en.wikipedia.org/wiki/PageRank)}. Let the initial scores of all nodes be 0.25. In the first iteration of the algorithm, if we assume that the surfer will only follow links (i.e., d = 0), the score of node A would be computed as follows. Since A has three incoming edges from nodes B, C and D, each of these nodes would transfer a portion of their score to A. Since B has two outgoing edges, it transfers half of it scores through each of them, C transfers all of its score to A and D transfers one-third of its score to A. At the completion of this iteration, page A has a score of $PR(B)/2 + PR(C) + PR(D)/3 = 0.458$. In this fashion, the scores for all the nodes are computed in each iteration, until the scores converge.
+
+If the probability of jumping to a web page from the distribution D is 0.15, and we assume that the probabilities in $D$ are equally likely, the above equation to compute the new pagerank of node A becomes $d/N + (1-d)(PR(B)/2 + PR(C) + PR(D)/3) = 0.35625$. Table \ref{tbl:prc} shows the different values of page rank for each node in our example graph per iteration until it converges. We assume that the initial ranks of each node is 0.25. The difference in ranks is computed using L1 norm of the difference of ranks in the current and previous iteration.
+
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c| }
+  \hline
+  \texttt{k} & \texttt{A} & \texttt{B} & \texttt{C} & \texttt{D} & \texttt{$\delta$}\\
+  \hline
+  1  &  0.25000  &  0.25000  &  0.25000  &  0.25000  &  - \\
+  1  &  0.35625  &  0.14375  &  0.25000  &  0.25000  &  0.21250 \\
+  2  &  0.31109  &  0.14375  &  0.20484  &  0.34031  &  0.18062 \\
+  3  &  0.27271  &  0.18213  &  0.24323  &  0.30193  &  0.15353 \\
+  4  &  0.32165  &  0.16582  &  0.24323  &  0.26930  &  0.09788 \\
+  5  &  0.31472  &  0.15195  &  0.22243  &  0.31090  &  0.08319 \\
+  6  &  0.29114  &  0.16963  &  0.23421  &  0.30501  &  0.05893 \\
+  7  &  0.30868  &  0.16713  &  0.23922  &  0.28497  &  0.04508 \\
+  8  &  0.31187  &  0.15861  &  0.22964  &  0.29987  &  0.03619 \\
+  9  &  0.30011  &  0.16495  &  0.23236  &  0.30259  &  0.02352 \\
+  10 &  0.30511  &  0.16610  &  0.23620  &  0.29259  &  0.02000 \\
+  ... &  ...  &  ...  &  ...  &  ...  &  ... \\
+  34 &  0.30554  &  0.16381  &  0.23343  &  0.29721  &  0.00002 \\
+  35 &  0.30554  &  0.16382  &  0.23344  &  0.29721  &  0.00002 \\
+  36 &  0.30554  &  0.16381  &  0.23344  &  0.29721  &  0.00001 \\
+  37 &  0.30554  &  0.16381  &  0.23343  &  0.29721  &  0.00001 \\
+  38 &  0.30554  &  0.16381  &  0.23344  &  0.29721  &  0.00001 \\
+  39 &  0.30554  &  0.16381  &  0.23344  &  0.29721  &  0.00000 \\
+  40 &  0.30554  &  0.16381  &  0.23343  &  0.29721  &  0.00000 \\
+  \hline
+\end{tabular}
+\caption{Page rank scores for nodes in the example graph per iteration.}
+\label{tbl:prc}
+\end{center}
+\end{table}
+
+The page rank algorithm is shown in algorithm \ref{alg:pr-alg}. R is a vector over all the nodes in the graph. A is an adjacency matrix where each cell measures is the reciprocal of outgoing edge count. If $u$ and $v$ are two nodes, and there are $N_u$ outgoing edges from $u$ and one of them ends in $v$, then $A(u, v) = 1/N_u$. The expression $||R||_1$ is the L1 or Manhattan norm of a vector $R$, which is computed as $\sum_{\forall i} |R_i|$. The vector $S$ is the initial score assigned to the nodes. On a large scale, pagerank scores are computed using the MapReduce framework \cite{dean2008mapreduce}. 
 
 \restylealgo{ruled}
 \SetAlgoSkip{}
@@ -33,15 +78,15 @@ $R_0$ $\leftarrow$ S  \\
   $R_{i+1}$ $\leftarrow$ $||R_i||_1$ + dE \\
   $\delta$ $\leftarrow$ $||R_{i+1} - R_i||_1$ \\
 \Indm
-\textbf{while $\delta$ $>$ $\epsilon$}
+\textbf{while $\delta > \epsilon$}
 }
 \caption{Original Pagerank Algorithm}
 \label{alg:pr-alg}
 \end{algorithm}
 
-Mathematically, the pagerank algorithm is expressed as shown in algorithm \ref{alg:pr-alg}. R is a vector over all the nodes in the graph. A is an adjacency matrix where each cell measures is the reciprocal of outgoing edge count. If $u$ and $v$ are two nodes, and there are $N_u$ outgoing edges from $u$ and one of them ends in $v$, then $A(u, v) = 1/N_u$. The expression $||R||_1$ is the L1 or Manhattan norm of a vector $R$, which is computed as $\sum_{\forall i} |R_i|$. The vector $S$ is the initial score assigned to the nodes. On a large scale, pagerank scores are computed using the MapReduce framework \cite{dean2008mapreduce}.
-
 \section{Intuition}
+
+To rank objects in context networks, we modify the random surfer model slightly to model the movement of objects between different networks. Consider a set of context networks, each of which correspond to a \texttt{photo-capture-event}. Each network consists of a set of participating objects. An object in a particular network decides to move to a neighboring context network depending on the differences between properties of the two networks. If the two photos were captured right next to each other, and contain very similar types of events, and object instances, then there is a high probability that this person who was tagged in one of them, will be present in the other. Time is one such axis of propagation. Other properties such as event class, object co-occurrence, place (type of place or the distance) of event occurrence or subevent patterns in context network can provide different axes to propagate tags between photos.
 
 \begin{figure}[t]
 \centering
@@ -52,20 +97,16 @@ Mathematically, the pagerank algorithm is expressed as shown in algorithm \ref{a
 
 Consider the very simple context networks shown in figure \ref{fig:time-example}. Each network contains an event, and they have a set of participants. Lets assume that all events \texttt{E1} - \texttt{E6} are of the same type, and occurred at the same location. But as shown in the figure the time of occurrence varies. Lets say that the hit ratio for tagging \texttt{E1} - \texttt{E5} is 100\%. But \texttt{E6} has a few untagged faces, and no more data source is able to provide additional context. The context discovery algorithm has a basic ranking algorithm which looks all social networks (temporal or not), and ranks entities based on whether they have any relations with its participants (in this case, \texttt{P6}). In this case, we could find that \texttt{P6} has participated with \texttt{P5} and \texttt{P4} in event \texttt{E5}. The voting algorithm stops if \texttt{P5} and \texttt{P4} are not found in the \texttt{E6}'s photo. But looking at all the networks, it makes sense to say that since these are all events of the same type, we could say that \texttt{P2}, \texttt{P3} and \texttt{P4} have participated in this same event a few months before \texttt{E6}'s occurrence, and therefore it is possible that \texttt{P2} and \texttt{P3} also participating in \texttt{E6}. With the same idea, we can also \texttt{P2} and \texttt{P1} participated in the same event many years, and therefore is a very low but non-zero chance that \texttt{P1} is present in the photo.
 
-Similarly, look at figure \ref{fig:location-example} where the context networks are exactly as before, but the types of events now vary. We show the type of the event above the event nodes. Their timestamps and location properties are exactly as before. Here, can we exploit some ontological properties about event similarities to propagate scores. If we know that \texttt{L1} is a \texttt{conference}, \texttt{L2} is a \texttt{music-event} and \texttt{L3} is a party, then can we say that \texttt{L2} events are more likely to contain the untagged person than the \texttt{conference} events. 
+Similarly, look at figure \ref{fig:location-example} where the context networks are exactly as before, but the types of events now vary. We show the type of the event above the event nodes. Their timestamps and location properties are exactly as before. Here, can we exploit some ontological properties about event similarities to propagate scores. If we know that \texttt{L1} is a \texttt{conference}, \texttt{L2} is a \texttt{music-event} and \texttt{L3} is a party, then can we say that \texttt{L2} events are more likely to contain the untagged person than the \texttt{conference} events. We can use social and spatial relationships to propagate rank scores to more individuals than just making a single hop as in the context discovery algorithm to reach a wider set of candidates.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.65\textwidth]{media/chapter6/intuition-location-example.png}
-\caption{Propagating values through ontological event relations.}
+\caption{Other properties of events (space, type, subevent hierarchy patterns or object co-occurrence could be used to propagate scores.}
 \label{fig:location-example}
 \end{figure}
 
-Similarly, we can use social and spatial relationships to propagate rank scores to more individuals than just making a single hop as in the context discovery algorithm to reach a wider set of candidates.
-
 In this chapter, we will modify the rank propagation technique to rank entities on a given set of context networks, to determine who might be participating in a new events. We will initialize scores of the nodes on the basis of what is known about the new event -- its type, the participating entities, and propagate the scores based on a set of propagation functions which we will introduce later. Since the basic propagation algorithm is an expensive one, we will look at some ways to reduce the size of the context networks, so the algorithm converges quickly, and still provides useful results.
-
-
 
 \section{Rank Propagation in Context Networks}
 
