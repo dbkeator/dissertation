@@ -8,6 +8,13 @@ In this chapter, we will attempt to address this problem of boosting the perform
 
 Rank propagation techniques have been used to rank nodes in directed graphs. Most commonly seen versions in today's literature are the HITS algorithm invented by Jon Kleinberg \cite{kleinberg1999authoritative} and the PageRank algorithm developed by Larry Page and Sergey Brin \cite{page1999pagerank}. The idea in the latter is to assign a set of initial values to a subset of nodes, and propagate a fraction of these values to their neighbors. Each iteration of the algorithm propagates their scores to the neighboring nodes until the overall ordering of the nodes, according to their scores, does not change. In practice, a few iterations ($<$ 100) on web scale graphs is sufficient to achieve convergence.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.65\textwidth]{media/chapter6/pr-example-graph.png}
+\caption{Example graph to demonstrate the original Pagerank algorithm.}
+\label{fig:pr-graph-example}
+\end{figure}
+
 The page rank \cite{page1999pagerank} algorithm, designed to rank large nodes in web graphs is an extension of this idea. The intuition behind page rank is that of the random surfer model. The rank propagation models the behavior of a random web surfer who follows a few links and then gets `bored' and jumps to a random part of the web graph. The final scores of the ranking algorithm converge to the probabilities of such a surfer spending time at a particular page. Another analogy to understand PageRank would be the following: If many surfers (where number of surfers is greater than number of nodes) uniformly choose a page to start surfing from, and move to either one of the outgoing nodes or decide to jump to another page in the graph, then after some iterations, the page rank of a node is fraction of surfers left on it. Mathematically, the page rank of a given web page $i$ at the $k^{th}$ iteration of the rank computation algorithm, denoted as $PR(i, k)$ is defined recursively according to the equation \cite{borodin2001finding}:
 
 \begin{align}
@@ -18,17 +25,42 @@ PR(i, k) = dD(i) + (1 - d) \sum_{j \rightarrow i} [PR(j, k - 1)/N(j)]
 
 In equation \ref{eq:pagerank}, $d$ is the probability with which the random surfer will jump to a sample from the distribution $D(.)$, and with probability (1-d) jumps uniformly at random to one of the pages linked from the current page.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.65\textwidth]{media/chapter6/pr-example-graph.png}
-\caption{Example graph to demonstrate the original Pagerank algorithm.}
-\label{fig:pr-graph-example}
-\end{figure}
+\restylealgo{ruled}
+\SetAlgoSkip{}
+\begin{algorithm}[t]
+\dontprintsemicolon 
+\Begin{
+  
+$R_0$ $\leftarrow$ S  \\
+\textbf{loop}: \\
+\Indp
+  $R_{i+1}$ $\leftarrow$ $AR_i$ \\
+  d $\leftarrow$ $||R_i||_1$ - $||R_{i+1}||_1$ \\  
+  $R_{i+1}$ $\leftarrow$ $||R_i||_1$ + dE \\
+  $\delta$ $\leftarrow$ $||R_{i+1} - R_i||_1$ \\
+\Indm
+\textbf{while $\delta > \epsilon$}
+}
+\caption{Original Pagerank Algorithm}
+\label{alg:pr-alg}
+\end{algorithm}
 
-Let us first take a look at how rank propagation works in simple graphs. Consider the directed graph in figure \ref{fig:pr-graph-example} \footnote{This example is adapted from Wikipedia (http://en.wikipedia.org/wiki/PageRank)}. Let the initial scores of all nodes be 0.25. In the first iteration of the algorithm, if we assume that the surfer will only follow links (i.e., d = 0), the score of node A would be computed as follows. Since A has three incoming edges from nodes B, C and D, each of these nodes would transfer a portion of their score to A. Since B has two outgoing edges, it transfers half of it scores through each of them, C transfers all of its score to A and D transfers one-third of its score to A. At the completion of this iteration, page A has a score of $PR(B)/2 + PR(C) + PR(D)/3 = 0.458$. In this fashion, the scores for all the nodes are computed in each iteration, until the scores converge.
+Let us take a look at how rank propagation works in simple graphs. Consider the directed graph in figure. Let the initial scores of all nodes be 0.25. In the first iteration of the algorithm, if we assume that the surfer will only follow links (i.e., d = 0), the score of node A would be computed as follows. Since A has two incoming edges from B and C, they will transfer a portion of their scores to A. Since B has two outgoing edges, it will transfer half of its score to A. C has only one outgoing edge, and therefore transfers all of its score to A. Thus, the value $PR(A)$ becomes $0.25/2 + .25 = 0.375$ at the end of the first iteration. Similarly, B obtains half the score of D; C obtains half of B and half of D; and D obtains the full score of A. For each node, we can rewrite \ref{eq:pagerank} as follows:
 
-If the probability of jumping to a web page from the distribution D is 0.15, and we assume that the probabilities in $D$ are equally likely, the above equation to compute the new pagerank of node A becomes $d/N + (1-d)(PR(B)/2 + PR(C) + PR(D)/3) = 0.35625$. Table \ref{tbl:prc} shows the different values of page rank for each node in our example graph per iteration until it converges. We assume that the initial ranks of each node is 0.25. The difference in ranks is computed using L1 norm of the difference of ranks in the current and previous iteration.
+\begin{flalign}
+\label{eq:p1}
+&PR(A, i) = \frac{PR(B, i-1)}{2} + PR(C, i-1) & \\
+&PR(B, i) = \frac{PR(D, i-1)}{2} & \\
+&PR(C, i) = \frac{PR(D, i-1)}{2} + \frac{PR(B, i-1)}{2}& \\
+&PR(D, i) = PR(A, i-1) & 
+\end{flalign}
 
+If the probability of jumping to a web page from the distribution D is 0.15, and we assume that the probabilities in $D$ are equally likely, the above equation to compute the new pagerank of node A becomes $PR(A, i) = \frac{d}{N} + (1-d)\frac{PR(B, i-1)}{2} + PR(C, i-1) = 0.35625$. Table \ref{tbl:prc} shows the different values of page rank for each node in our example graph per iteration until it converges. We assume that the initial ranks of each node is 0.25. The difference in ranks is computed using L1 norm of the difference of ranks in the current and previous iteration.
+
+\begin{flalign}
+\label{eq:norm}
+\delta = \sum_{\forall i}{|PR(i)  - PR(i-1)|}
+\end{flalign}
 
 \begin{table}[h]
 \begin{center}
@@ -62,66 +94,58 @@ If the probability of jumping to a web page from the distribution D is 0.15, and
 \end{center}
 \end{table}
 
-The page rank algorithm is shown in algorithm \ref{alg:pr-alg}. R is a vector over all the nodes in the graph. A is an adjacency matrix where each cell measures is the reciprocal of outgoing edge count. If $u$ and $v$ are two nodes, and there are $N_u$ outgoing edges from $u$ and one of them ends in $v$, then $A(u, v) = 1/N_u$. The expression $||R||_1$ is the L1 or Manhattan norm of a vector $R$, which is computed as $\sum_{\forall i} |R_i|$. The vector $S$ is the initial score assigned to the nodes. On a large scale, pagerank scores are computed using the MapReduce framework \cite{dean2008mapreduce}. 
-
-\restylealgo{ruled}
-\SetAlgoSkip{}
-\begin{algorithm}[h!]
-\dontprintsemicolon 
-\Begin{
-  
-$R_0$ $\leftarrow$ S  \\
-\textbf{loop}: \\
-\Indp
-  $R_{i+1}$ $\leftarrow$ $AR_i$ \\
-  d $\leftarrow$ $||R_i||_1$ - $||R_{i+1}||_1$ \\  
-  $R_{i+1}$ $\leftarrow$ $||R_i||_1$ + dE \\
-  $\delta$ $\leftarrow$ $||R_{i+1} - R_i||_1$ \\
-\Indm
-\textbf{while $\delta > \epsilon$}
-}
-\caption{Original Pagerank Algorithm}
-\label{alg:pr-alg}
-\end{algorithm}
+The page rank algorithm is shown in algorithm \ref{alg:pr-alg}. R is a vector over all the nodes in the graph. A is an adjacency matrix where each cell measures is the reciprocal of outgoing edge count. If $u$ and $v$ are two nodes, and there are $N_u$ outgoing edges from $u$ and one of them ends in $v$, then $A(u, v) = 1/N_u$. The expression $||R||_1$ is the L1 or Manhattan norm of a vector $R$, which is computed as $\sum_{\forall i} |R_i|$. The vector $S$ is the initial score assigned to the nodes. On a large scale, pagerank scores are computed using the MapReduce framework \cite{dean2008mapreduce}. Each iteration of the computation corresponds to one map reduce job. Multiple such iterations are performed to obtain the final results.
 
 \section{Intuition}
 
-To rank objects in context networks, we modify the random surfer model slightly to model the movement of objects between different networks. Consider a set of context networks, each of which correspond to a \texttt{photo-capture-event}. Each network consists of a set of participating objects. An object in a particular network decides to move to a neighboring context network depending on the differences between properties of the two networks. If the two photos were captured right next to each other, and contain very similar types of events, and object instances, then there is a high probability that this person who was tagged in one of them, will be present in the other. Time is one such axis of propagation. Other properties such as event class, object co-occurrence, place (type of place or the distance) of event occurrence or subevent patterns in context network can provide different axes to propagate tags between photos.
+To rank objects in context networks, we modify the random surfer model slightly to model the movement of objects between different networks. Consider a set of context networks, each of which correspond to a \texttt{photo-capture-event}. Each network consists of a set of participating objects. An object in a particular network can move to a neighboring context network depending on the differences between properties of the two networks. If the two photos were captured right next to each other, and contain very similar types of events, and object instances, then there is a high probability that this person who was tagged in one of them, will be present in the other. Time is one such axis of propagation. Other properties such as event class, object co-occurrence, place (type of place or the distance) of event occurrence or subevent patterns in context network can provide different axes to propagate tags between photos.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.65\textwidth]{media/chapter6/intuition-time-example.png}
+\includegraphics[width=0.65\textwidth]{media/chapter6/time-example-2.png}
 \caption{Propagating values through temporal relations.}
 \label{fig:time-example}
 \end{figure}
 
-Consider the very simple context networks shown in figure \ref{fig:time-example}. Each network contains an event, and they have a set of participants. Lets assume that all events \texttt{E1} - \texttt{E6} are of the same type, and occurred at the same location. But as shown in the figure the time of occurrence varies. Lets say that the hit ratio for tagging \texttt{E1} - \texttt{E5} is 100\%. But \texttt{E6} has a few untagged faces, and no more data source is able to provide additional context. The context discovery algorithm has a basic ranking algorithm which looks all social networks (temporal or not), and ranks entities based on whether they have any relations with its participants (in this case, \texttt{P6}). In this case, we could find that \texttt{P6} has participated with \texttt{P5} and \texttt{P4} in event \texttt{E5}. The voting algorithm stops if \texttt{P5} and \texttt{P4} are not found in the \texttt{E6}'s photo. But looking at all the networks, it makes sense to say that since these are all events of the same type, we could say that \texttt{P2}, \texttt{P3} and \texttt{P4} have participated in this same event a few months before \texttt{E6}'s occurrence, and therefore it is possible that \texttt{P2} and \texttt{P3} also participating in \texttt{E6}. With the same idea, we can also \texttt{P2} and \texttt{P1} participated in the same event many years, and therefore is a very low but non-zero chance that \texttt{P1} is present in the photo.
+Consider the context networks shown in figure \ref{fig:time-example}. Events \texttt{E1} - \texttt{E7} contain one or more persons from the candidate set \texttt{P1} - \texttt{P5}. The binary vector below event describes whether an object was present in the event or not. \texttt{P1}, for example, participates in \texttt{E1} and \texttt{E2}. \texttt{P5} participates in events \texttt{E4} through \texttt{E7}. The top row shows the time of occurrence for all events. We shall assume that other properties of an event (class, location and subevent structure) are same, and therefore do not effect the propagation. Since \texttt{E6} contains \texttt{P4}, it can be said that there is a higer chance of \texttt{P4} participating in \texttt{E7} than in \texttt{E1} for two reasons. First, the object distribution in \texttt{E1} is very different from \texttt{E6}. \texttt{P4} has never participated in any event with the \texttt{P1} and \texttt{P2}. Second, because the temporal difference is much higher, very little can be estimated about the presence of a person in an event. If we quantify the object similarity using a set similarity measure, such as the jaccard index (represented by $d_s(e_i, e_j)$, and the effect of time using a formula $1 - \frac{\Delta T}{T_{max}}$, where $\Delta T$ is the difference between occurrence times of two events in question, represented as $d_t(e_i, e_j)$, then we can say that the probability that a person will appear in some Ex at the $i^{th}$ iteration, $R(p, Ex, i)$, who is known to have appeared in some other set of events $\mathcal{E}$, where $Ex \notin \mathcal{E}$ is:
 
-Similarly, look at figure \ref{fig:location-example} where the context networks are exactly as before, but the types of events now vary. We show the type of the event above the event nodes. Their timestamps and location properties are exactly as before. Here, can we exploit some ontological properties about event similarities to propagate scores. If we know that \texttt{L1} is a \texttt{conference}, \texttt{L2} is a \texttt{music-event} and \texttt{L3} is a party, then can we say that \texttt{L2} events are more likely to contain the untagged person than the \texttt{conference} events. We can use social and spatial relationships to propagate rank scores to more individuals than just making a single hop as in the context discovery algorithm to reach a wider set of candidates.
+\begin{align}
+\label{eq:puirank}
+R(p, Ex, i) \leftarrow \sum_{e \in \mathcal{E}}[ d_t (Ex, e) d_s (Ex, e) R(p, e, i-1) ]
+\end{align}
+
+Similarly, look at figure \ref{fig:location-example} where the context networks now differ in type and location of occurrence as well. We show the event class information (indicated by `C') and location information with `L' of the event above the nodes. Their timestamps are as before, but our original assumption about spatial and ontological consistency no longer holds. Here, can we need to exploit some ontological properties about event similarities to propagate scores. If we know that \texttt{L1} is a \texttt{conference}, \texttt{L2} is a \texttt{music-event} and \texttt{L3} is a party, then can we say that \texttt{L2} events are more likely to contain the untagged person than the \texttt{conference} events. Likewise, spatial relationships propagate higher scores to individuals between events which occur near each other, than those which occur further away.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.65\textwidth]{media/chapter6/intuition-location-example.png}
+\includegraphics[width=0.65\textwidth]{media/chapter6/multi-property-example.png}
 \caption{Other properties of events (space, type, subevent hierarchy patterns or object co-occurrence could be used to propagate scores.}
 \label{fig:location-example}
 \end{figure}
 
-In this chapter, we will modify the rank propagation technique to rank entities on a given set of context networks, to determine who might be participating in a new events. We will initialize scores of the nodes on the basis of what is known about the new event -- its type, the participating entities, and propagate the scores based on a set of propagation functions which we will introduce later. Since the basic propagation algorithm is an expensive one, we will look at some ways to reduce the size of the context networks, so the algorithm converges quickly, and still provides useful results.
+In this chapter, we will modify the page rank technique (algorithm \ref{alg:pr-alg}) to rank entities on a given set of context networks, to determine who might be participating in a new events. We will initialize scores of the nodes on the basis of what is known about the new event: the type of the instantiating class, the participating objects, and propagate the scores based on a set of propagation functions which we will introduce in the next section. Since the basic propagation algorithm is an expensive one, we will look at some ways to reduce the size of the context networks, so the algorithm converges quickly, and still provides useful results.
 
 \section{Rank Propagation in Context Networks}
 
 In order to rank candidates for a new given photo, we go by the observation that people participate in similar kinds of types, and spend time with similar groups of people. In other words, the distribution of people in events is not random. By ranking events, we are ordering them by some metric of similarity with respect to the context network containing the new photo. Events encapsulate heterogeneous information. Thus, their similarities must be computed across the different kinds of entities they encapsulate. For example, two event instances of the same class which have no common participating object are less similar to each other than two others which are of the same type and contain same participating objects.
 
-For our application of face tagging, computing similar similarities across time, space, type and object information of events. In order to formalize our rank propagation mechanism, we introduce the concept of a propagation function. A propagation function will transfer score from one event to the other for a specific property of the event. For example, if we can design a propagation algorithm around two functions \texttt{temporal} and \texttt{spatial} propagation, scores will be transferred based only on the temporal and spatial attribute values of the events respectively. We say that the propagation function contributes a \textit{transfer ratio} across a dimension. We follow the same algorithm as the one shown in algorithm \ref{alg:pr-alg} with the following differences: \textbf{First}, the vector $S$ is setup based on the distribution of persons present and the attributes of the events in the new context networks. \textbf{Second}, the matrix $A$ is computed as the L1 norm of a vector over the propagation function transfer score between two events. For two events, $u$ and $w$, and propagation functions $P_t$ and $P_s$ (temporal and spatial propagations), the propagation vector $V$ = $[P_t, P_s]$, and the score transfer vector from $u$ to $w$, $V(u, w)$ = $[P_t(u, w), P_s(u, w)]$ and the value $A(u, w)$ = $||V(u, w)||_1$.
+For our application of face tagging, computing similar similarities across time, space, type and object information of events. In order to formalize our rank propagation mechanism, we introduce the concept of a propagation function. A propagation function will transfer score from one object in a event to itself in another event through specific property of the event. For example, if we can design a propagation algorithm around two \texttt{temporal} and \texttt{spatial} properties, scores will be transferred based only on the temporal and spatial attribute values of the events respectively. We say that the propagation function contributes a \textit{transfer ratio} across an axis. We follow the steps as shwon in algorithm \ref{alg:pr-alg} with the following differences: \textbf{First}, the vector $S$ is setup based on the distribution of persons present and the attributes of the events in the new context networks. \textbf{Second}, the matrix $A$ is computed as the product of all the transfer ratios between two events. For two events, $u$ and $w$, and propagation functions $P_t$ and $P_s$ (temporal and spatial propagations), the propagation vector is $V$ = $[P_t, P_s]$, and the score transfer vector from $u$ to $w$, $V(u, w)$ = $[P_t(u, w), P_s(u, w)]$ and the value $A(u, w)$ = $\mathcal{C} \times P_t(u, w) \times P_s(u, w)$, where $\mathcal C$ is a constant scaling factor.
 
 \subsection{Propagation Functions}
 
 In this section we introduce the propagation functions used in our work to rank events for the face tagging application.
 
 \begin{itemize}
-\item \textbf{Temporal Propagation}: The temporal propagation function $P_t (u, w)$ propagates a fraction of the score of node $u$ to $w$ proportional to the difference between \texttt{u.duration} and \texttt{v.duration}. The transfer function can be modeled using uniform gaussian or zipf distributions. The advantage with such distributions is to model high transfer of scores who occur nearby in the temporal dimension, and ignoring those which happened too far away. The distribution parameters will be constant and set by the designer.
+\item \textbf{Temporal Propagation}: For events $u$ and $w$, the temporal propagation function $P_t (u, w)$ propagates a fraction of the score of node $u$ to $w$ proportional to the difference between \texttt{u.duration} and \texttt{v.duration}. The transfer function can be modeled using uniform gaussian or zipf distributions. The advantage with such distributions is to model high transfer of scores who occur nearby in the temporal dimension, and ignoring those which happened too far away. The distribution parameters will be constant and set by the designer.
 
-\item \textbf{Spatial Propagation}: Similar to the temporal propagation function, this takes into consider the spatial attributes of an event while transferring scores.
+\item \textbf{Spatial Propagation}: Similar to the temporal propagation function, this takes into consider the spatial attributes of an event while transferring scores. The distance between two coordinates can be computed through one of three ways. First, a table based scheme which allots scores based on the address information of the event. Here, high scores are given if the two events occur in the same city in comparison to those within the same country. Second, using euclidean distance between GPS coordinates of the two events. Third, compute the actual `as the crow flies' distance between the two locations. We use the formula based on the spherical law of cosines: where the distance between two pair of coordinates d(lat1, lon1, lon2), is given by (where $\mathcal R$ is the radius of the Earth (6378 kms)):
+
+
+\begin{align}
+\label{eq:distance}
+\mathcal R \arccos(\sin(lat1) \sin(lat2) + \cos(lat1) \cos(lat2) \cos(lon2 - lon1))
+\end{align}
+
 
 \item \textbf{Type Propagation}: The class of the event instance is taken into consideration to compare two events. We use the concept of ontological distance to compute the type propagation score transfer. We extend the concept of \texttt{Is-A} distance given in \cite{ranwez2006ontological}. For given a subsumption hierarchy, $a$ is an ancestor of $b$ iff there is a path between $a$ and $b$. The set of concepts having a as ancestor is denoted by $desc(a)$, while its ancestors are denoted as $ansc(a)$. The set of exclusive ancestors (if a node is an ancestor of exactly one of the two nodes) of $a$ and $b$ is denoted by $exAnsc(a, b)$. The subsumption ontological distance is defined as:
 
@@ -144,7 +168,11 @@ J(A, B) = \frac{A \cap B}{A \cup B} \nonumber
 
 \end{itemize}
 
-We could create additional functions which are combinations of these functions. For example, if an event $A$ occurred a long before $B$, and it has common entities, then the object similarity could be weighed based on the spatio-temporal proximity of the two events. In this work, we do not consider such cases.
+The final transfer ratio is the product of all the individual transfer ratios. This allows us to transfer smaller scores if the two events differ largely in any one attribute. This is particularly useful when many events occur spatiotemporally close to each other, but are instances of very different event classes. On the other hand, a sum based combination of the individual scores would propagate larger number of individuals because there is atleast one good axis.
+
+We will compute the scores of objects using the following steps. Construct
+
+
 
 \section{Experiments}
 
