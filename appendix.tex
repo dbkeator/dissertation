@@ -9,191 +9,238 @@
 \appendix
 \chapter{Appendix}
 
-Supplementary material goes here.
-
 \section{Source Mapping}
+
+Following are the source descriptions of various sources used in our experiments.
+
+\begin{enumerate}
+
+\item Personal Data Source: Google Calendar.
 
 \begin{verbatim}
 (:source google-calendar
-   (:attrs event email time location title description attendee)
-   (:rel ev type-of event)
-   (:rel owner type-of person)
-   (:rel ti type-of time-interval)
+   (:attrs a_event a_email a_time a_location a_title a_description a_attendee)
+   (:rel ev type-of dolce:event)
+   (:rel owner type-of cuenet:person)
+   (:rel ti type-of dolce:time-interval)
    (:rel ev occurs-during ti)
-   (:rel participant type-of person)
+   (:rel participant type-of cuenet:person)
    (:rel owner participant-of ev)
    (:rel participant participant-of ev)
    (:io disk (:db mongodb))
    (:type personal)
    (:axioms
-      (:map ev event)
-      (:map ti time)
-      (:map owner.email email B)
-      (:map ev.occurs-during time)
-      (:map ev.occurs-at location)
-      (:map participant attendee)
-      (:map ev.title title U)
-      (:map ev.description description U)))
+      (:map ev a_event)
+      (:map ti a_time)
+      (:map owner.email a_email B)
+      (:map ev.occurs-during a_time)
+      (:map ev.occurs-at a_location)
+      (:map participant a_attendee)
+      (:map ev.title a_title U)
+      (:map ev.description a_description U)))
 \end{verbatim}
+
+\item Personal Profile from Facebook
 
 \begin{verbatim}
 (:source fb-user
-   (:attrs id name birthday location work email)
-   (:rel person type-of person)
-   (:rel named-place type-of named-place)
-   (:rel address type-of address)
+   (:attrs a_id a_name a_birthday a_location a_work a_email)
+   (:rel person type-of cuenet:person)
+   (:rel named-place type-of cuenet:named-place)
+   (:rel address type-of cuenet:address)
    (:rel person works-at named-place)
    (:rel person lives-at address)
    (:io disk (:db mongodb))
    (:type personal)
    (:axioms
-      (:map person.name name)
-      (:map person.dob birthday)
-      (:map address.street-address location.name)
-      (:map named-place.name work.name)))
+      (:map person.name a_name)
+      (:map person.dob a_birthday)
+      (:map address.street-address a_location.name)
+      (:map named-place.name a_work.name)))
+\end{verbatim}
 
+\item People on a Email's from/to/cc header fields
 
+\begin{verbatim}
 (:source email
-   (:attrs from to cc)
-   (:rel pf type-of person)
-   (:rel pt type-of person)
-   (:rel pc type-of person)
+   (:attrs a_from a_to a_cc)
+   (:rel pf type-of cuenet:person)
+   (:rel pt type-of cuenet:person)
+   (:rel pc type-of cuenet:person)
    (:io disk (:db mongodb))
    (:type personal)
    (:axioms
-      (:map pf.email from)
-      (:map pt.email to)
-      (:map pc.email cc)))
+      (:map pf.email a_from)
+      (:map pt.email a_to)
+      (:map pc.email a_cc)))
+\end{verbatim}
 
+\item Social Relations on Facebook.
 
+\begin{verbatim}
 (:source fb-relation
-   (:attrs name1 name2)
-   (:rel p1 type-of person)
-   (:rel p2 type-of person)
+   (:attrs a_name1 a_name2)
+   (:rel p1 type-of cuenet:person)
+   (:rel p2 type-of cuenet:person)
    (:rel p1 knows p2)
    (:io disk (:db mongodb))
    (:type personal)
    (:axioms
-      (:map p1.name name1 F)
-      (:map p2.name name2 U)))
+      (:map p1.name a_name1 F)
+      (:map p2.name a_name2 U)))
+\end{verbatim}
 
+\item A subset of DBLP to model co-authorship between academic as social relations
+
+\begin{verbatim}
 (:source academix
-   (:attrs name1 name2)
-   (:rel p1 type-of person)
-   (:rel p2 type-of person)
+   (:attrs a_name1 a_name2)
+   (:rel p1 type-of cuenet:person)
+   (:rel p2 type-of cuenet:person)
    (:rel p1 knows p2)
    (:io disk (:db mongodb))
    (:type public)
    (:axioms
-      (:map p1.name name1 F)
-      (:map p2.name name2 U)))
+      (:map p1.name a_name1 F)
+      (:map p2.name a_name2 U)))
+\end{verbatim}
 
+\item Conference data source
+
+\begin{verbatim}
 (:source conferences
-   (:attrs time location ltitle stitle url)
-   (:rel conf type-of event)
-   (:rel time type-of time-interval)
-   (:rel loc type-of location)
+   (:attrs a_time a_location a_ltitle a_stitle a_url)
+   (:rel conf type-of dolce:event)
+   (:rel time type-of dolce:time-interval)
+   (:rel loc type-of dolce:location)
    (:rel conf occurs-at location)
    (:rel conf occurs-during time)
    (:axioms
-      (:map time time)
-      (:map loc location)
-      (:map conf.title ltitle)
-      (:map conf.name stitle)
-      (:map conf.url url)))
+      (:map time a_time)
+      (:map loc a_location)
+      (:map conf.title a_ltitle)
+      (:map conf.name a_stitle)
+      (:map conf.url a_url)))
+\end{verbatim}
 
+\item Conferences attendees
 
+\begin{verbatim}
 (:source confattendees
-   (:attrs url name time location ltitle stitle)
-   (:rel conf type-of conference)
-   (:rel time type-of time-interval)
-   (:rel loc type-of location)
-   (:rel attendee type-of person)
+   (:attrs a_url a_name a_time a_location a_ltitle a_stitle)
+   (:rel conf type-of cuenet:conference)
+   (:rel time type-of dolce:time-interval)
+   (:rel loc type-of dolce:location)
+   (:rel attendee type-of cuenet:person)
    (:rel attendee participant-in conf)
    (:rel conf occurs-at location)
    (:rel conf occurs-during time)
    (:axioms
-      (:map time time)
-      (:map loc location)
-      (:map conf.title ltitle)
-      (:map conf.name stitle)
-      (:map conf.url url)
-      (:map attendee.name name)))
+      (:map time a_time)
+      (:map loc a_location)
+      (:map conf.title a_ltitle)
+      (:map conf.name a_stitle)
+      (:map conf.url a_url)
+      (:map attendee.name a_name)))
+\end{verbatim}
 
+\item Keynote event at conferences
 
+\begin{verbatim}
 (:source keynotes
-   (:attrs url time location title name)
-   (:rel conf type-of conference)
-   (:rel k type-of keynote)
+   (:attrs a_url a_time a_location a_title a_name)
+   (:rel conf type-of cuenet:conference)
+   (:rel k type-of cuenet:keynote)
    (:rel k subevent-of conf)
    (:rel attendee participant-in k)
    (:axioms
-      (:map conf.url url)
-      (:map attendee.name name)
-      (:map k.location location)
-      (:map k.time time)
-      (:map k.title title)))
+      (:map conf.url a_url)
+      (:map attendee.name a_name)
+      (:map k.location a_location)
+      (:map k.time a_time)
+      (:map k.title a_title)))
+\end{verbatim}
 
+\item Session event at conferences
+
+\begin{verbatim}
 (:source sessions
-   (:attrs url time location title name)
-   (:rel conf type-of conference)
-   (:rel k type-of session)
+   (:attrs a_url a_time a_location a_title a_name)
+   (:rel conf type-of cuenet:conference)
+   (:rel k type-of cuenet:session)
    (:rel k subevent-of conf)
    (:rel attendee participant-in k)
    (:axioms
-      (:map conf.url url)
-      (:map attendee.name name)
-      (:map k.location location)
-      (:map k.time time)
-      (:map k.title title)))
+      (:map conf.url a_url)
+      (:map attendee.name a_name)
+      (:map k.location a_location)
+      (:map k.time a_time)
+      (:map k.title a_title)))
+\end{verbatim}
 
+\item Talk event at conferences
 
+\begin{verbatim}
 (:source talks
-   (:attrs url time location title name)
-   (:rel conf type-of conference)
-   (:rel k type-of talk)
+   (:attrs a_url a_time a_location a_title a_name)
+   (:rel conf type-of cuenet:conference)
+   (:rel k type-of cuenet:talk)
    (:rel k subevent-of conf)
    (:rel attendee participant-in k)
    (:axioms
-      (:map conf.url url)
-      (:map attendee.name name)
-      (:map k.location location)
-      (:map k.time time)
-      (:map k.title title)))
+      (:map conf.url a_url)
+      (:map attendee.name a_name)
+      (:map k.location a_location)
+      (:map k.time a_time)
+      (:map k.title a_title)))
+\end{verbatim}
 
+\item Lunch event at conferences
+
+\begin{verbatim}
 (:source conflunches
-   (:attrs url time location title name)
-   (:rel conf type-of conference)
-   (:rel k type-of lunch)
+   (:attrs a_url a_time a_location a_title a_name)
+   (:rel conf type-of cuenet:conference)
+   (:rel k type-of cuenet:lunch)
    (:rel k subevent-of conf)
    (:rel attendee participant-in k)
    (:axioms
-      (:map conf.url url)
-      (:map attendee.name name)
-      (:map k.location location)
-      (:map k.time time)
-      (:map k.title title)))
+      (:map conf.url a_url)
+      (:map attendee.name a_name)
+      (:map k.location a_location)
+      (:map k.time a_time)
+      (:map k.title a_title)))
+\end{verbatim}
 
+\item Twitter containing hashtags are mapped to public events.
 
+\begin{verbatim}
 (:source tweets
-   (:attrs url name)
-   (:rel conf type-of conference)
-   (:rel attendee type-of person)
+   (:attrs a_url a_name)
+   (:rel conf type-of cuenet:conference)
+   (:rel attendee type-of cuenet:person)
    (:rel attendee participant-in conf)
    (:axioms
-      (:map conf.url url)
-      (:map attendee.name name)))
+      (:map conf.url a_url)
+      (:map attendee.name a_name)))
+\end{verbatim}
 
+\item Events on Facebook
+
+\begin{verbatim}
 (:source fb-events
-   (:attrs event name time)
-   (:rel ev type-of event)
-   (:rel p1 type-of person)
-   (:rel ti type-of time-interval)
+   (:attrs a_event a_name a_time)
+   (:rel ev type-of dolce:event)
+   (:rel p1 type-of cuenet:person)
+   (:rel ti type-of dolce:time-interval)
    (:rel ev occurs-during ti)
    (:rel p1 participant-of ev)
    (:axioms
-      (:map p1.name name)
-      (:map ev event)
-      (:map ev.occurs-during time)
-      (:map ti time)))
+      (:map p1.name a_name)
+      (:map ev a_event)
+      (:map ev.occurs-during a_time)
+      (:map ti a_time)))
 \end{verbatim}
+
+
+\end{enumerate}

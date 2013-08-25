@@ -259,8 +259,8 @@ The ontology makes available a vocabulary of classes and properties. Using this 
    (:rel c-conf type-of cuenet:conference)
    (:rel d-time type-of dolce:time-interval)
    (:rel d-loc type-of dolce:location)
-   (:rel d-attendee type-of dolce:person)
-   (:rel d-attendee participant-in conf)
+   (:rel c-attendee type-of cuenet:person)
+   (:rel c-attendee participant-in conf)
    (:rel c-conf occurs-at loc)
    (:rel c-conf occurs-during time)
    (:axioms
@@ -268,7 +268,7 @@ The ontology makes available a vocabulary of classes and properties. Using this 
       (:map d-loc a_location)
       (:map c-conf.title a_ltitle)
       (:map c-conf.url a_url)
-      (:map d-attendee.name a_name)))
+      (:map c-attendee.name a_name)))
 \end{verbatim}
 
 % The above source declaration consists of a s-expression, where the source keyword indicates a unique name for the source. The \texttt{attrs} keyword is used to list the attributes of this source. The \texttt{rel} keyword constructs the instances conf, time, loc, attendee which are of conference, time-interval, location and person class types respectively, and relates them with relations specified in the ontology. Finally, the mapping \texttt{axioms} are used to map nodes in the relationship graph constructed above to attributes of the data source. For example, the first axiom (specified using the map keyword) maps the time node to the time attribute. 
