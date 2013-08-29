@@ -231,48 +231,74 @@ Figure \ref{fig:convergences} plots the L1 norm in the rank vector for different
 \label{fig:convergences-inreasing-nodes}
 \end{figure}
 
-Now, we shall apply this technique to ranking real-world photos. We consider a dataset containing 120 photos taken during a \texttt{social-party} event. All photos were annotated by the owner, and contain required EXIF tags. In order to test the algorithm, we construct context networks for all photos (using the ground truth information supplied by the user). We select some photos randomly, and remove all object information from them. The propagation algorithm is used to order the collection of objects for these photos. We use precision and recall to analyze the performance of the propagation algorithm. For this experiment, we only use temporal propagation with a linear transfer function which decreases linearly until 2\% of the timespan. In figures \ref{fig:good} - \ref{fig:poor}, we see different precision recall graphs drawn for different photos. The performance for ranking people in a photo can vary because of many reasons. In our experiments, we see that many personal photos contain the same set of people in sequence. This is because the photographer was capturing a specific event where these people were playing a prominent role or the photographer was not satisfied with the aesthetic quality of photo, and tried multiple captures before settling on a photo. In such cases, we see all the objects in the ground truth rank very highly from the propagation algorithm. Figure \ref{fig:good} shows the precision recall graph for two such photos. On the other extreme, the algorithm fares poorly when new people are introduced in the photo. Here, they are ranked very low as the expected people are those who were captured in nearby photos. This can be seen in the figure \ref{fig:poor}. A set of photos also displayed intermediate results (figure \ref{fig:average}), where some of the entities ranked highly but the rest were ranked very low. The distribution of people in these photos looked such that some people were present in nearby photos, but others were not. This is due to the nature of the event. Since our linear propagation function does not model the behavior of photographers in such \texttt{party} events, the algorithm sees seemingly random behavior. What is actually happening is that the photographer moves his vantage between groups of people in the party. If the propagation model can be extended to capture this event specific behavior, we can possibly boost the performance of such an algorithm. 
+Now, we shall apply this technique to rank objects in real world photos. We perform the propagation on a dataset obtained from users on Facebook. Albums of 430 users of Facebook were downloaded. Albums which did not contain any face tags or location information were filtered. Albums which contained less than 2 tags were removed from the collection. This left us with 198 albums and a candidate set of 526 objects. A score matrix, similar to the one shown in figure \ref{fig:location-example}, was constructed for one event corresponding to on album. The participants of an event were the union of all face tags in the contained photos. We use temporal, spatial and object propagation functions to propagate scores across events. Temporal propagation and spatial proagation was modeled using linear functions, and object propagation used jaccard similarity. The variable $T_{max}$ was set to range of all events in the collection. the spatial counterpart of $T_{max}$, $L_{max}$ was set to 50. We used equation \ref{eq:distance} to compute distances between events. We choose to test this over multiple albums to see how the algorithm performs over large time periods, and across events which contain a diverse samples of participants.
+
+In order to test the efficacy of the algorithm, we randomly select an event, and remove one tag from it. The propagation algorithm is used to score all the objects, and the rank of the deleted tag is noted. Lower the rank, the better. This was repeated 100 hundred times, and the position of the objects within the rank vectors were noted. For example, if the 3 of the missing tags appeared at rank 2 of the final list, and 4 came at rank 5, and 3 came at rank 10. Then we, would say that rank 2 contained 3 correct tags, rank 5 contained 4 and so on. The positions for our experiment are shown in figure \ref{fig:real-world-results}. We also plot the cumulative positions in figure \ref{fig:real-world-results-cumulative}. Here our example would take the following form: upto 3 tags appear till rank 2; upto 7 ranks appear till rank 5; and so on. As it can be seen, a majority of our deleted tags appear within the first ten ranks. Precisely 57\% of these tags appeared within the first 10 rank, and 76\% of the tags appear within 10\% of the 6.8\% of the ranked list (top 36 ranks). The final 24\% of the candidates were distributed in the last 50\% of the list. This can be more conveniently in graph \ref{fig:real-world-results}, as the X axis is logarithmic scale.
 
 \begin{figure}[t]
 
-\begin{minipage}[b]{0.5\linewidth}
+\begin{minipage}[b]{\linewidth}
 \centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-75.png}
+\includegraphics[width=\textwidth]{media/chapter6/real-world-ranks-simple-graph.png}
+\end{minipage}
+\caption{Number of deleted tags (y-axis) at a particular rank (x-axis) in the final score vector. X axis is logarithmic scale.}
+\label{fig:real-world-results}
 
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-35.png}
-\end{minipage}
-\caption{Photos where people were ranked very high.}
-\label{fig:good}
+\vspace{0.5cm}
 
-\begin{minipage}[b]{0.5\linewidth}
+\begin{minipage}[b]{\linewidth}
 \centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-25.png}
+\includegraphics[width=\textwidth]{media/chapter6/real-world-ranks-cumulative.png}
 \end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-55.png}
-\end{minipage}
-\caption{Photos where `random' distribution of people were seen.}
-\label{fig:average}
-
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-5.png}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-45.png}
-\end{minipage}
-\caption{Photos where people were ranked poorly because they were not present in nearby photos.}
-\label{fig:poor}
+\caption{Cumulative Number of deleted tags (y-axis) at a particular rank (x-axis) in the final score vector.}
+\label{fig:real-world-results-cumulative}
 
 \end{figure}
+
+
+% Now, we shall apply this technique to ranking real-world photos. We consider a dataset containing 120 photos taken during a \texttt{social-party} event. All photos were annotated by the owner, and contain required EXIF tags. In order to test the algorithm, we construct context networks for all photos (using the ground truth information supplied by the user). We select some photos randomly, and remove all object information from them. The propagation algorithm is used to order the collection of objects for these photos. We use precision and recall to analyze the performance of the propagation algorithm. For this experiment, we only use temporal propagation with a linear transfer function which decreases linearly until 2\% of the timespan. In figures \ref{fig:good} - \ref{fig:poor}, we see different precision recall graphs drawn for different photos. The performance for ranking people in a photo can vary because of many reasons. In our experiments, we see that many personal photos contain the same set of people in sequence. This is because the photographer was capturing a specific event where these people were playing a prominent role or the photographer was not satisfied with the aesthetic quality of photo, and tried multiple captures before settling on a photo. In such cases, we see all the objects in the ground truth rank very highly from the propagation algorithm. Figure \ref{fig:good} shows the precision recall graph for two such photos. On the other extreme, the algorithm fares poorly when new people are introduced in the photo. Here, they are ranked very low as the expected people are those who were captured in nearby photos. This can be seen in the figure \ref{fig:poor}. A set of photos also displayed intermediate results (figure \ref{fig:average}), where some of the entities ranked highly but the rest were ranked very low. The distribution of people in these photos looked such that some people were present in nearby photos, but others were not. This is due to the nature of the event. Since our linear propagation function does not model the behavior of photographers in such \texttt{party} events, the algorithm sees seemingly random behavior. What is actually happening is that the photographer moves his vantage between groups of people in the party. If the propagation model can be extended to capture this event specific behavior, we can possibly boost the performance of such an algorithm. 
+
+
+% \begin{figure}[t]
+
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-75.png}
+
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-35.png}
+% \end{minipage}
+% \caption{Photos where people were ranked very high.}
+% \label{fig:good}
+
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-25.png}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-55.png}
+% \end{minipage}
+% \caption{Photos where `random' distribution of people were seen.}
+% \label{fig:average}
+
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-5.png}
+% \end{minipage}
+% \hspace{0.5cm}
+% \begin{minipage}[b]{0.5\linewidth}
+% \centering
+% \includegraphics[width=\textwidth]{media/chapter6/pr-graphs/plot-45.png}
+% \end{minipage}
+% \caption{Photos where people were ranked poorly because they were not present in nearby photos.}
+% \label{fig:poor}
+
+% \end{figure}
 
 \section{Conclusion}
 In this chapter, we outlined a technique similar to \cite{page1999pagerank} to order the entities when only partial contextual information for a photo is available. There are two main advantages to such a technique. First, it can be used to tag photos which are captured after an event's duration has passed. Since the people are still participating in event, after its scheduled duration has passed, the photos taken during this interval would have \textit{missed} the contextual information available from different sources. In such cases, the tagged people from the previous photos can be propagated to these photos. Second, during long term events like conferences people will participate in different types of events such as trips to landmarks, dinner with colleagues or visit friends in the city where the conference is occurring. 
