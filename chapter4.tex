@@ -10,7 +10,7 @@ The focus was instead on extracting the best features from images, to obtain hig
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{media/with-without-cuenet-2.png}
-\caption{The different approaches in search space construction for a multimedia annotation problem. A traditional classifier setup is shown in (a) where the search space candidates are manually specified. Context is used to generate large static search spaces in (b). The desired framework is shown in (c), which aims to produce small search spaces with many correct annotations.}
+\caption{The different approaches in search space construction for a multimedia annotation problem. A traditional classifier setup is shown in (a) where the search space candidates are manually specified. Context is used to generate large static search spaces in (b). The desired framework is shown in (c), which aims to prune search spaces and rank highly, the correct candidates.}
 \label{fig:with-without-cuenet}
 \end{figure}
 
@@ -234,7 +234,7 @@ Since we have more candidates tagged in the photo, we can repeat the above proce
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/stacktrace/vldb-source-3.png}
-\caption{Sources used to tag all faces.}
+\caption{Sources used to tag all faces shown in figure \ref{fig:vldb-network-8}.}
 \label{fig:vldb-network-3}
 \end{figure}
 
@@ -319,7 +319,7 @@ Here $v^I_i.$\textbf{Endurants} is defined as a set $\{w | w \in V^I_i \wedge w.
 \begin{figure*}[h]
 \centering
 \includegraphics[width=\textwidth]{media/exec/exec-cycle-one-line.png}
-\caption{The various stages in an iteration of algorithm \ref{alg:cx-alg}.}
+\caption{The discover, merge, and prune up stages in an iteration of the discovery algorithm.}
 \label{fig:exec-cycle}
 \end{figure*}
 
@@ -514,7 +514,7 @@ We first check if the root of the primary would contain the secondary. Since, ev
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/merge-example-output.png}
-\caption{The three steps taken to merge the different nodes of the secondary into the primary network.}
+\caption{The three steps taken to merge the different nodes of the secondary network into the primary network shown in figure \ref{fig:merge-setup}.}
 \label{fig:merge-output-stages}
 \end{figure}
 
@@ -538,7 +538,7 @@ When a tag request is initiated, a message is passed to the candidate manager, w
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/web-stack.png}
-\caption{Web stack for data aggregation.}
+\caption{Web stack for aggregating personal, public and social data.}
 \label{fig:web-stack}
 \end{figure}
 
@@ -547,7 +547,7 @@ The web interface to the system is shown in figure \ref{fig:web-stack}. This sta
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{media/chapter4/adj-list.png}
-\caption{The data structure for maintaining Context Network.}
+\caption{The in-memory data structure for storing entities and their relations in Context Network.}
 \label{fig:adj-list}
 \end{figure}
 

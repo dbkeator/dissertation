@@ -89,7 +89,7 @@ If the probability of jumping to a web page from the distribution D is 0.15, and
   40 &  0.30554  &  0.16381  &  0.23343  &  0.29721  &  0.00000 \\
   \hline
 \end{tabular}
-\caption{Page rank scores for nodes in the example graph per iteration.}
+\caption{Page rank scores for nodes in the example graph per iteration using equation \ref{eq:pagerank} (d = 0.15). We observe convergence of node scores after iteration 39.}
 \label{tbl:prc}
 \end{center}
 \end{table}
@@ -103,7 +103,7 @@ To rank objects in context networks, we modify the random surfer model slightly 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.65\textwidth]{media/chapter6/time-example-2.png}
-\caption{Propagating values through temporal relations.}
+\caption{Score map for events $E_1$ to $E_7$ with candidate persons $P_1$ to $P5$. Score 1 is assigned if a person was participating in the event, and a 0 if not.}
 \label{fig:time-example}
 \end{figure}
 
