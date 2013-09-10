@@ -46,6 +46,8 @@ This primary \uline{contribution} of this dissertation is a \textbf{\textit{prog
 
 In contrast to current static linking techniques, progressive discovery \textbf{dynamically links} context sources to the photo. It uses all available knowledge about a given problem (the input photo and related properties) to associate a subset of data from various sources as context. This allows us to decouple the technique of gathering context from the properties of the photo data. Because of this decoupling, there is no direct dependency on any specific set of sources, freeing the system developers to plug-and-play with various sources. With this decoupling, we are able to select different sources for different photos, and therefore discover only the relevant context for a given photo.
 
+
+
 \section{Examples}
 In this section, we present two examples of progressive discovery to demonstrate how different context is discovered for different photos. Figure \ref{fig:example-icmr-hidden} shows a photo of a person giving a presentation. Progressive discovery is done in three steps. First, the discovery algorithm proceeds to find the EXIF parameters and the camera device's owner with the photo. In our discussions we will use the term \texttt{photo-capture} event to signify the event in which a person clicks his/her camera and records a photograph. The event is assumed to contain spatio-temporal attributes which specify when and where the photo was taken. In the next step, these spatio-temporal attributes are used to discover \textit{what events, if any, is this object (the owner) participating in, at this time}? Only those data sources are searched which can provide results to such a query (for example, facebook's social network will not be searched, as it does provide temporal information about people). We obtain a response from a conference database saying that the owner was attending the ICMR conference at Dallas, Texas. Third, given this new conference event, the algorithm discovers what conference subevents (keynotes, talks or break sessions) were occurring at this time. Finally, it finds that Mor Naaman and John Smith were speaker and host respectively, for the keynote talk going on that time. Given the two candidates, the face tagging algorithm proceeds to identify Mor Naaman as the person in the photo, as shown in figure \ref{fig:example-icmr-show}.
 
@@ -89,32 +91,3 @@ In this first run, the algorithm links only to a conference database, whereas in
 
 \section{Overview}
 This dissertation is organized into the following chapters. Chapter 2 provides an overview of context, how context has been used to address problems in various scientific disciplines and how we use context in our specific personal photo tagging application. Chapter 3 describes the related work in computer science, specifically the main ideas in photo annotation and tag propagation techniques, and presenting the techniques prevalent in context modeling and processing communities: how context is used to solve problems in different domains. Chapter 4 describes our context discovery framework, how it models various data sources, and how our progressive discovery algorithm constructs models for real world problems. We facilitate this discussion with an example real world application to tag faces of people in personal photos. Chapter 5 analyzes the algorithmic complexity of different parts of the system, and provides experiments to verify the competence and performance of the system. We also present experiments to confirm the efficacy of our approach in the light of the real world application. Chapter 6 presents a technique to use previously tagged photos and their context networks to rank candidates in context networks for new photos. Finally, chapter 7 describes the known issues of our approach and the future possibilities of using context discovery in various applications.
-
-% Chapters 6 and 7 describe two extensions to the CueNet framework to solve problems of missing context and that of source selection. 
-
-%% \section{Terminology}
-%% Before starting the discussion on Context Networks, it is necessary to include a short note on terminology to avoid any ambiguities. We use the word `Object' to collectively refer to events and entities. An entity includes persons, places in the world, for example `Starbucks, UC Irvine', `The Eiffel Tower, Paris, France', or organizations, for example `Google Inc', `Royal Society of London'. The term `object' has been used in literature to refer to things which have no temporal properties. But, in our discussion, an `object' could imply an event which exhibits temporal properties.
-
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.75\textwidth]{media/chapter1/terminology.png}
-% \caption{Objects, Events and Entities.}
-% \label{fig:terminology}
-% \end{figure}
-
-
-% \begin{figure}[ht]
-% \begin{minipage}[b]{0.45\linewidth}
-% \centering
-% \includegraphics[width=\textwidth]{media/chapter1/icmr-keynote-2-hidden.jpg}
-% \caption{Who is in this photo?}
-% \label{fig:example-icmr-hidden}
-% \end{minipage}
-% \hspace{0.5cm}
-% \begin{minipage}[b]{0.45\linewidth}
-% \centering
-% \includegraphics[width=\textwidth]{media/chapter1/icmr-keynote-2-show.jpg}
-% \caption{Mor Naaman at ICMR.}
-% \label{fig:example-icmr-show}
-% \end{minipage}
-% \end{figure}
