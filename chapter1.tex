@@ -6,7 +6,7 @@ Recently, the following changes in the technology climate motivate us to view re
 
 % people are taking more photos, and tagging them requires deeper insights into how they are generated. very similar to how evolution is barely noticable at small time scales, but becomes prominent at larger ones (here we observer opposite phenomenon).
 
-The most relevant context for a photo is contained in the relationships between the various real-world entities at the \textit{time of photo capture}. Given the various data sources and sensors, each of which contain partial information about these entities, it is non-trivial to meaningfully combine this information to produce the context for a photo. In this dissertation, we construct computational representations of such dynamic real-world entities and their relationships from the partial information in various heterogeneous data sources. We refer to such a representation as the \textbf{Context Network} of the photo. The network describes real-world events occurring with the photo-capture event, the objects participating in them, and their semantic inter-relationships. Given such a network for a photo, we can reason which parts of the search space can be pruned, and which of the remaining candidates are most likely present in the photo.
+The most relevant context for a photo is contained in the relationships between the various real-world entities at the \textit{time of photo capture}. Given the various data sources and sensors, each of which contain partial information about these entities, it is non-trivial to meaningfully combine this information to produce the context for a photo. In this dissertation, we construct computational representations of such dynamic real-world entities and their relationships from the partial information in various heterogeneous data sources. We refer to such a representation as the \textbf{Context Network} of the photo. The network describes real-world events occurring with the photo-capture event, the objects participating in them, and their semantic inter-relationships. Given such a network for a photo, we can reason which parts of the search space can be pruned, and which of the remaining candidates are most likely present in the photo. 
 
 \begin{figure}[t]
 \centering
@@ -19,6 +19,8 @@ The most relevant context for a photo is contained in the relationships between 
 \caption{Photos can be captured at a variety of different events.}
 \label{fig:people}
 \end{figure}
+
+In this dissertation, we explore the symbiotic mutualistic relationship between contextual information and image features. Most often, context-aware multimedia problems use contextual information to simplify their respective challenges. But the opposite direction is undervalued and unexplored. A unified system where both contextual information can be discovered using images properties and image annotation can be achieved using contextual information forms the very novel foundation described in the following chapters. Such a \textit{systemic view} \cite{capra1997web} of context and image features where every component of a system assists the others, stands in contrast to \textit{pipeline systems} where every component provides appropriate inputs for the following components.
 
 \section{Importance of Context Discovery}
 
@@ -66,8 +68,6 @@ In this section, we present two examples of progressive discovery to demonstrate
 \label{fig:example-icmr-show}
 \end{minipage}
 \end{figure}
-
-\pagebreak
 
 Now, let us attempt to discover context for photo shown in figure \ref{fig:example-kasturi-hidden}. Context discovery initiates the same way as in the above example, but after searching for events related to the owner in data sources, finds nothing. It proceeds to rank all known contacts according to location, and given that this photo was taken to the owner's workplace ranks colleagues higher than friends. The top 20 (an arbitrary constant) ranked candidates are passed to the face tagging algorithm which finds Ramesh Jain in the photo. But not the person to his right in the photo. Since the \texttt{photo-capture-event} has an additional participant, Ramesh, his personal information (calendar or social network) can be queried to find events in which he was participating. The calendar returns the entry ``Kasturi". The algorithm uses this term to find all Ramesh's contacts to find all people with first or last name ``Kasturi'', and finds his long time friend and colleague ``Rangachar Kasturi''. The face tagging algorithm is invoked with one candidate. In this case, it is simply checking if Prof. Kasturi is present in the photo or not.
 
